@@ -1,0 +1,34 @@
+
+# Secrets
+.env
+.env.*
+server/.env
+server/.env.*
+!.env.example
+!.env.production.template
+!server/.env.example
+
+# Generated files
+node_modules/
+coverage/
+playwright-report/
+test-results/
+server/.env
+
+# Local credentials, runtime state, and generated output
+DEPLOY_SECRETS.txt
+.vercel/
+dist/
+*.log
+*.sqlite*
+*.db
+*.msi
+*.exe
+*.tsbuildinfo
+server/uploads/
+server/runtime/
+server/scratch/
+roster-backups/
+roster.json
+hive/
+legatrixon/

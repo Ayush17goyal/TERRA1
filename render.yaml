@@ -1,0 +1,90 @@
+services:
+  - type: web
+    name: legatrixon-backend
+    runtime: node
+    plan: starter
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: CLIENT_ORIGIN
+        value: https://legatrixon-3.vercel.app
+      - key: SQLITE_DB_PATH
+        value: /var/data/legatrixon_db.sqlite
+      - key: REDIS_URL
+        fromService:
+          name: legatrixon-redis
+          property: connectionString
+      # Supabase Configuration
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        value: https://mydrikssmzzudzqeqroe.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15ZHJpa3NzbXp6dWR6cWVxcm9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NjYyNjIsImV4cCI6MjA5NjU0MjI2Mn0.Nvqw1uuNa95yunYiBqXLUoJ7tRFkjjUrWoCXeV_8XIc
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: VITE_SUPABASE_URL
+        value: https://mydrikssmzzudzqeqroe.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15ZHJpa3NzbXp6dWR6cWVxcm9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NjYyNjIsImV4cCI6MjA5NjU0MjI2Mn0.Nvqw1uuNa95yunYiBqXLUoJ7tRFkjjUrWoCXeV_8XIc
+      # Clerk Authentication
+      - key: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+        value: pk_test_aW1wcm92ZWQtaGlwcG8tMzIuY2xlcmsuYWNjb3VudHMuZGV2JA
+      - key: CLERK_SECRET_KEY
+        sync: false
+      # External Providers (OpenAI, Deepseek, Gemini)
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      # Google Calendar API
+      - key: GOOGLE_CLIENT_ID
+        value: 904542993845-0bp0tcfv7rlel2tb66l2sp57ig9042rs.apps.googleusercontent.com
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://legatrixon-backend.onrender.com/auth/google/callback
+      # Qdrant Vector Database
+      - key: QDRANT_URL
+        value: https://dd284eb5-9c7e-4f0e-92fd-815f87684ce0.us-west-1-0.aws.cloud.qdrant.io
+      - key: QDRANT_API_KEY
+        sync: false
+      # SMTP Configuration for email
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        value: legatrixon2026@gmail.com
+      - key: SMTP_PASS
+        sync: false
+      - key: SECURITY_EMAIL_FROM
+        value: legatrixon2026@gmail.com
+      # BYOK Encryption
+      - key: BYOK_ENCRYPTION_KEY
+        sync: false
+      # Disabled features
+      - key: SUPABASE_DISABLED
+        value: "true"
+      # Learning module config
+      - key: LEARNING_INDEXING_CONCURRENCY
+        value: "2"
+      - key: LEARNING_CHUNK_SIZE
+        value: "1400"
+    disk:
+      name: sqlite-data
+      mountPath: /var/data
+      sizeGB: 1
+
+  - type: redis
+    name: legatrixon-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+    version: "7"

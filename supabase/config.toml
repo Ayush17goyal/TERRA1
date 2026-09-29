@@ -1,0 +1,16 @@
+# These Edge Functions authenticate requests with a Clerk-issued JWT (not a
+# Supabase Auth JWT), so the platform's built-in JWT gate must be disabled —
+# otherwise every request is rejected with 401 before reaching the function.
+[functions.create-order]
+verify_jwt = false
+
+[functions.verify-payment]
+verify_jwt = false
+
+[functions.payment-history]
+verify_jwt = false
+
+# Verified independently via HMAC signature against RAZORPAY_WEBHOOK_SECRET,
+# and called by Razorpay directly (no Clerk/Supabase JWT is ever sent).
+[functions.razorpay-webhook]
+verify_jwt = false

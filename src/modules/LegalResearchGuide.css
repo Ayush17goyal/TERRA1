@@ -1,0 +1,875 @@
+/* ─── LegalResearchGuide ───────────────────────────────────────────────────── */
+
+/* === Root container =========================================================*/
+.srg {
+  --b: var(--bg-elev);
+  --p: var(--card);
+  --a: var(--card-alt);
+  --t: var(--text);
+  --m: var(--text-soft);
+  --l: var(--line);
+  --g: var(--gold);
+  --s: var(--gold-soft);
+
+  height: 820px;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  background: var(--b);
+  color: var(--t);
+  border: 1px solid var(--l);
+  border-radius: 16px;
+  overflow: hidden;
+  font-family: Manrope, 'Segoe UI', sans-serif;
+  transition: grid-template-columns 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Collapsed state: sidebar width → 0 */
+.srg--collapsed {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+.srg * {
+  box-sizing: border-box;
+}
+
+.srg button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* === Sidebar ================================================================*/
+.srg-aside {
+  border-right: 1px solid var(--l);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--p);
+  min-width: 0;
+  transition: opacity 0.25s ease, padding 0.32s ease;
+}
+
+.srg-aside--hidden {
+  opacity: 0;
+  pointer-events: none;
+  padding: 0;
+}
+
+/* === Brand =================================================================*/
+.srg-brand {
+  height: 65px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--g);
+  flex-shrink: 0;
+}
+
+.srg-brand > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.srg-brand span > * {
+  display: block;
+}
+
+.srg-brand span b {
+  font-size: 17px;
+  color: var(--t);
+}
+
+.srg small,
+.srg-brand small {
+  font-size: 10px;
+  color: var(--m);
+}
+
+/* === Journey header =========================================================*/
+.srg-journey {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px 5px 10px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--g);
+  flex-shrink: 0;
+}
+
+.srg-journey > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.srg-journey-count {
+  color: var(--t);
+  letter-spacing: 0;
+  font-size: 10px;
+}
+
+/* Sidebar collapse / expand toggle buttons */
+.srg-sidebar-toggle {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--l);
+  background: var(--a);
+  color: var(--m);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  transition: background 0.18s, color 0.18s;
+  flex-shrink: 0;
+}
+
+.srg-sidebar-toggle:hover {
+  background: var(--s);
+  color: var(--g);
+}
+
+/* Expand button shown inside main header when sidebar is collapsed */
+.srg-expand-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--l);
+  background: var(--a);
+  color: var(--m);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+  transition: background 0.18s, color 0.18s;
+}
+
+.srg-expand-btn:hover {
+  background: var(--s);
+  color: var(--g);
+}
+
+/* === Notebook button ========================================================*/
+.srg-notebook {
+  border: 1px solid var(--g);
+  background: var(--s);
+  color: var(--t);
+  border-radius: 10px;
+  padding: 11px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.srg-notebook svg {
+  color: var(--g);
+}
+
+.srg-notebook b {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--g);
+  color: var(--b);
+  display: grid;
+  place-items: center;
+}
+
+/* === Lesson navigation ======================================================*/
+.srg > aside nav,
+.srg-aside nav {
+  overflow: auto;
+  margin: 10px -6px 0;
+  padding: 0 6px 40px;
+  scrollbar-width: thin;
+}
+
+.srg-aside nav section h3 {
+  font-size: 9px;
+  letter-spacing: 1.3px;
+  color: var(--g);
+  margin: 21px 5px 8px;
+}
+
+.srg-aside nav section > button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--m);
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 29px 1fr;
+  gap: 7px;
+  text-align: left;
+  border-radius: 8px;
+}
+
+.srg-aside nav section > button svg {
+  width: 21px;
+}
+
+.srg-aside nav section > button span > * {
+  display: block;
+}
+
+.srg-aside nav section > button span b {
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.srg-aside nav section > button.current {
+  background: var(--s);
+  color: var(--g);
+}
+
+.srg-aside nav section > button.complete {
+  color: var(--t);
+}
+
+.srg-aside nav section > button.complete > svg {
+  color: var(--ok);
+}
+
+.srg-aside nav section > button.locked {
+  opacity: 0.47;
+  cursor: not-allowed;
+}
+
+/* === Main panel =============================================================*/
+.srg-main {
+  min-width: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Sticky header ==========================================================*/
+.srg-header {
+  height: 88px;
+  border-bottom: 1px solid var(--l);
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  background: var(--p);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.srg-header-progress {
+  width: 45%;
+}
+
+.srg-header-progress b,
+.srg-header-progress span {
+  display: block;
+}
+
+.srg-header-progress span {
+  font-size: 11px;
+  color: var(--m);
+  margin: 4px 0 8px;
+}
+
+.srg-header-progress i {
+  display: block;
+  height: 5px;
+  background: var(--a);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.srg-header-progress i em {
+  display: block;
+  height: 100%;
+  background: var(--g);
+  transition: width 0.4s;
+}
+
+.srg-header-stats {
+  margin-left: auto;
+  display: flex;
+}
+
+.srg-header-stats span {
+  display: grid;
+  grid-template-columns: 23px auto;
+  padding: 5px 18px;
+  border-right: 1px solid var(--l);
+}
+
+.srg-header-stats svg {
+  grid-row: 1 / 3;
+  color: var(--g);
+  width: 18px;
+}
+
+.srg-header-stats b {
+  font-size: 14px;
+}
+
+.srg-header-stats small {
+  display: block;
+}
+
+/* === Lesson body ============================================================*/
+.srg-lesson {
+  max-width: 1100px;
+  margin: auto;
+  padding: 52px 42px 70px;
+  flex: 1;
+}
+
+.srg-meta {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  color: var(--m);
+  font-size: 11px;
+}
+
+.srg-meta > b {
+  color: var(--g);
+  letter-spacing: 1px;
+}
+
+.srg-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.srg-meta svg {
+  width: 14px;
+}
+
+.srg-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 23px 0 35px;
+}
+
+.srg-title > i {
+  width: 65px;
+  height: 65px;
+  border-radius: 18px;
+  background: var(--navy);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.srg-title > i svg {
+  width: 31px;
+  height: 31px;
+}
+
+.srg-title span > * {
+  display: block;
+}
+
+.srg-title span small {
+  font-size: 15px;
+}
+
+.srg-title h1 {
+  font: 42px / 1.05 Georgia, serif;
+  margin: 5px 0;
+}
+
+/* === Two-column grid ========================================================*/
+.srg-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+  gap: 18px;
+}
+
+/* === Left content card ======================================================*/
+.srg-content,
+.srg-example {
+  border: 1px solid var(--l);
+  border-radius: 16px;
+  padding: 26px;
+  background: var(--p);
+}
+
+.srg-content > label,
+.srg-example > label {
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  color: var(--g);
+  font-weight: 800;
+}
+
+.srg-content > h2,
+.srg-example h2 {
+  font-size: 18px;
+  margin: 7px 0 12px;
+}
+
+.srg-content > p,
+.srg-example > p {
+  color: var(--m);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+/* Principle box */
+.srg-principle {
+  padding: 16px;
+  background: var(--a);
+  border-radius: 12px;
+  display: flex;
+  gap: 11px;
+}
+
+.srg-principle > svg {
+  color: var(--g);
+  flex: none;
+}
+
+.srg-principle span > * {
+  display: block;
+}
+
+.srg-principle p {
+  margin: 4px 0;
+  color: var(--m);
+  line-height: 1.6;
+}
+
+/* === Ask LexMentor ==========================================================*/
+.srg-ask {
+  border-top: 1px solid var(--l);
+  margin-top: 25px;
+  padding-top: 22px;
+}
+
+.srg-ask-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--g);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.srg-ask-header svg {
+  flex-shrink: 0;
+}
+
+/* Conversation container */
+.srg-ai-conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+  max-height: 380px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding-right: 2px;
+}
+
+/* Individual message row */
+.srg-ai-msg {
+  display: flex;
+  flex-direction: column;
+}
+
+.srg-ai-msg--user {
+  align-items: flex-end;
+}
+
+.srg-ai-msg--assistant {
+  align-items: flex-start;
+}
+
+/* User bubble */
+.srg-ai-user-bubble {
+  background: var(--s);
+  border: 1px solid color-mix(in srgb, var(--g) 30%, transparent);
+  border-radius: 12px 12px 4px 12px;
+  padding: 10px 14px;
+  max-width: 80%;
+}
+
+.srg-ai-user-bubble p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--t);
+  line-height: 1.55;
+}
+
+/* AI response card */
+.srg-ai-card {
+  background: var(--p);
+  border: 1px solid color-mix(in srgb, var(--g) 22%, var(--l));
+  border-radius: 12px;
+  padding: 14px 16px;
+  max-width: 94%;
+  position: relative;
+}
+
+.srg-ai-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  background: var(--g);
+  border-radius: 0 3px 3px 0;
+}
+
+.srg-ai-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: var(--g);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.srg-ai-card > p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--t);
+  line-height: 1.7;
+}
+
+/* Loading variant */
+.srg-ai-card--loading {
+  background: var(--a);
+}
+
+/* Error variant */
+.srg-ai-card--error {
+  border-color: color-mix(in srgb, #c44f59 30%, var(--l));
+  background: color-mix(in srgb, #c44f59 6%, var(--p));
+}
+
+.srg-ai-card--error::before {
+  background: #c44f59;
+}
+
+.srg-ai-card--error > p {
+  color: #c44f59;
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+
+/* Loading row inside card */
+.srg-ai-thinking {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--m);
+}
+
+/* Spinner animation */
+.srg-ai-spinner {
+  animation: srg-spin 0.9s linear infinite;
+  color: var(--g);
+  flex-shrink: 0;
+}
+
+@keyframes srg-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Retry button */
+.srg-ai-retry {
+  border: 1px solid var(--l);
+  background: var(--a);
+  color: var(--t);
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.18s;
+}
+
+.srg-ai-retry:hover {
+  background: var(--s);
+}
+
+/* Input wrapper */
+.srg-ask-input-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  border: 1px solid var(--l);
+  border-radius: 12px;
+  padding: 10px 10px 10px 14px;
+  background: var(--b);
+  transition: border-color 0.18s;
+}
+
+.srg-ask-input-wrap:focus-within {
+  border-color: var(--g);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--g) 12%, transparent);
+}
+
+.srg-ask-input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  resize: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--t);
+  line-height: 1.55;
+  outline: none;
+  min-height: 22px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.srg-ask-input::placeholder {
+  color: var(--m);
+}
+
+.srg-ask-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.srg-ask-send {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: var(--g);
+  color: #000;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background 0.18s, opacity 0.18s, transform 0.15s;
+}
+
+.srg-ask-send:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--g) 80%, #000);
+  transform: translateY(-1px);
+}
+
+.srg-ask-send:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Keyboard hint */
+.srg-ask-hint {
+  font-size: 10px;
+  color: var(--m);
+  margin: 6px 2px 0;
+  line-height: 1.4;
+}
+
+.srg-ask-hint kbd {
+  font: inherit;
+  font-size: 10px;
+  background: var(--a);
+  border: 1px solid var(--l);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* === Complete button ========================================================*/
+.srg-complete {
+  margin-top: 20px;
+  margin-left: auto;
+  border: 0;
+  background: var(--g);
+  color: var(--b);
+  font-weight: 800;
+  padding: 11px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.18s, transform 0.15s;
+}
+
+.srg-complete:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* === Right example card =====================================================*/
+.srg-example {
+  background: linear-gradient(140deg, var(--a), var(--p));
+  align-self: start;
+}
+
+.srg-example h2 {
+  font: italic 22px Georgia, serif;
+  color: var(--g);
+  margin: 27px 0;
+}
+
+.srg-example hr {
+  border: 0;
+  border-top: 1px solid var(--l);
+  margin: 25px 0;
+}
+
+.srg-example > div {
+  margin-top: 26px;
+  padding: 14px;
+  background: var(--s);
+  border-radius: 10px;
+  display: flex;
+  gap: 9px;
+  color: var(--g);
+}
+
+.srg-example > div span > * {
+  display: block;
+}
+
+.srg-example > div p {
+  font-size: 11px;
+  color: var(--m);
+  line-height: 1.5;
+  margin: 4px 0;
+}
+
+/* === Accessibility ==========================================================*/
+@media (prefers-reduced-motion: reduce) {
+  .srg * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* === Responsive — tablet (681px – 900px) ====================================*/
+@media (max-width: 900px) {
+  .srg {
+    grid-template-columns: 240px minmax(0, 1fr);
+    height: auto;
+    min-height: 800px;
+  }
+
+  .srg--collapsed {
+    grid-template-columns: 0 minmax(0, 1fr);
+  }
+
+  .srg-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .srg-header {
+    padding: 15px 20px;
+  }
+
+  .srg-lesson {
+    padding: 35px 25px;
+  }
+
+  .srg-title h1 {
+    font-size: 34px;
+  }
+}
+
+/* === Responsive — mobile (≤680px) ==========================================*/
+@media (max-width: 680px) {
+  /* On mobile the sidebar becomes a fixed overlay / drawer */
+  .srg {
+    height: auto;
+    min-height: 800px;
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+
+  .srg--collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .srg-aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 80vw;
+    z-index: 200;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+    transform: translateX(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    overflow-y: auto;
+    height: 100%;
+    padding-bottom: 60px;
+  }
+
+  .srg-aside--hidden {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .srg-main {
+    grid-column: 1;
+  }
+
+  .srg-header {
+    position: static;
+    padding: 15px 16px;
+  }
+
+  .srg-header-progress {
+    width: 100%;
+  }
+
+  .srg-header-stats span {
+    padding: 4px 7px;
+  }
+
+  .srg-header-stats small {
+    display: none;
+  }
+
+  .srg-lesson {
+    padding: 28px 14px;
+  }
+
+  .srg-title {
+    align-items: flex-start;
+  }
+
+  .srg-title > i {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+  }
+
+  .srg-title h1 {
+    font-size: 29px;
+  }
+
+  .srg-meta {
+    flex-wrap: wrap;
+  }
+
+  .srg-content,
+  .srg-example {
+    padding: 19px;
+  }
+
+  .srg-ai-conversation {
+    max-height: 260px;
+  }
+}

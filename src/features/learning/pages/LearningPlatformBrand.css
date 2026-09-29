@@ -1,0 +1,115 @@
+.review-panel {
+  border-color: #d5b878;
+  background: linear-gradient(145deg, #ffffff, #fbf8f0);
+}
+
+.review-panel > header::before {
+  content: '';
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border: 1px solid #d8c79f;
+  border-radius: 12px;
+  background: #fff url('/Legatrixon logo.jpg') center / cover no-repeat;
+  box-shadow: 0 5px 14px rgba(38, 63, 112, 0.12);
+}
+
+.review-panel > header > svg {
+  display: none;
+}
+
+.review-panel header small,
+.review-panel footer span {
+  color: #263f70;
+}
+
+.review-panel header > b,
+.feedback-grid > div > strong {
+  color: #a86f12;
+}
+
+.review-panel button {
+  background: #263f70;
+}
+
+.review-panel button.secondary {
+  color: #263f70;
+  border-color: #9aabd0;
+}
+
+.score-row i b {
+  background: linear-gradient(90deg, #263f70, #b07a1b);
+}
+
+.feedback-grid > div {
+  background: #f7f4ec;
+}
+
+.review-panel.answer-correct {
+  border-color: #d1aa56;
+  background: linear-gradient(145deg, #ffffff, #fbf7eb);
+}
+
+.review-panel.answer-partial {
+  border-color: #d1aa56;
+  background: linear-gradient(145deg, #ffffff, #fff9e9);
+}
+
+.review-panel.answer-incorrect {
+  border-color: #b76a62;
+  background: linear-gradient(145deg, #ffffff, #fff7f4);
+}
+
+.review-panel.review-pending {
+  border-color: #d1aa56;
+  background: linear-gradient(145deg, #ffffff, #fbf7eb);
+}
+
+.review-panel.review-pending h2,
+.local-checks-ok {
+  color: #263f70;
+}
+
+.revision-nav {
+  color: #263f70;
+  border-color: #d8c79f;
+  background: #fbf7eb;
+}
+
+.revision-nav.active {
+  color: #263f70;
+  border-color: #d1aa56;
+  background: #f5ecd6;
+}
+
+.revision-nav b {
+  color: #fff;
+  background: #263f70;
+}
+
+.revision-dashboard > header button,
+.revision-dashboard button {
+  color: #fff;
+  background: #263f70;
+  border: 1px solid #263f70;
+}
+
+.revision-mastery > i {
+  background: #e8e5dc;
+}
+
+.revision-mastery > i b {
+  background: linear-gradient(90deg, #263f70, #b07a1b);
+}
+
+.revision-lessons article > header > strong,
+.revision-lessons summary {
+  color: #a86f12;
+}
+
+.revision-mastery,
+.revision-dashboard-grid > section,
+.revision-lessons > article,
+.revision-empty {
+  border-color: #ddd4c1;
+}

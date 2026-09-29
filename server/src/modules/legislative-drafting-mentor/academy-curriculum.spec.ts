@@ -1,0 +1,5 @@
+import { ACADEMY_CURRICULUM, ACADEMY_TOTAL_LESSONS } from './academy-curriculum';
+describe('Legislative Drafting Academy curriculum',()=>{
+ it('contains exactly 77 sequential one-concept lessons',()=>{expect(ACADEMY_TOTAL_LESSONS).toBe(77);expect(ACADEMY_CURRICULUM.map(x=>x.number)).toEqual(Array.from({length:77},(_,i)=>i+1));expect(new Set(ACADEMY_CURRICULUM.map(x=>`${x.module}:${x.title}`)).size).toBe(77)});
+ it('keeps the required module boundaries and final advanced lessons',()=>{expect(ACADEMY_CURRICULUM[0].title).toBe('What is a Bare Act?');expect(ACADEMY_CURRICULUM[4].title).toBe('How to Read and Understand a Bare Act');expect(ACADEMY_CURRICULUM[70].title).toBe('Graduation and Certificate');expect(ACADEMY_CURRICULUM[71].title).toBe('Analyze the Indian Contract Act');expect(ACADEMY_CURRICULUM[76].title).toBe('Common Drafting Mistakes')});
+});

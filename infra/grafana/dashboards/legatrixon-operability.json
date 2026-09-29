@@ -1,0 +1,21 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "panels": [
+    { "type": "timeseries", "title": "API P95/P99 Latency", "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }, "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(legatrixon_http_request_duration_seconds_bucket[5m])) by (le, route))", "legendFormat": "p95 {{route}}" }, { "expr": "histogram_quantile(0.99, sum(rate(legatrixon_http_request_duration_seconds_bucket[5m])) by (le, route))", "legendFormat": "p99 {{route}}" }] },
+    { "type": "timeseries", "title": "Workflow, Retrieval, Prompt, Validator Latency", "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }, "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(legatrixon_workflow_latency_seconds_bucket[5m])) by (le, stage))", "legendFormat": "workflow {{stage}}" }, { "expr": "histogram_quantile(0.95, sum(rate(legatrixon_retrieval_latency_seconds_bucket[5m])) by (le, intent))", "legendFormat": "retrieval {{intent}}" }, { "expr": "histogram_quantile(0.95, sum(rate(legatrixon_prompt_assembly_latency_seconds_bucket[5m])) by (le, intent, strategy))", "legendFormat": "prompt {{intent}}/{{strategy}}" }, { "expr": "histogram_quantile(0.95, sum(rate(legatrixon_validation_latency_seconds_bucket[5m])) by (le, decision))", "legendFormat": "validation {{decision}}" }] },
+    { "type": "timeseries", "title": "LLM Latency, Tokens, Cost", "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }, "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(legatrixon_llm_latency_seconds_bucket[5m])) by (le, model, intent))", "legendFormat": "latency {{model}} {{intent}}" }, { "expr": "sum(rate(legatrixon_llm_token_usage_total_sum[5m])) by (model, category)", "legendFormat": "tokens {{model}} {{category}}" }, { "expr": "sum(rate(legatrixon_llm_estimated_cost_usd_total[5m])) by (model, intent)", "legendFormat": "cost {{model}} {{intent}}" }] },
+    { "type": "timeseries", "title": "Cache Hit/Miss Events", "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }, "targets": [{ "expr": "sum(rate(legatrixon_cache_events_total[5m])) by (cache, result)", "legendFormat": "{{cache}} {{result}}" }] },
+    { "type": "timeseries", "title": "Queue Depth and Failures", "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 }, "targets": [{ "expr": "legatrixon_queue_depth", "legendFormat": "depth {{queue}}" }, { "expr": "sum(rate(legatrixon_queue_failures_total[5m])) by (queue)", "legendFormat": "failures {{queue}}" }] },
+    { "type": "timeseries", "title": "Embedding, Indexing, Security, Slow Ops", "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 }, "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(legatrixon_embedding_generation_seconds_bucket[5m])) by (le, model))", "legendFormat": "embedding {{model}}" }, { "expr": "sum(rate(legatrixon_document_indexing_total[5m])) by (document_type, status)", "legendFormat": "index {{document_type}} {{status}}" }, { "expr": "sum(rate(legatrixon_security_events_total[5m])) by (type, severity)", "legendFormat": "security {{severity}} {{type}}" }, { "expr": "sum(rate(legatrixon_slow_operations_total[5m])) by (operation, budget)", "legendFormat": "slow {{operation}} {{budget}}" }] },
+    { "type": "timeseries", "title": "Student Interactions and Mastery Updates", "gridPos": { "x": 0, "y": 24, "w": 24, "h": 8 }, "targets": [{ "expr": "sum(rate(legatrixon_student_interactions_total[5m])) by (intent, mode)", "legendFormat": "{{intent}} {{mode}}" }, { "expr": "sum(rate(legatrixon_mastery_updates_total[5m])) by (direction)", "legendFormat": "mastery {{direction}}" }] }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["legatrixon", "bare-act-mentor", "performance"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "title": "LEGATRIXON Bare Act Mentor Performance",
+  "uid": "legatrixon-performance",
+  "version": 2
+}
