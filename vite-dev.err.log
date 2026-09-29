@@ -1,0 +1,22 @@
+[2m11:44:47 am[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[LexNotebook AI] Backend offline or unreachable. Running in high-precision premium client-side sandbox mode. TypeError: Failed to fetch
+    at fetchDocuments (http://127.0.0.1:5174/src/App.tsx:1701:28)
+    at http://127.0.0.1:5174/src/App.tsx:1730:3
+    at Object.react_stack_bottom_frame (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:12904:13)
+    at runWithFiberInDEV (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:851:66)
+    at commitHookEffectListMount (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:6617:153)
+    at commitHookPassiveMountEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:6652:55)
+    at commitPassiveMountOnFiber (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7618:22)
+    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7606:5)
+    at commitPassiveMountOnFiber (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7672:14)
+    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7606:5)
+[2m11:44:47 am[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[LexNotebook AI] Backend offline or unreachable. Running in high-precision premium client-side sandbox mode. TypeError: Failed to fetch
+    at fetchDocuments (http://127.0.0.1:5174/src/App.tsx:1701:28)
+    at http://127.0.0.1:5174/src/App.tsx:1730:3
+    at Object.react_stack_bottom_frame (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:12904:13)
+    at runWithFiberInDEV (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:851:66)
+    at commitHookEffectListMount (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:6617:153)
+    at commitHookPassiveMountEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:6652:55)
+    at reconnectPassiveEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7701:6)
+    at recursivelyTraverseReconnectPassiveEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7688:5)
+    at reconnectPassiveEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7713:14)
+    at recursivelyTraverseReconnectPassiveEffects (http://127.0.0.1:5174/node_modules/.vite/deps/react-dom_client.js?v=d0ad06b2:7688:5)

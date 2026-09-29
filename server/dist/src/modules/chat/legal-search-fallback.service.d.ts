@@ -1,0 +1,45 @@
+import { LegalSource } from './legal-source.types';
+import { SemanticCacheService } from './semantic-cache.service';
+export declare class LegalSearchFallbackService {
+    private readonly cacheService;
+    private readonly logger;
+    private readonly strongQdrantConfidence;
+    private readonly minAuthoritativeConfidence;
+    private readonly minGeneralConfidence;
+    private readonly trustedTiers;
+    private readonly generalLegalDomains;
+    constructor(cacheService: SemanticCacheService);
+    search(query: string, qdrantSources?: LegalSource[]): Promise<LegalSource[]>;
+    fromQdrantHit(params: {
+        id: string;
+        title: string;
+        collection: string;
+        score: number;
+        excerpt: string;
+        metadata: Record<string, any>;
+    }): LegalSource;
+    toContextBlock(sources: LegalSource[], limit?: number): string;
+    private searchTier;
+    private searchGeneralLegalSources;
+    private searchDuckDuckGo;
+    private toLegalSource;
+    private rankAndDedupe;
+    private calculateConfidence;
+    private estimateRelevance;
+    private inferQdrantSourceType;
+    private normalizeCitation;
+    private canonicalizeCitation;
+    private dedupeKey;
+    private decodeDuckDuckGoUrl;
+    private isAllowedDomain;
+    private safeHost;
+    private canonicalUrl;
+    private titleFromUrl;
+    private extractActName;
+    private extractSection;
+    private extractLawCommissionReport;
+    private stripHtml;
+    private asString;
+    private hash;
+    private clamp;
+}

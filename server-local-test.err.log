@@ -1,0 +1,2 @@
+[LEGATRIXON SERVER] SQLite path is not writable, trying fallback. Path: /var/data/legatrixon_db.sqlite. Reason: EPERM: operation not permitted, mkdir 'C:\var\data'
+Failed to obtain server version. Unable to check client-server compatibility. Set checkCompatibility=false to skip version check.

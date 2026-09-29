@@ -1,0 +1,16 @@
+{
+  "name": "legatrixon-backend",
+  "ownerId": "tea-d8tm9htckfvc73ep9h50",
+  "type": "web_service",
+  "region": "oregon",
+  "plan": "starter",
+  "serviceDetails": {
+    "envSpecific": false,
+    "rootDir": "server",
+    "buildCommand": "npm install && npm run build",
+    "startCommand": "npm run start:prod"
+  },
+  "repo": "https://github.com/Ayush17goyal/LEGATRIXON-31.git",
+  "branch": "main",
+  "autoDeploy": true
+}

@@ -1,0 +1,15 @@
+import { LegalEvidenceValidation, RetrievedAuthority } from './pipeline.types';
+export declare const LEXMENTOR_LEGAL_ONLY_REJECTION = "LexMentor AI is designed exclusively for legal education and legal research. Please ask a question related to law.";
+export declare const LEXMENTOR_LOW_CONFIDENCE_RESPONSE = "I am not sufficiently confident to provide a reliable legal answer based on the available legal sources.";
+export declare const LEXMENTOR_CANNOT_VERIFY_RESPONSE: string;
+export declare const LEXMENTOR_NO_AUTHORITATIVE_MATERIAL = "I could not locate authoritative legal material supporting this question.";
+export declare const LEXMENTOR_LEGAL_DISCLAIMER = "This response is for legal education and research purposes only and should not be treated as professional legal advice.";
+export declare const LEXMENTOR_UPLOADED_DOC_NOTE = "Answer generated from your uploaded document.";
+export declare const RETRIEVAL_CONFIDENCE_THRESHOLD: 0.8;
+export declare function computeRetrievalConfidence(authorities: RetrievedAuthority[]): number;
+export declare function hasUploadedDocumentSources(authorities: RetrievedAuthority[]): boolean;
+export declare function buildMissingMaterialGuidance(): string;
+export declare function buildInsufficientConfidenceResponse(includeGuidance?: boolean): string;
+export declare function buildNoRetrievalResponse(includeGuidance?: boolean): string;
+export declare function buildLegalEvidenceFailureResponse(validation: LegalEvidenceValidation, includeGuidance?: boolean): string;
+export declare function formatConfidenceLevel(score: number): string;

@@ -1,0 +1,40 @@
+import { Repository, EntityManager } from 'typeorm';
+import { Notification } from './exam.entities';
+import { SupabaseService } from '../settings/supabase.service';
+import { OpenRouterAiProviderService } from '../chat/openrouter-ai-provider.service';
+export declare class NotificationService {
+    private readonly notificationRepository;
+    private readonly entityManager;
+    private readonly supabaseService;
+    private readonly aiProvider;
+    private readonly logger;
+    private dispatcherRunning;
+    constructor(notificationRepository: Repository<Notification>, entityManager: EntityManager, supabaseService: SupabaseService, aiProvider: OpenRouterAiProviderService);
+    createNotification(userId: string, title: string, message: string, triggerTimeOffsetMins?: number, priority?: string, deliveryChannel?: string, type?: string): Promise<void>;
+    createScheduledNotification(userId: string, title: string, message: string, triggerTime: Date, priority?: string, deliveryChannel?: string, type?: string): Promise<void>;
+    getTriggeredNotifications(userId: string): Promise<Notification[]>;
+    markAsRead(userId: string): Promise<void>;
+    private ensureSqliteLogsTable;
+    private isPrioritySuppressed;
+    private isInQuietHours;
+    private getEndOfQuietHours;
+    private markProcessed;
+    private sendPushNotification;
+    private logDelivery;
+    private startEmailDispatcher;
+    private getUserEmail;
+    sendNotificationEmail(toEmail: string, title: string, message: string): Promise<void>;
+    private escapeHtml;
+    private sendSmtp;
+    runNotificationChecks(userId: string): Promise<void>;
+    compileWeeklyStats(userId: string): Promise<{
+        studyHours: number;
+        masteryScore: number;
+        quizAccuracy: number;
+        streak: number;
+        studySessions: number;
+    }>;
+    runNotificationChecksForUser(userId: string): Promise<void>;
+    checkUpcomingExamsAndTriggerReminders(now: Date): Promise<void>;
+    checkDailyInternshipReminders(now: Date): Promise<void>;
+}

@@ -1,0 +1,111 @@
+import { Repository } from 'typeorm';
+import { QdrantService } from './qdrant.service';
+import { BgeM3Provider } from './bge-m3.provider';
+import { ActRegistryEntry } from './act-registry';
+import { ParsedProvisionEntity } from '../ingestion/entities/parsed-provision.entity';
+export interface LegalProvisionContext {
+    id: string;
+    actId: string;
+    actName: string;
+    actShortName: string;
+    category: string;
+    part: string;
+    chapter: string;
+    section: string;
+    article: string;
+    subsection: string;
+    clause: string;
+    title: string;
+    content: string;
+    documentType: string;
+    jurisdiction: string;
+    year: number | null;
+    source: string;
+    keywords: string[];
+    score: number;
+}
+export interface RetrievalLog {
+    userQuery: string;
+    detectedIntent: string;
+    detectedAct: string | null;
+    detectedActId: string | null;
+    detectedSection: string | null;
+    detectedArticle: string | null;
+    detectedSubsection: string | null;
+    detectedClause: string | null;
+    detectedChapter: string | null;
+    detectedTopic: string | null;
+    documentType: string | null;
+    queryType: string;
+    strategy: 'exact-sql' | 'qdrant-exact' | 'qdrant-filtered' | 'qdrant-semantic' | 'none';
+    sqlQuery: string | null;
+    rowsReturned: number;
+    qdrantFilter: Record<string, any> | null;
+    retrievedCollection: string | null;
+    retrievedDocuments: string[];
+    metadataMatch: boolean;
+    similarityScore: number;
+    retrievedAct: string | null;
+    retrievedActId: string | null;
+    retrievedSection: string | null;
+    provisionsFound: number;
+    topScore: number;
+    confidence: 'high' | 'medium' | 'low' | 'none';
+    promptContext: string;
+    failureReason: string | null;
+}
+export interface LegalRetrievalResponse {
+    detectedActId: string | null;
+    detectedActName: string | null;
+    detectedType: string;
+    detectedNumber: string | null;
+    provisions: LegalProvisionContext[];
+    log: RetrievalLog;
+}
+interface ParsedLegalQuery {
+    act: ActRegistryEntry | null;
+    actName: string | null;
+    section: string | null;
+    article: string | null;
+    subsection: string | null;
+    clause: string | null;
+    chapter: string | null;
+    topic: string | null;
+    documentType: 'Bare Act' | 'Constitution' | 'Unknown';
+    queryType: 'statutory_explanation' | 'constitutional_article' | 'act_overview' | 'semantic_legal_query';
+    detectedType: string;
+    detectedNumber: string | null;
+}
+export declare class LegalRetrievalService {
+    private readonly qdrantService;
+    private readonly bgeM3Provider;
+    private readonly parsedProvisionRepository;
+    private readonly logger;
+    constructor(qdrantService: QdrantService, bgeM3Provider: BgeM3Provider, parsedProvisionRepository: Repository<ParsedProvisionEntity>);
+    retrieveLegalContext(query: string, limit?: number): Promise<LegalRetrievalResponse>;
+    parseQueryIntent(query: string): ParsedLegalQuery;
+    private createLog;
+    private exactSqlLookup;
+    private exactQdrantPayloadLookup;
+    private exactCorpusFileLookup;
+    private diagnoseExactMiss;
+    private countQdrantDiagnostics;
+    private filteredSemanticRetrieval;
+    private globalSemanticRetrieval;
+    private validateActIsolation;
+    private entityToContext;
+    private payloadToContext;
+    private buildResponse;
+    private finalizeLog;
+    private exactProvisionKeys;
+    private exactQdrantFilters;
+    private resolveCorpusRoot;
+    private findExactProvisionNodes;
+    private renderCorpusNode;
+    private dedupeRows;
+    private normalizeProvisionNumber;
+    private extractArticleFromStoredSection;
+    private normalizeActName;
+    private extractTopic;
+}
+export {};

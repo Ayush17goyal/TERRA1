@@ -1,0 +1,141 @@
+[31m[Nest] 3724  - [39m10/06/2026, 1:19:15 pm [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::4000[39m[38;5;3m +3ms[39m
+node:net:1940
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at ExpressAdapter.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v22.21.0
+[31m[Nest] 33972  - [39m10/06/2026, 1:41:08 pm [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::4000[39m[38;5;3m +3ms[39m
+node:net:1940
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at ExpressAdapter.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v22.21.0
+[31m[Nest] 20580  - [39m10/06/2026, 1:52:54 pm [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (1)...[39m
+QueryFailedError: SQLITE_READONLY: attempt to write a readonly database
+    at Statement.handler (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\typeorm\driver\src\driver\sqlite\SqliteQueryRunner.ts:133:29)
+    at Statement.replacement (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\sqlite3\lib\trace.js:25:27)
+    at Statement.replacement (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\sqlite3\lib\trace.js:25:27)
+[31m[Nest] 20580  - [39m10/06/2026, 1:52:57 pm [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::4000[39m[38;5;3m +3ms[39m
+node:net:1940
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at ExpressAdapter.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v22.21.0
+[31m[Nest] 1036  - [39m10/06/2026, 2:08:21 pm [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::4000[39m[38;5;3m +7ms[39m
+node:net:1940
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at ExpressAdapter.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v22.21.0
+[31m[Nest] 13160  - [39m10/06/2026, 2:23:33 pm [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (1)...[39m
+QueryFailedError: SQLITE_READONLY: attempt to write a readonly database
+    at Statement.handler (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\typeorm\driver\src\driver\sqlite\SqliteQueryRunner.ts:133:29)
+    at Statement.replacement (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\sqlite3\lib\trace.js:25:27)
+    at Statement.replacement (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\sqlite3\lib\trace.js:25:27)
+node:internal/child_process:420
+    throw new ErrnoException(err, 'spawn');
+    ^
+
+Error: spawn EPERM
+    at ChildProcess.spawn (node:internal/child_process:420:11)
+    at spawn (node:child_process:787:9)
+    at Object.execFile (node:child_process:349:17)
+    at exec (node:child_process:236:25)
+    at module.exports (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\tree-kill\index.js:29:9)
+    at C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\cli\actions\start.action.js:57:17
+    at Object.onWatchStatusChange (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\cli\lib\compiler\watch-compiler.js:83:17)
+    at C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\typescript\lib\typescript.js:133916:30
+    at emitFilesAndReportErrors (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\typescript\lib\typescript.js:133737:5)
+    at result.afterProgramCreate (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\typescript\lib\typescript.js:133912:5) {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'spawn'
+}
+
+Node.js v22.21.0
+[31m[Nest] 13160  - [39m10/06/2026, 2:23:36 pm [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::4000[39m[38;5;3m +7ms[39m
+node:net:1940
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at ExpressAdapter.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v22.21.0

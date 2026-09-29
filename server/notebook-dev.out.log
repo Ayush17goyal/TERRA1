@@ -1,0 +1,196 @@
+
+> legatrixon-server@1.0.0 start:dev
+> nest start --watch
+
+[2J[3J[H[[90m7:05:16 pm[0m] Starting compilation in watch mode...
+
+[[90m7:05:19 pm[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +29ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRetrievalModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJudgmentModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContractModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mIngestionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +41ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotebookModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mResearchModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mJudgmentController {/api/v1/judgments}:[39m[38;5;3m +30ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/judgments/upload, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/judgments/:id/structure, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/judgments/:id/explain, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/v1/chat}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/message, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/history/:sessionId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/history/:sessionId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/search, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/citations/:messageId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContractController {/api/v1/contracts}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/contracts/review, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/contracts/:id/risks, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/contracts/:id/clauses, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotebookController {/api/v1/notebook}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/preview, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/chunks, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/reprocess, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/extraction, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/graph, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/search, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/upload, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/chat, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mResearchController {/api/v1/research}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/query, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/query/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/query/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report/:id, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note/:id, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/source, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/source/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/source/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/save, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/save/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/save/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/asset, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/upload, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/documents/:queryId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/generate, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/challenge, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mIngestionController {/api/v1/ingestion}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/init-collections, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/ingest, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/ingest-text, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/ingest-batch, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamController {/api/v1/exam}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/:id/mock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/assistant, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/dashboard/recommendations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/doubt-solve, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/oauth-tokens, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/dashboard/notifications, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/dashboard/notifications/read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/calendar/events, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/calendar/events, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mInitializing Qdrant client with URL: https://dd284eb5-9c7e-4f0e-92fd-815f87684ce0.us-west-1-0.aws.cloud.qdrant.io[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mTesting Qdrant connection...[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[BgeM3Provider] [39m[32mInitializing BGE-M3 provider → http://localhost:8100[39m
+[32m[Nest] 28656  - [39m07/06/2026, 7:05:20 pm [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +8ms[39m
+[2J[3J[H[[90m7:57:34 pm[0m] File change detected. Starting incremental compilation...
+
+[[90m7:57:34 pm[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m7:57:34 pm[0m] File change detected. Starting incremental compilation...
+
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +27ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRetrievalModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJudgmentModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContractModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mIngestionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +50ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotebookModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mResearchModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mJudgmentController {/api/v1/judgments}:[39m[38;5;3m +36ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/judgments/upload, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/judgments/:id/structure, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/judgments/:id/explain, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/v1/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/message, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/history/:sessionId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/history/:sessionId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/search, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/chat/citations/:messageId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContractController {/api/v1/contracts}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/contracts/review, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/contracts/:id/risks, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/contracts/:id/clauses, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotebookController {/api/v1/notebook}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/preview, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/chunks, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/reprocess, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id/extraction, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/graph, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/search, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/documents/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/upload, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notebook/chat, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mResearchController {/api/v1/research}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/query, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/query/all, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/query/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report/:id, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/report/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note/:id, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/note/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/source, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/source/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/source/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/save, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/save/all, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/save/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/asset, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/upload, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/documents/:queryId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/generate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/research/challenge, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mIngestionController {/api/v1/ingestion}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/init-collections, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/ingest, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/ingest-text, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ingestion/ingest-batch, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamController {/api/v1/exam}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/:id/mock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/assistant, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/dashboard/recommendations, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/doubt-solve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/oauth-tokens, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/dashboard/notifications, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/dashboard/notifications/read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/calendar/events, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/exam/calendar/events, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mInitializing Qdrant client with URL: https://dd284eb5-9c7e-4f0e-92fd-815f87684ce0.us-west-1-0.aws.cloud.qdrant.io[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mTesting Qdrant connection...[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[BgeM3Provider] [39m[32mInitializing BGE-M3 provider → http://localhost:8100[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +9ms[39m
+[LEGATRIXON SERVER] NestJS Engine running on: http://localhost:4000/api/v1
+[33m[Nest] 10388  - [39m07/06/2026, 7:57:36 pm [33m   WARN[39m [38;5;3m[BgeM3Provider] [39m[33mBGE-M3 sidecar unreachable at http://localhost:8100: . Embeddings will fail until the sidecar is started.[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:37 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mSuccessfully connected to Qdrant.[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:37 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mCollection judgments already exists.[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:38 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mCollection acts already exists.[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:38 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mCollection research_papers already exists.[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:38 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mCollection law_commission_reports already exists.[39m
+[32m[Nest] 10388  - [39m07/06/2026, 7:57:39 pm [32m    LOG[39m [38;5;3m[QdrantService] [39m[32mCollection user_documents already exists.[39m

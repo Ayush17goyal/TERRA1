@@ -1,0 +1,12 @@
+2026-06-08 00:20:56,323 [INFO] bge-m3-service � Starting BGE-M3 Embedding Service on port 8100
+INFO:     Started server process [31380]
+INFO:     Waiting for application startup.
+2026-06-08 00:20:56,503 [INFO] bge-m3-service � Loading BGE-M3 model: BAAI/bge-m3 ...
+
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]
+Loading weights:   1%|1         | 5/391 [00:00<01:11,  5.43it/s]
+Loading weights: 100%|##########| 391/391 [00:00<00:00, 413.29it/s]
+2026-06-08 00:21:29,673 [INFO] FlagEmbedding.finetune.embedder.encoder_only.m3.runner � loading existing colbert_linear and sparse_linear---------
+2026-06-08 00:21:29,723 [INFO] bge-m3-service � Model loaded successfully in 33.22s
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8100 (Press CTRL+C to quit)

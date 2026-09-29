@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "savedAt": "2026-08-17T18:51:35.785Z",
+  "agents": [
+    {
+      "id": "god",
+      "name": "Michael",
+      "character": "michael",
+      "accent": "lemon",
+      "description": "on standby",
+      "project": "hive",
+      "tmuxTarget": "",
+      "cwd": "C:\\Users\\goyal\\OneDrive\\Documents\\LEGATRIXON-3",
+      "status": "idle",
+      "action": "awaiting",
+      "progress": 0,
+      "currentStation": "desk",
+      "ptyId": "pty-god",
+      "command": "claude --model claude-opus-4-8[1m] --permission-mode bypassPermissions",
+      "provider": "claude",
+      "model": "claude-opus-4-8[1m]",
+      "isGod": true
+    },
+    {
+      "id": "jim-msxl6pz6",
+      "name": "Jim",
+      "character": "jim",
+      "accent": "sky",
+      "description": "on standby",
+      "project": "C:\\Users\\goyal\\OneDrive\\Documents\\AI Research Assistant Platform",
+      "tmuxTarget": "",
+      "cwd": "C:\\Users\\goyal\\OneDrive\\Documents\\AI Research Assistant Platform",
+      "status": "idle",
+      "action": "starting up",
+      "progress": 0,
+      "currentStation": "desk",
+      "ptyId": "pty-jim-msxl6pz6",
+      "command": "claude --model claude-fable-5 --permission-mode bypassPermissions",
+      "provider": "claude",
+      "model": "claude-fable-5",
+      "lastPrompt": "claude login",
+      "archived": false
+    }
+  ],
+  "archived": [],
+  "restorable": [],
+  "queues": {},
+  "selectedId": "god"
+}

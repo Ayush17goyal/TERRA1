@@ -1,0 +1,1 @@
+This is a sample TXT document for legal ingestion status verification. It is short but valid.

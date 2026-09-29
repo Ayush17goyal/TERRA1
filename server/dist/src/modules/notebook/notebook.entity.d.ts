@@ -1,0 +1,30 @@
+import { DocumentChunk } from './chunk.entity';
+export declare class NotebookDocument {
+    id: string;
+    name: string;
+    type: string;
+    size: string;
+    status: string;
+    uploadedAt: Date;
+    wordCount: number;
+    pages: number;
+    documentType: string;
+    clausesCount: number;
+    tags: string[];
+    legalMetadata: any;
+    studyForge: any;
+    userId: string;
+    errorMessage: string;
+    storagePath: string;
+    mimeType: string;
+    fileName: string;
+    fileType: string;
+    storageUrl: string;
+    extractedText: string;
+    embeddingsStatus: string;
+    qdrantCollection: string;
+    indexedAt: Date;
+    chunkCount: number;
+    topicsDetected: string[];
+    chunks: DocumentChunk[];
+}

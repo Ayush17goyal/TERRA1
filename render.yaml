@@ -1,0 +1,64 @@
+services:
+  - type: web
+    name: legatrixon-backend
+    runtime: node
+    plan: starter
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+      - key: PORT
+        value: 4000
+      - key: CLIENT_ORIGIN
+      - key: SQLITE_DB_PATH
+      - key: REDIS_URL
+        fromService:
+          name: legatrixon-redis
+          property: connectionString
+      # Supabase Configuration
+      - key: NEXT_PUBLIC_SUPABASE_URL
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+      - key: SUPABASE_SERVICE_ROLE_KEY
+      - key: VITE_SUPABASE_URL
+      - key: VITE_SUPABASE_ANON_KEY
+      # Clerk Authentication
+      - key: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+      - key: CLERK_SECRET_KEY
+      # External Providers (OpenAI, Deepseek, Gemini)
+      - key: OPENAI_API_KEY
+      - key: DEEPSEEK_API_KEY
+      - key: GEMINI_API_KEY
+      - key: OPENROUTER_API_KEY
+      # Google Calendar API
+      - key: GOOGLE_CLIENT_ID
+      - key: GOOGLE_CLIENT_SECRET
+      - key: GOOGLE_REDIRECT_URI
+      # Qdrant Vector Database
+      - key: QDRANT_URL
+west-1-0.aws.cloud.qdrant.io
+      - key: QDRANT_API_KEY
+      # SMTP Configuration for email
+      - key: SMTP_HOST
+      - key: SMTP_PORT
+      - key: SMTP_USER
+      - key: SMTP_PASS
+      - key: SECURITY_EMAIL_FROM
+      # BYOK Encryption
+      - key: BYOK_ENCRYPTION_KEY
+      # Disabled features
+      - key: SUPABASE_DISABLED
+      # Learning module config
+      - key: LEARNING_INDEXING_CONCURRENCY
+      - key: LEARNING_CHUNK_SIZE
+        value: "1400"
+    disk:
+      name: sqlite-data
+      mountPath: /var/data
+      sizeGB: 1
+
+  - type: redis
+    name: legatrixon-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+    version: "7"

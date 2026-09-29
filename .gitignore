@@ -1,0 +1,16 @@
+
+# Secrets
+.env
+.env.*
+server/.env
+server/.env.*
+!.env.example
+!.env.production.template
+!server/.env.example
+
+# Generated files
+node_modules/
+coverage/
+playwright-report/
+test-results/
+server/.env

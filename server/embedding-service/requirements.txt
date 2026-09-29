@@ -1,0 +1,15 @@
+# BGE-M3 Embedding Microservice Dependencies
+# =============================================
+# Install: pip install -r requirements.txt
+#
+# For GPU support, install PyTorch with CUDA first:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+#
+# For CPU-only (default):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+FlagEmbedding>=1.2.10
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+numpy>=1.26.0

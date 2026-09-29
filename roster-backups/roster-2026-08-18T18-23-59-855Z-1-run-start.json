@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "savedAt": "2026-08-18T06:48:45.052Z",
+  "agents": [
+    {
+      "id": "god",
+      "name": "Michael",
+      "character": "michael",
+      "accent": "lemon",
+      "description": "on standby",
+      "project": "hive",
+      "tmuxTarget": "",
+      "cwd": "C:\\Users\\goyal\\OneDrive\\Documents\\LEGATRIXON-3",
+      "status": "idle",
+      "action": "awaiting",
+      "progress": 0,
+      "currentStation": "desk",
+      "ptyId": "pty-god",
+      "command": "codex --model gpt-5-codex --dangerously-bypass-approvals-and-sandbox",
+      "provider": "codex",
+      "model": "gpt-5-codex",
+      "isGod": true
+    },
+    {
+      "id": "jim-msxldtge",
+      "name": "Jim",
+      "character": "jim",
+      "accent": "sky",
+      "description": "on standby",
+      "project": "C:\\Users\\goyal\\OneDrive\\Documents\\LEGATRIXON-3",
+      "tmuxTarget": "",
+      "cwd": "C:\\Users\\goyal\\OneDrive\\Documents\\LEGATRIXON-3",
+      "status": "idle",
+      "action": "starting up",
+      "progress": 0,
+      "currentStation": "desk",
+      "ptyId": "pty-jim-msxldtge",
+      "command": "claude --model claude-fable-5 --permission-mode bypassPermissions",
+      "provider": "claude",
+      "model": "claude-fable-5",
+      "archived": false
+    }
+  ],
+  "archived": [],
+  "restorable": [],
+  "queues": {},
+  "selectedId": "god"
+}

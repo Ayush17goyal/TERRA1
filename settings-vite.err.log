@@ -1,0 +1,27 @@
+[31mfailed to load config from C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\vite.config.ts[39m
+[31merror when starting dev server:
+Error: Build failed with 1 error:
+
+[plugin externalize-deps]
+Error: spawn EPERM
+    at ChildProcess.spawn (node:internal/child_process:420:11)
+    at spawn (node:child_process:787:9)
+    at Object.execFile (node:child_process:349:17)
+    at exec (node:child_process:236:25)
+    at optimizeSafeRealPathSync (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:1946:2)
+    at windowsSafeRealPathSync (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:1932:3)
+    at getRealPath (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:32568:36)
+    at tryResolveRealFileOrType (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:32562:9)
+    at tryCleanFsResolve (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:32311:21)
+    at tryFsResolve (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:32304:14)
+    at aggregateBindingErrorsIntoJsError (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/rolldown/dist/shared/error-B8po7KiL.mjs:48:18)
+    at unwrapBindingResult (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/rolldown/dist/shared/error-B8po7KiL.mjs:18:128)
+    at #build (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/rolldown/dist/shared/rolldown-build-9MccaWPU.mjs:3236:34)
+    at async bundleConfigFile (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:34846:17)
+    at async bundleAndLoadConfigFile (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:34754:18)
+    at async loadConfigFromFile (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:34723:42)
+    at async resolveConfig (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:34349:22)
+    at async _createServer (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/chunks/node.js:26083:65)
+    at async CAC.<anonymous> (file:///C:/Users/goyal/OneDrive/Desktop/LEGATRIXON-3/node_modules/vite/dist/node/cli.js:708:18) {
+  errors: [Getter/Setter]
+}[39m

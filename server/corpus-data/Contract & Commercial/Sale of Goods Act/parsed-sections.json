@@ -1,0 +1,1302 @@
+{
+  "actName": "Sale of Goods Act, 1930",
+  "officialName": "Sale of Goods Act, 1930",
+  "shortName": "SOGA",
+  "category": "Contract & Commercial",
+  "year": 1930,
+  "summary": {
+    "totalParts": 0,
+    "totalTitles": 0,
+    "totalChapters": 7,
+    "totalArticles": 0,
+    "totalSections": 67,
+    "totalSchedules": 0,
+    "totalExplanations": 1,
+    "totalIllustrations": 0
+  },
+  "structure": [
+    {
+      "type": "body",
+      "content": "enacted as follows:—"
+    },
+    {
+      "type": "chapter",
+      "number": "I",
+      "title": "PRELIMINARY",
+      "children": [
+        {
+          "type": "section",
+          "number": "1",
+          "title": "Short title, extent and commencement.",
+          "content": "(1) This Act may be called the\n*** Sale of Goods Act,\n1930.\n[(2) It extends to the whole of India\n***.]\n1. The Act has been extended to Berar by Act 4 of 1941, to Dadra and Nagar Haveli by Reg. 6 of 1963, s. 2 and the First\nSchedule (w.e.f. 1-7-1965); to Goa, Daman and Diu by Reg. 11 of 1963, s. 3 and the Schedule; to Pondicherry by the\nPondicherry (Extension of Laws) Act, 1968, s. 3 and Schedule; to Lakshadweep by Reg. 8 of 1965, s. 3 and the Schedule\n(w.e f. 1-10-1967); and to Sikkim on 1-91984 vide Notification No. S.O. 645 (E), dated 24-8-1984, Gazette of India,\nExtraordinary, Pt. II, Sec. 3(11).\n1. Subs by Act 33 of 1963, s. 4, for sub-sections (2) and (3) (w.e.f. 22-9-1963).\n1. Subs. by Act 33 of 1963, s. 5, for section 64A (w.e.f. 22-9-1963). Earlier it was inserted by Act 41 of 1940, s 2.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "It shall come into force on the 1st day of July, 1930.",
+              "children": []
+            },
+            {
+              "type": "proviso",
+              "content": "Provided that, where delivery has been delayed through the fault of either buyer or seller, the goods\nare at the risk of the party in fault as regards any loss which might not have occurred but for such fault:",
+              "children": []
+            },
+            {
+              "type": "proviso",
+              "content": "Provided also that nothing in this section shall affect the duties or liabilities of either seller or buyer as\na bailee of the goods of the other party.\nTransfer of title",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "The rules of insolvency relating to contracts for the sale of goods shall continue to apply thereto,\nnotwithstanding anything contained in this Act.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "The provisions of this Act relating to contracts of sale do not apply to any transaction in the form\nof a contract of sale which is intended to operate by way of mortgage, pledge, charge or other security.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "2",
+          "title": "Definitions.",
+          "content": "In this Act, unless there is anything repugnant in the subject or context,—\n2. The word “Indian” omitted by Act 33 of 1963, s. 2 (w.e.f. 22-9-1963).",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "1",
+              "content": "“buyer” means a person who buys or agrees to buy goods;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "“delivery” means voluntary transfer of possession from one person to another;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "goods are said to be in a “deliverable state” when they are in such state that the buyer would\nunder the contract be bound to take delivery of them;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "“document of title to goods” includes a bill of lading, dockwarrant, warehouse keeper’s\ncertificate, wharfingers’ certificate, railway receipt,\n[multimodal transport document,] warrant or\norder for the delivery of goods and any other document used in the ordinary course of business as\nproof of the possession or control of goods, or authorising or purporting to authorise, either by\nendorsement or by delivery, the possessor of the document to transfer or receive goods thereby\nrepresented;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "5",
+              "content": "“fault” means wrongful act or default;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "6",
+              "content": "“future goods” means goods to be manufactured or produced or acquired by the seller after the\nmaking of the contract of sale;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "7",
+              "content": "“goods” means every kind of moveable property other than actionable claims and money; and\nincludes stock and shares, growing crops, grass, and things attached to or forming part of the land\nwhich are agreed to be severed before sale or under the contract of sale;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "8",
+              "content": "a person is said to be “insolvent” who has ceased to pay his debts in the ordinary course of\nbusiness, or cannot pay his debts as they become due, whether he has committed an act of insolvency\nor not;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "9",
+              "content": "“mercantile agent” means a mercantile agent having in the customary course of business as\nsuch agent authority either to sell goods, or to consign goods for the purposes of sale, or to buy goods,\nor to raise money on the security of goods;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "10",
+              "content": "“price” means the money consideration for a sale of goods;",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "3",
+          "title": "Subs. by the A.O. 1950, for sub",
+          "content": "section (2).\n3. Application of provisions of Act 9 of 1872.—The unrepealed provisions of the Indian Contract\nAct, 1872, save in so far as they are inconsistent with the express provisions of this Act, shall continue to\napply to contracts for the sale of goods.",
+          "children": [
+            {
+              "type": "footnote",
+              "number": "4",
+              "content": "The words “except the State of Jammu and Kashmir” omitted by Act 34 of 2019, s. 95 and the Fifth Schedule\n(w.e.f. 31-10-2019).."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "5",
+          "title": "Ins",
+          "content": "by Act 28 of 1993, s. 31 and the Schedule, Part III.\n5. Contract of sale how made.—(1) A contract of sale is made by an offer to buy or sell goods for a\nprice and the acceptance of such offer. The contract may provide for the immediate delivery of the goods\nor immediate payment of the price or both, or for the delivery or payment by instalments, or that the\ndelivery or payment or both shall be postponed.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "11",
+              "content": "“property” means the general property in goods, and not merely a special property;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "12",
+              "content": "“quality of goods” includes their state or condition;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "13",
+              "content": "“seller” means a person who sells or agrees to sell goods;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "14",
+              "content": "“specific goods” means goods identified and agreed upon at the time a contract of sale is\nmade; and",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "15",
+              "content": "expressions used but not defined in this Act and defined in the Indian Contract Act, 1872\n(9 of 1872), have the meaning assigned to them in that Act.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Subject to the provisions of any law for the time being in force, a contract of sale may be made in\nwriting or by word of mouth, or partly in writing and partly by word of mouth or may be implied from the\nconduct of the parties.\nSubject-matter of contract",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "chapter",
+      "number": "II",
+      "title": "FORMATION OF THE CONTRACT",
+      "children": [
+        {
+          "type": "section",
+          "number": "4",
+          "title": "Sale and agreement to sell.",
+          "content": "(1) A contract of sale of goods is a contract whereby the seller\ntransfers or agrees to transfer the property in goods to the buyer for a price. There may be a contract of\nsale between one part-owner and another.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "A contract of sale may be absolute or conditional.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where under a contract of sale the property in the goods is transferred from the seller to the buyer,\nthe contract is called a sale, but where the transfer of the property in the goods is to take place at a future\ntime or subject to some condition thereafter to be fulfilled, the contract is called an agreement to sell.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "An agreement to, sell becomes a sale when the time elapses or the conditions are fulfilled subject\nto which the property in the goods is to be transferred.\nFormalities of the contract",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "6",
+          "title": "Existing or future goods.",
+          "content": "(1) The goods which form the subject of a contract of sale may be\neither existing goods, owned or possessed by the seller, or future goods.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "There may be a contract for the sale of goods the acquisition of which by the seller depends upon\na contingency which may or may not happen.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where by a contract of sale the seller purports to effect a present sale of future goods, the contract\noperates as an agreement to sell the goods.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "7",
+          "title": "Goods perishing before making of contract.",
+          "content": "Where there is a contract for the sale of specific\ngoods, the contract is void if the goods without the knowledge of the seller have, at the time when the\ncontract was made, perished or become so damaged as no longer to answer to their description in the\ncontract.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "8",
+          "title": "Goods perishing before sale but after agreement to sell.",
+          "content": "Where there is an agreement to sell\nspecific goods, and subsequently the goods without any fault on the part of the seller or buyer perish or\nbecome so damaged as no longer to answer to their description in the agreement before the risk passes to\nthe buyer, the agreement is thereby avoided.\nThe price",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "9",
+          "title": "Ascertainment of price.",
+          "content": "(1) The price in a contract of sale may be fixed by the contract or may\nbe left to be fixed in manner thereby agreed or may be determined by the course of dealing between the\nparties.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where the price is not determined in accordance with the foregoing provisions, the buyer shall\npay the seller a reasonable price. What is a reasonable price is a question of fact dependent on the\ncircumstances of each particular case.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "10",
+          "title": "Agreement to sell at valuation.",
+          "content": "(1) Where there is an agreement to sell goods on the terms that\nthe price is to be fixed by the valuation of a third party and such third party cannot or does not make such\nvaluation, the agreement is thereby avoided:",
+          "children": [
+            {
+              "type": "proviso",
+              "content": "Provided that, if the goods or any part thereof have been delivered to, and appropriated by, the buyer,\nhe shall pay a reasonable price therefor.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where such third party is prevented from making the valuation by the fault of the seller or buyer,\nthe party not in fault may maintain a suit for damages against the party in fault.\nConditions and waranties",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "11",
+          "title": "Stipulations as to time.",
+          "content": "Unless a different intention appears from the terms of the contract,\nstipulations as to time of payment arc not deemed to be of the essence of a contract of sale. Whether any\nother Stipulation as to time is of the essence of the contract or not depends on the terms of the contract.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "12",
+          "title": "Condition and warranty.",
+          "content": "(1) A stipulation in a contract of sale with reference to goods which\nare the subject thereof may be a condition or a warranty.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "A condition is a stipulation essential to the main purpose of the contract, the breach of which\ngives rise to a right to treat the contract as repudiated.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "A warranty is a stipulation collateral to the main purpose of the contract, the breach of which\ngives rise to a claim for damages but not to a right to reject the goods and treat the contract as repudiated.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "Whether a stipulation in a contract of sale is a condition or a warranty depends in each case on the\nconstruction of the contract. A stipulation may be a condition, though called a warranty in the contract.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "13",
+          "title": "When condition to be treated as warranty.",
+          "content": "(1) Where a contract of sale is subject to any\ncondition to be fulfilled by the seller, the buyer may waive the condition or elect to treat\nthe breach of the condition as a breach of warranty and not as a ground for treating the contract as\nrepudiated.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where a contract of sale is not severable and the buyer has accepted the goods or part thereof,\n*** the breach of any condition to be fulfilled by the seller can only be treated as a breach of warranty\nand not as a ground for rejecting the goods and treating the contract as.repudiated, unless there is a term\nof the contract, express or implied, to that effect.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Nothing in this section shall affect the case of any condition or warranty fulfilment of which is\nexcused by law by reason of impossibility or otherwise.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "14",
+          "title": "Implied undertaking as to title, etc.",
+          "content": "In a contract of sale, unless the circumstances of the\ncontract are such as to show a different intention, there is—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "an implied condition on the part of the seller that, in the case of a sale, he has a right to sell the\ngoods and that, in the case of an agreement to sell, he will have a right to sell the goods at the time\nwhen the property is to pass;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "an implied warranty that the buyer shall have and enjoy quiet possession of the goods;",
+              "children": []
+            },
+            {
+              "type": "footnote",
+              "number": "1",
+              "content": "The words “or where the contract is for specific goods the property in which has passed to the buyer,” omitted by Act 33 of\n1963, s. 3 (w.e.f. 22-9-1963)."
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "an implied warranty that the goods shall be free from any charge or encumbrance in favour of\nany third party not declared or known to the buyer before or at the time when the contract is made.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "15",
+          "title": "Sale by description.",
+          "content": "Where there is a contract for the sale of goods by description, there is an\nimplied condition that the goods shall correspond with the description; and, if the sale is by sample as\nwell as by description, it is not sufficient that the bulk of the goods corresponds with the sample if the\ngoods do not also correspond with the description.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "16",
+          "title": "Implied conditions as to quality or fitness.",
+          "content": "Subject to the provisions of this Act and of any\nother law for the time being in force, there is no implied warranty or condition as to the quality or fitness\nfor any particular purpose of goods supplied under a contract of sale, except as follows:—",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "1",
+              "content": "Where the buyer, expressly or by implication, makes known to the seller the particular\npurpose for which the goods are required, so as to show that the buyer relies on the seller’s skill or\njudgment, and the goods are of a description which it is in the course of the seller’s business to supply\n(whether he is the manufacturer or producer or not), there is an implied condition that the goods shall\nbe reasonably fit for such purpose:",
+              "children": [
+                {
+                  "type": "proviso",
+                  "content": "Provided that, in the case of a contract for the sale of a specified article under its patent or other\ntrade name, there is no implied condition as to its fitness for any particular purpose.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where goods are bought by description from a seller who deals in goods of that description\n(whether he is the manufacturer or producer or not), there is an implied condition that the goods shall\nbe of merchantable quality:",
+              "children": [
+                {
+                  "type": "proviso",
+                  "content": "Provided that, if the buyer has examined the goods, there shall be no implied condition as regards\ndefects which such examination ought to have revealed.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "An implied warranty or condition as to quality or fitness for a particular purpose may be\nannexed by the usage of trade.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "An express warranty or condition does not negative a warranty or condition implied by this\nAct unless inconsistent therewith.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "17",
+          "title": "Sale by sample.",
+          "content": "(1) A contract of sale is a contract for sale by sample where there is a term in\nthe contract, express or implied, to that effect.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "In the case of a contract for sale by sample there is an implied condition—",
+              "children": [
+                {
+                  "type": "clause",
+                  "number": "a",
+                  "content": "that the bulk shall correspond with the sample in quality;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "b",
+                  "content": "that the buyer shall have a reasonable opportunity of comparing the bulk with the sample;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "c",
+                  "content": "that the goods shall be free from any defect, rendering them unmerchantable, which would not\nbe apparent on reasonable examination of the sample.",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": "Contract of sale"
+    },
+    {
+      "type": "chapter",
+      "number": "III",
+      "title": "EFFECTS OF THE CONTRACT",
+      "children": [
+        {
+          "type": "section",
+          "number": "18",
+          "title": "Goods must be ascertained.",
+          "content": "Where there is a contract for the sale of unascertained goods, no\nproperty in the goods is transferred to the buyer unless and until the goods are ascertained.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "19",
+          "title": "Property passes when intended to pass.",
+          "content": "(1) Where there is a contract for the sale of specific\nor ascertained goods the property in them is transferred to the buyer at such time as the parties to the\ncontract intend it to he transferred.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "For the purpose of ascertaining the intention of the parties regard shall be had to the terms of the\ncontract, the conduct of the parties and the circumstances of the case.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Unless a different intention appears, the rules contained in sections 20 to 24 are rules for\nascertaining the intention of the parties as to the time at which the property in the goods is to pass to the\nbuyer.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "20",
+          "title": "Specific goods in a deliverable state.",
+          "content": "Where there is an unconditional contract for the sale of\nspecific goods in a deliverable state, the property in the goods passes to the buyer when the contract is\nmade, and it is immaterial whether the time of payment of the price or the time of delivery of the goods,\nor both, is postponed.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "21",
+          "title": "Specific goods to be put into a deliverable state.",
+          "content": "Where there is a contract for the sale of\nspecific goods and the seller is bound to do something to the goods for the purpose of putting them into a\ndeliverable state, the property does not pass until such thing is done and the buyer has notice thereof.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "22",
+          "title": "",
+          "content": "Specific goods in a deliverable state, when the seller has to do anything thereto in order to\nascertain price.—Where there is a contract for the sale of specific goods in a deliverable state, but the\nseller is bound to weigh, measure, test or do some other act or thing with reference to the goods for the\npurpose of ascertaining the price, the property does not pass until such act or thing is done and the buyer\nhas notice thereof.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "23",
+          "title": "Sale of unascertained goods and appropriation.",
+          "content": "(1) Where there is a contract for the sale of\nunascertained or future goods by description and goods of that description and in a deliverable state are\nunconditionally appropriated to the contract, either by the seller with the assent of the buyer or by the\nbuyer with the assent of the seller, the property in the goods thereupon passes to the buyer. Such assent\nmay be express or implied, and may by given either before or after the appropriation is made\nDelivery to carrier.—(2) Where, in pursuance of the contract, the seller delivers the goods to the\nbuyer or to a carrier or other bailee (whether named by the buyer or not) for the purpose of transmission\nto the buyer, and does not reserve the right of disposal, he is deemed to have unconditionally appropriated\nthe goods to the contract.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "24",
+          "title": "Goods sent on approval or “on sale or return”.",
+          "content": "When goods are delivered to the buyer on\napproval or “on sale or return” or other similar terms, the property therein passes to the buyer—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "when he signifies his approval or acceptance to the seller or does any other act adopting the\ntransaction;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "if he does not signify his approval or acceptance to the seller but retains the goods without\ngiving notice of rejection, then, if a time has been fixed for the return of the goods, on the expiration\nof such time, and, if no time has been fixed, on the expiration of a reasonable time.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "25",
+          "title": "Reservation of right of disposal.",
+          "content": "(1) Where there is a contract for the sale of specific goods or\nwhere goods are subsequently appropriated to the contract, the seller may, by the terms of the contract or\nappropriation, reserve the right of disposal of the goods until certain conditions are fulfilled. In such case,\nnotwithstanding the delivery of the goods to a buyer or to a carrier or other bailee for the purpose of\ntransmission to the buyer, the property in the goods does not pass to the buyer until the conditions\nimposed by the seller are fulfilled.\n[(2) Where goods are shipped or delivered to a railway administration for carriage by railway and by\nthe bill of lading or railway receipt, as the case may be, the goods are deliverable to the order of the seller\nor his agent, the seller is prima facie deemed to reserve the right of disposal.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where the seller of goods draws on the buyer for the price and transmits to the buyer the bill of\nexchange together with the bill of lading or, as the case may be, the railway receipt, to secure acceptance\nor payment of the bill of exchange, the buyer is bound to return the bill of lading or the railway receipt if\nhe does not honour the bill of exchange; and, if he wrongfully retains the bill of lading or the railway\nreceipt, the property in the goods does not pass to him.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "In this section, the expressions “railway” and “railway administration” shall have the\nmeanings respectively assigned to them under the Indian Railways Act, 1890 (9 of 1890).]",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "26",
+          "title": "Risk prima facie passes with property.",
+          "content": "Unless otherwise agreed, the goods remain at the\nseller’s risk until the property therein is transferred to the buyer, but when the property therein is\ntransferred to the buyer, the goods are at the buyer’s risk whether delivery has been made or not:",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "27",
+          "title": "Sale by person not the owner.",
+          "content": "Subject to the provisions of this Act and of any other law for the\ntime being in force, where goods are sold by a person who is not the owner thereof and who does not sell\nthem under the authority or with the consent of the owner, the buyer acquires no better title to the goods\nthan the seller had, unless the owner of the goods is by his conduct precluded from denying the seller’s\nauthority to sell:",
+          "children": [
+            {
+              "type": "proviso",
+              "content": "Provided that, where a mercantile agent is, with the consent of the owner, in possession of the goods\nor of a document of title to the goods, any sale made by him, when acting in the ordinary course of\nbusiness of a mercantile agent, shall be as valid as if he were expressly authorised by the owner of the\ngoods to make the same; provided that the buyer acts in good faith and has not at the time of the contract\nof sale notice that the seller has not authority to sell.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "28",
+          "title": "Sale by one of joint owners.",
+          "content": "If one of several joint owners of goods has the sole possession of\nthem by permission of the co-owners, the property in the goods is transferred to any person who buys\nthem of such joint owner in good faith and has not at the time of the contract of sale notice that the seller\nhas not authority to sell.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "29",
+          "title": "Sale by person in possession under voidable contract.",
+          "content": "When the seller of goods has obtained\npossession thereof under a contract voidable under section 19 or section 19A of the Indian Contract Act,",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "1872",
+          "title": "",
+          "content": "(9 of 1872), but the contract has not been rescinded at the time of the sale, the buyer acquires a good\ntitle to the goods, provided he buys them in good faith and without notice of the seller’s defect of title.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "30",
+          "title": "Seller or buyer in possession after sale.",
+          "content": "(1) Where a person, having sold goods, continues or is\nin possession of the goods or of the documents of title to the goods, the delivery or transfer by that person\nor by a mercantile agent acting for him, of the goods or documents of title under any sale, pledge or other\ndisposition thereof to any person receiving the same in good faith and without notice of the previous sale\nshall have the same effect as if the person making the delivery or transfer were expressly authorised by\nthe owner of the goods to make the same.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where a person, having bought or agreed to buy goods, obtains, with the consent of the seller,\npossession of the goods or the documents of title to the goods, the delivery or transfer by that person or by\na mercantile agent acting for him, of the goods or documents of title under any sale, pledge or other\ndisposition thereof to any person receiving the same in good faith and without notice of any lien or other\nright of the original seller in respect of the goods shall have effect as if such lien or right did not exist.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "content": "Transfer of property as between seller and buyer"
+    },
+    {
+      "type": "chapter",
+      "number": "IV",
+      "title": "PERFORMANCE OF THE CONTRACT",
+      "children": [
+        {
+          "type": "section",
+          "number": "31",
+          "title": "Duties, of seller and buyer.",
+          "content": "It is the duty to the seller to deliver the goods and of the buyer to\naccept and pay for them, in accordance with the terms of the contract of sale.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "32",
+          "title": "Payment and delivery are concurrent conditions.",
+          "content": "Unless otherwise agreed, delivery of the\ngoods and payment of the price are concurrent conditions, that is to say, the seller shall be ready and\nwilling to give possession of the goods to the buyer in exchange for the price, and the buyer shall be ready\nand willing to pay the price in exchange for possession of the goods.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "33",
+          "title": "Delivery.",
+          "content": "Delivery of goods sold may be made by doing anything which the parties agree shall\nbe treated as delivery or which has the effect of putting the goods in the possession of the buyer or of any\nperson authorised to hold them on his behalf.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "34",
+          "title": "Effect of part delivery.",
+          "content": "A delivery of part of goods, in progress of the delivery of the whole,\nhas the same effect, for the purpose of passing the property in such goods, as a delivery of the whole; but\na delivery of part of the goods, with an intention of severing it from the whole, does not operate as a\ndelivery of the remainder.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "35",
+          "title": "Buyer to apply for delivery.",
+          "content": "Apart from any express contract, the seller of goods is not bound\nto delivery them until the buyer applies for delivery.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "36",
+          "title": "Rules as to delivery.",
+          "content": "(1) Whether it is for the buyer to take possession of the goods or for the\nseller to send them to the buyer is a question depending in each case on the contract, express or implied,\nbetween the parties. Apart from any such contract, goods sold are to be delivered at the place at which\nthey are at the time of the sale, and goods agreed to be sold are to be delivered at the place at which they\nare at the time of the agreement to sell, or, if not then in existence, at the place at which they are\nmanufactured or produced.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where under the contract of sale the seller is bound to send the goods to the buyer, but no time\nfor sending them is fixed, the seller is bound to send them within a reasonable time.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where the goods at the time of sale are in the possession of a third person, there is no delivery by\nseller to buyer unless and until such third person acknowledges to the buyer that he holds the goods on his\nbehalf:",
+              "children": [
+                {
+                  "type": "proviso",
+                  "content": "Provided that nothing in this section shall affect the operation of the issue or transfer of any document\nof title to goods.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "Demand or tender of delivery may be treated as ineffectual unless made at a reasonable hour.\nWhat is a reasonable hour is a question of fact.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "5",
+              "content": "Unless otherwise agreed, the expenses of and incidental to putting the goods into a deliverable\nstate shall be borne by the seller.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "37",
+          "title": "Delivery of wrong quantity.",
+          "content": "(1) Where the seller delivers to the buyer a quantity of goods less\nthan he contracted to sell, the buyer may reject them, but it the buyer accepts the goods so delivered he\nshall pay for them at the contract rate.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where the seller delivers to the buyer a quantity of goods larger than he contracted to sell, the\nbuyer may accept the goods included in the contract and reject the rest, or he may reject the whole. If the\nbuyer accepts the whole of the goods so delivered, he shall pay for them at the contract rate.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where the seller delivers to the buyer the goods he contracted to sell mixed with goods of a\ndifferent description not included in the contract, the buyer may accept the goods which are in accordance\nwith the contract and reject the rest, or may reject the whole.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "The provisions of this section are subject to any usage of trade, special agreement or course of\ndealing between the parties.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "38",
+          "title": "Instalment deliveries.",
+          "content": "(1) Unless otherwise agreed, the buyer of goods is not bound to accept\ndelivery thereof by instalments.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where there is a contract for the sale of goods to be delivered by stated instalments which are to\nbe separately paid for, and the seller makes no delivery or defective delivery in respect of one or more\ninstalments, or the buyer neglects or refuses to take delivery of or pay for one or more instalments, it is a\nquestion in each case depending on the terms of the contract and the circumstances of the case, whether\nthe breach of contract is a repudiation of the whole contract, or whether it is a severable breach giving rise\nto a claim for compensation, but not to a right to treat the whole contract as repudiated.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "39",
+          "title": "Delivery to carrier or wharfinger.",
+          "content": "(1) Where, in pursuance of a contract of sale, the seller is\nauthorised or required to send the goods to the buyer, delivery of the goods to a carrier, whether named by\nthe buyer or not, for the purpose of transmission to the buyer, or delivery of the goods to a wharfinger for\nsafe custody, is prima facie deemed to be a delivery of the goods to the buyer.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Unless otherwise authorised by the buyer, the seller shall make such contract with the carrier or\nwharfinger on behalf of the buyer as may be reasonable having regard to the nature of the goods and the\nother circumstances of the case. If the seller omits so to do, and the goods are lost or damaged in course\nof transit or whilst in the custody of the wharfinger, the buyer may decline to treat the delivery to the\ncarrier or wharfinger as a delivery to himself, or may hold the seller responsible in damages.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Unless otherwise agreed, where goods are sent by the seller to the buyer by a route involving sea\ntransit, in curcumstances in which it is usual to insure, the seller shall give such notice to the buyer as\nmay enable him to insure them during their sea transit, and if the seller fails so to do, the goods shall be\ndeemed to be at his risk during such sea transit.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "40",
+          "title": "Risk where goods are delivered at distant place.",
+          "content": "Where the seller of goods agrees to deliver\nthem at his own risk at a place other than that where they are when sold, the buyer shall, nevertheless,\nunless otherwise agreed, take any risk of deterioration in the goods necessarily incident to the course of\ntransit.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "41",
+          "title": "Buyer’s right of examining the goods.",
+          "content": "(1) Where goods are delivered to the buyer which he\nhas not previously examined, he is not deemed to have accepted them unless and until he has had a\nreasonable opportunity of examining them for the purpose of ascertaining whether they are in conformity\nwith the contract.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Unless otherwise agreed, when the seller tenders delivery of goods to the buyer, he is bound, on\nrequest, to afford the buyer a reasonable opportunity of examining the goods for the purpose of\nascertaining whether they are in conformity with the contract.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "42",
+          "title": "Acceptance.",
+          "content": "The buyer is deemed to have accepted the goods when he intimates to the seller\nthat he has accepted them, or when the goods have been delivered to him and he does any act in relation\nto them which is inconsistent with the ownership of the seller, or when, after the lapse of a reasonable\ntime, he retains the goods without intimating to the seller that he has rejected them.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "43",
+          "title": "Buyer not bound to return rejected goods.",
+          "content": "Unless otherwise agreed, where goods are\ndelivered to the buyer and he refuses to accept them, having the right so to do, he is not bound to return\nthem to the seller, but it is sufficient if he intimates to the seller that he refuses to accept them.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "44",
+          "title": "Liability of buyer for neglecting or refusing delivery of goods.",
+          "content": "When the seller is ready and\nwilling to deliver the goods and requests the buyer to take delivery, and the buyer does not within a\nreasonable time after such request take delivery of the goods, he is liable to the seller for any loss\noccasioned by his neglect or refusal to take delivery, and also for a reasonable charge for the care and\ncustody of the goods:",
+          "children": [
+            {
+              "type": "proviso",
+              "content": "Provided that nothing in this section shall affect the rights of the seller where the neglect or refusal of\nthe buyer to take delivery amounts to a repudiation of the contract.",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "chapter",
+      "number": "V",
+      "title": "RIGHTS OF UNPAID SELLER AGAINST THE GOODS",
+      "children": [
+        {
+          "type": "section",
+          "number": "45",
+          "title": "“Unpaid seller” defined.",
+          "content": "(1) The seller of goods is deemed to be an “unpaid seller” within the\nmeaning of this Act—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "when the whole of the price has not been paid or tendered;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "when a bill of exchange or other negotiable instrument has been received as conditional\npayment, and the condition on which it was received has not been fulfilled by reason of the dishonour\nof the instrument or otherwise.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "In this Chapter, the term “seller” includes any person who is in the position of a seller, as, for\ninstance, an agent of the seller to whom the bill of lading has been endorsed, or a consignor or agent who\nhas himself paid, or is directly responsible for, the price.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "46",
+          "title": "Unpaid seller’s sights.",
+          "content": "(1) Subject to the provisions of this Act and of any law for the time\nbeing in force, notwithstanding that the property in the goods may have passed to the buyer, the unpaid\nseller of goods, as such, has by implication of law—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "a lien on the goods for the price while he is in possession of them;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "in case of the insolvency of the buyer a right of stopping the goods in transit after he has\nparted with the possession of them;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "a right of re-sale as limited by this Act.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where the property in goods has not passed to the buyer, the unpaid seller has, in addition to his\nother remedies, a right of withholding delivery similar to and co-extensive with his rights of lien and\nstoppage in transit where the property has passed to the buyer.\nUnpaid seller’s lien",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "47",
+          "title": "Seller’s lien.",
+          "content": "(1) Subject to the provisions of this Act, the unpaid seller of goods who is in\npossession of them is entitled to retain possession of them until payment or tender of the price in the\nfollowing cases, namely:—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "where the goods have been sold without any stipulation as to credit;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "where the goods have been sold on credit, but the term of credit has expired;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "where the buyer becomes insolvent.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "The seller may exercise his right of lien notwithstanding that he is in possession of the goods as\nagent or bailee for the buyer.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "48",
+          "title": "Part delivery.",
+          "content": "Where an unpaid seller has made part delivery of the goods, he may exercise his\nright of lien on the remainder, unless such part delivery has been made under such circumstances as to\nshow an agreement to waive the lien.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "49",
+          "title": "Termination of lien.",
+          "content": "(1) The unpaid seller of goods loses his lien thereon—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "when he delivers the goods to a carrier or other bailee for the purpose of transmission to the\nbuyer without reserving the right of disposal of the goods;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "when the buyer or his agent lawfully obtains possession of the goods;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "by waiver thereof.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "The unpaid seller of goods, having a lien thereon, does not lose his lien by reason only that he has\nobtained a decree for the price of the goods.\nStoppage in transit",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "50",
+          "title": "Right of stoppage in transit.",
+          "content": "Subject to the provisions of this Act, when the buyer of goods\nbecomes insolvent, the unpaid seller who has parted with the possession of the goods has the right of\nstopping them in transit, that is to say, he may resume possession of the goods as long as they are in the\ncourse of transit, and may retain them until payment or tender of the price.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "51",
+          "title": "Duration of transit.",
+          "content": "(1) Goods are deemed to be in course of transit from the time when they\nare delivered to a carrier or other bailee for the purpose of transmission to the buyer, until the buyer or his\nagent in that behalf takes delivery of them from such carrier or other bailee.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "If the buyer or his agent in that behalf obtains delivery of the goods before their arrival at the\nappointed destination, the transit is at an end.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "If, after the arrival of the goods at the appointed destination, the carrier or other bailee\nacknowledges to the buyer or his agent that he holds the goods on his behalf and continues in possession\nof them as bailee for the buyer or his agent, the transit is at an end and it is immaterial that a further\ndestination for the goods may have been indicated by the buyer.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "If the goods are rejected by the buyer and the carrier or other bailee continues in possession of\nthem, the transit is not deemed to be at an end, even if the seller has refused to receive them back.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "5",
+              "content": "When goods are delivered to a ship chartered by the buyer, it is a question depending on the\ncircumstances of the particular case, whether they are in the possession of the master as a carrier or as\nagent of the buyer.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "6",
+              "content": "Where the carrier or other bailee wrongfully refuses to deliver the goods to the buyer or his agent\nin that behalf, the transit is deemed to be at an end.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "7",
+              "content": "Where part delivery of the goods has been made to the buyer or his agent in that behalf, the\nremainder of the goods may be stopped in transit, unless such part delivery has been given in such\ncircumstances as to show an agreement to give up possession of the whole of the goods.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "52",
+          "title": "How stoppage in transit is effected.",
+          "content": "(1) The unpaid sellermay exercise his right of stoppage in\ntransit either by taking actual possession of the goods, or by giving notice of his claim to the carrier or\nother bailee in whose possession the goods are. Such notice may be given either to the person in actual\npossession of the goods or to his principal. In the latter case the notice, to be effectual, shall be given at\nsuch time and in such circumstances that the principal, by the exercise of reasonable diligence, may\ncommunicate it to his servant or agent in time to prevent a delivery to the buyer.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "When notice of stoppage in transit is given by the seller to the carrier or other bailee in possession\nof the goods, he shall re-deliver the goods to, or according to the directions of, the seller. The expenses of\nsuch re-delivery shall be borne by the seller.\nTransfer by buyer and seller",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "53",
+          "title": "Effect of sub",
+          "content": "sale or pledge by buyer.—(1) Subject to the provisions of this Act, the unpaid\nseller’s right of lien or stoppage in transit is not affected by any sale or other disposition of the goods\nwhich the buyer may have made, unless the seller has assented thereto:",
+          "children": [
+            {
+              "type": "proviso",
+              "content": "Provided that where a document of title to goods has been issued or lawfully transferred to any person\nas buyer or owner of the goods, and that person transfers the document to a person who takes the\ndocument in good faith and for consideration, then, if such last mentioned transfer was by way a sale, the\nunpaid seller’s right of lien or stoppage in transit is defeated, and, if such last mentioned transfer was by\nway of pledge or other disposition for value, the unpaid seller’s right of lien or stoppage is transit can\nonly be exercised subject to the rights of the transferee.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where the transfer is by way of pledge, the unpaid seller may require the pledgee to have the\namount secured by the pledge satisfied in the first instance, as far as possible, out of any other goods or\nsecurities of the buyer in the hands of the pledgee and available against the buyer",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "54",
+          "title": "Sale not generally rescinded by lien or stoppage in transit.",
+          "content": "(1) Subject to the provisions of\nthis section, a contract of sale is not rescinded by the mere exercise by an unpaid seller of his right of lien\nor stoppage in transit.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where the goods are of a perishable nature, or where the unpaid seller who has exercised his right\nof lien or stoppage in transit gives notice to the buyer of his intention to re-sell, the unpaid seller may, if\nthe buyer does not within a reasonable time pay or tender the price, re-sell the goods within a reasonable\ntime and recover from the original buyer damages for any loss occasioned by his breach of contract, but\nthe buyer shall not be entitled to any profit which may occur on the re-sale. If such notice is not given, the\nunpaid seller shall not be entitled to recover such damages and the buyer shall be entitled to the profit, if\nany, on the re-sale.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where an unpaid seller who has exercised his right of lien or stoppage in transit re-sells the goods,\nthe buyer acquires a good title thereto as against the original buyer, notwithstanding that no notice of the\nre-sale has been given to the original buyer.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "Where the seller expressly reserves a right of re-sale in case the buyer should make default, and,\non the buyer making default, re-sells the goods, the original contract of sale is thereby rescinded, but\nwithout prejudice to any claim which the seller may have for damages.",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "chapter",
+      "number": "VI",
+      "title": "SUITS FOR BREACH OF THE CONTRACT",
+      "children": [
+        {
+          "type": "section",
+          "number": "55",
+          "title": "Suit for price.",
+          "content": "(1) Where under a contract of sale the property in the goods has passed to the\nbuyer and the buyer wrongfully neglects or refuses to pay for the goods according to the terms of the\ncontract, the seller may sue him for the price of the goods.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where under a contract of sale the price is payable on a day certain irrespective of delivery and\nthe buyer wrongfully neglects or refuses to pay such pirce, the seller may sue him for the price although\nthe property in the goods has not passed and the goods have not been appropriated to the contract.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "56",
+          "title": "Damages for non",
+          "content": "acceptance.—Where the buyer wrongfully neglects or refuses to accept and\npay for the goods, the seller may sue him for damages for non-acceptance.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "57",
+          "title": "Damages for non",
+          "content": "delivery.—Where the seller wrongfully neglects or refuses to deliver the\ngoods to the buyer, the buyer may sue the seller for damages for non-delivery.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "58",
+          "title": "Specific performance.",
+          "content": "Subject to the provisions of Chapter II of the Specific Relief Act, 1877\n(1 of 1877), in any suit for breach of contract to deliver specific or ascertained goods, the Court may, if it\nthinks fit, on the application of the plaintiff, by its decree direct that the contract shall be performed\nspecifically, without giving the defendant the option of retaining the goods on payment of damages. The\ndecree may be unconditional, or upon such terms and conditions as to damages, payment of the price or\notherwise, as the Court may deem just, and the application of the plaintiff may be made at any time before\nthe decree.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "59",
+          "title": "Remedy for breach of warranty.",
+          "content": "(1) Where there is a breach of warranty by file seller, or\nwhere the buyer elects or is compelled to treat any breach of a condition on the part of the seller as a\nbreach of warranty, the buyer is not by reason only of such breach of warranty entitled to reject the goods;\nbut he may—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "set up against the seller the breach of warranty in diminution or extinction of the price; or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "sue the seller for damages for breach of warranty.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "The fact that a buyer has set up a breach of warranty in diminution or extinction of the price does\nnot prevent him from suing for the same breach of warranty if he has suffered further damage.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "60",
+          "title": "Repudiation of contract before due date.",
+          "content": "Where either party to a contract of sale repudiates\nthe contract before the date of delivery, the other may either treat the contract as subsisting and wait till\nthe date of delivery, or he may treat the contract as rescinded and sue for damages for the breach.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "61",
+          "title": "Interest by way of damages and special damages.",
+          "content": "(1) Nothing in this Act shall affect the right\nof the seller or the buyer to recover interest or special damages in any case where by law interest or\nspecial damages may be recoverable, or to recover the money paid where the consideration for the\npayment of it has failed.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "In the absence of a contract to the contrary, the Court may award interest at such rate as it thinks\nfit on the amount of the price—",
+              "children": [
+                {
+                  "type": "clause",
+                  "number": "a",
+                  "content": "to the seller in a suit by him for the amount of the price— from the date of the tender of the\ngoods or from the date on which the price was payable;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "b",
+                  "content": "to the buyer in a suit by him for the refund of the price in a case of a breach of the contract on\nthe part of the seller—from the date on which the payment was made.",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "chapter",
+      "number": "VII",
+      "title": "MISCELLANEOUS",
+      "children": [
+        {
+          "type": "section",
+          "number": "62",
+          "title": "Exclusion of implied terms and conditions.",
+          "content": "Where any right, duty or liability would arise\nunder a contract of sale by implication of law, it may be negatived or varied by express agreement or by\nthe course of dealing between the parties, or by usage, if the usage is such as to bind both parties to the\ncontract.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "63",
+          "title": "Reasonable time a question of fact.",
+          "content": "Where in this Act any reference is made to a reasonable\ntime, the question what is a reasonable time is a question of fact.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "64",
+          "title": "Auction sale.",
+          "content": "In the case of a sale by auction—",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "1",
+              "content": "Where goods are put up for sale in lots, each lot is prima facie deemed to be the subject of a\nseparate contract of sale;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "the sale is complete when the auctioneer announces its completion by the fall of the hammer\nor in other customary manner; and, until such announcement is made, any bidder may retract his bid;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "a right to bid may be reserved expressely by or on behalf of the seller and, where such right is\nexpressly so reserved, but not otherwise, the seller or any one person on his behalf may, subject to the\nprovisions hereinafter contained, bid at the auction;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "where the sale is not notified to be subject to a right to bid on behalf of the seller, it shall not\nbe lawful for the seller to bid himself or to employ any person to bid at such sale, or for the auctioneer\nknowingly to take any bid from the seller or any such person; and any sale contravening this rule may\nbe treated as fraudulent by the buyer;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "5",
+              "content": "the sale may be notified to be subject to a reserved or upset, price;",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "6",
+              "content": "if the seller makes use of pretended bidding to raise the price, the sale is voidable at the option\nof the buyer.\n[64A. In contracts of sale, amount of increased or decreased taxes to be added or deducted.—",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "1",
+              "content": "Unless a different intention appears from the terms of the contract, in the event of any tax of the nature\ndescribed in sub-section (2) being imposed, increased, decreased or remitted in respect of any goods after\nthe making of any contract for the sale or purchase of such goods without stipulation as to the payment of\ntax where tax was not chargeable at the time of the making of the contract, or for the sale or purchase of\nsuch goods tax-paid where tax was chargeable at that time,—",
+              "children": [
+                {
+                  "type": "clause",
+                  "number": "a",
+                  "content": "if such imposition or increase so takes effect that the tax or increased tax, as the case may be,\nor any part of such tax is paid or is payable, the seller may add so much to the contract price as will\nbe equivalent to the amount paid or payable in respect of such tax or increase of tax, and he shall be\nentitled to be paid and to sue for and recover such addition; and",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "b",
+                  "content": "if such decrease or remission so takes effect that the decreased tax only, or no tax, as the case\nmay be, is paid or is payable, the buyer may deduct so much from the contract price as will be\nequivalent to the decrease of tax or remitted tax, and he shall not be liable to pay, or be sued for, or in\nrespect of, such deduction.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "The provisions of sub-section (1) apply to the following taxes, namely:—",
+              "children": [
+                {
+                  "type": "clause",
+                  "number": "a",
+                  "content": "any duty of customs or excise on goods;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "b",
+                  "content": "any tax on the sale or purchase of goods.]",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "65",
+          "title": "[Repeal",
+          "content": "] Rep. by the Repealing Act, 1938 (1 of 1938), s. 2 and Sch.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "66",
+          "title": "Savings.",
+          "content": "(1) Nothing in this Act or in any repeal effected thereby shall affect or be deemed to\naffect—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "any right, title, interest, obligation or liability already acquired, accrued or incurred before the\ncommencement of this Act, or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "any legal proceedings or remedy in respect of any such right, title, interest, obligation or\nliability, or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "anything done or suffered before the commencement of this Act, or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "d",
+              "content": "any enactment relating to the sale of goods which is not expressly repealed by this Act, or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "e",
+              "content": "any rule of law not inconsistent with this Act.",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1673 @@
+{
+  "actName": "Limitation Act, 1963",
+  "officialName": "Limitation Act, 1963",
+  "shortName": "LA",
+  "category": "Civil laws",
+  "year": 1963,
+  "summary": {
+    "totalParts": 6,
+    "totalTitles": 0,
+    "totalChapters": 0,
+    "totalArticles": 0,
+    "totalSections": 34,
+    "totalSchedules": 1,
+    "totalExplanations": 15,
+    "totalIllustrations": 0
+  },
+  "structure": [
+    {
+      "type": "body",
+      "content": "BE it enacted by Parliament in the Fourteenth Year of the Republic of India as follows:—"
+    },
+    {
+      "type": "part",
+      "number": "I",
+      "title": "PRELIMINARY",
+      "children": [
+        {
+          "type": "section",
+          "number": "1",
+          "title": "Short title, extent and commencement.",
+          "content": "(1) This Act may be called the Limitation Act, 1963.\n1. Subs. by Act 10 of 1969, s. 2, for “five years” (retrospectively).",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "It extends to the whole of India\n***.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "It shall come into force on such date\nas the Central Government may, by notification in the\nOfficial Gazette, appoint.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "2",
+          "title": "Definitions.",
+          "content": "In this Act, unless the context otherwise requires,—\n2. 1st January, 1964, vide notification No. S.O. 3118, dated 29th October, 1963, see Gazette of India, Part II, sec. 3 (ii).\nAmended in West Bengal by W.B. Act 18 of 1977.\n1st September, 1984, vide notification No. S.O. 647(C), in respect of the State of Sikkim dated 24th August, 1984, see\nGazette of India, Part II, sec. 3(ii).\n2. Ins. by s. 2, ibid. (retrospectively).",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "“applicant” includes—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "i",
+              "content": "a petitioner;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "ii",
+              "content": "any person from or through whom an applicant derives his right to apply;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "iii",
+              "content": "any person whose estate is represented by the applicant as executor, administrator or\nother representative;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "“application” includes a petition;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "“bill of exchange” includes a hundi and a cheque;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "d",
+              "content": "“bond” includes any instrument whereby a person obliges himself to pay money to another,\non condition that the obligation shall be void if a specified act is performed, or is not performed, as\nthe case may be;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "e",
+              "content": "“defendant” includes—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "i",
+              "content": "any person from or through whom a defendant derives his liability to be sued;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "ii",
+              "content": "any person whose estate is represented by the defendant as executor, administrator or\nother representative;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "f",
+              "content": "“easement” includes a right not arising from contract, by which one person is entitled to\nremove and appropriate for his own profit any part of the soil belonging to another or anything\ngrowing in, or attached to, or subsisting upon, the land of another;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "g",
+              "content": "“foreign country” means any country other than India;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "h",
+              "content": "“good faith”—nothing shall be deemed to be done in good faith which is not done with due\ncare and attention;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "i",
+              "content": "“plaintiff” includes—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "i",
+              "content": "any person from or through whom a plaintiff derives his right to sue;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "ii",
+              "content": "any person whose estate is represented by the plaintiff as executor, administrator or other\nrepresentative;",
+              "children": []
+            },
+            {
+              "type": "footnote",
+              "number": "1",
+              "content": "The words “except the State of Jammu and Kashmir” omitted by Act 34 of 2019, s. 95 and the Fifth Schedule (w.e.f. 31-\n10- 2019)."
+            },
+            {
+              "type": "clause",
+              "number": "j",
+              "content": "“period of limitation” means the period of limitation prescribed for any suit, appeal or\napplication by the Schedule, and “prescribed period” means the period of limitation computed in\naccordance with the provisions of this Act;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "k",
+              "content": "“promissory note” means any instrument whereby the maker engages absolutely to pay a\nspecified sum of money to another at a time therein limited, or on demand, or at sight;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "l",
+              "content": "“suit” does not include an appeal or an application;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "m",
+              "content": "“tort\" means a civil wrong which is not exclusively the breach of a contract or the breach of a\ntrust;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "n",
+              "content": "“trustee” does not include a benamidar, a mortgagee remaining in possession after the\nmortgage has been satisfied or a person in wrongful possession without title.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "any appeal or application for which the period of limitation is shorter than the period of\nlimitation prescribed by the Indian Limitation Act, 1908 (9 of 1908), may be preferred or made within\na period of ninety days next after the commencement of this Act or within the period prescribed for\nsuch appeal or application by the Indian Limitation Act, 1908, whichever period expires earlier.\nSTATE AMENDMENT\nJammu and Kashmir and Ladakh (UTs).—\nInsertion of Section 30A.— After section 30, insert the following section, namely: —\n“30A. Provision for suits, etc., for which the prescribed period is shorter than the period\nprescribed by the Limitation Act, samvat 1995.—Notwithstanding anything contained in this\nAct,—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "Any suit for which the period of limitation is shorter than the period of limitation prescribed\nby the Limitation Act, Samvat 1995, may be instituted within a period of one year next after\nthe commencement of the Jammu and Kashmir Reorganisation Act, 2019 or within the period\nprescribed for such suit by the Limitation Act, Samvat 1995, whichever period expires\nearlier:",
+              "children": [
+                {
+                  "type": "proviso",
+                  "content": "Provided that if in respect of any such suit, the said period of one year expires earlier than\nperiod of limitation prescribed therefor under the Limitation Act, Samvat 1995 (now\nrepealed) and the said period of one year together with so much of the period of limitation in\nrespect of such suit under the said Act, as has already expired before the commencement of\nthe Jammu and Kashmir Reorganisation Act, 2019 is shorter than the period prescribed for\nsuch suit under the Limitation Act, 1963, then, the suit may be instituted within the period of\nlimitation prescribed therefor under the Limitation Act, 1963;",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "Any appeal or application for which the period of limitation is shorter than the period of\nlimitation prescribed by the Limitation Act, Samvat 1995, may be preferred or made within a\nperiod of ninety days next after the commencement of the Jammu and Kashmir\nReorganisation Act, 2019 or within the period prescribed for such appeal or application by\nthe Limitation Act, Samvat 1995, whichever period expires earlier.”\n[Vide the Jammu and Kashmir Reorganization (Adaptation of Central Laws) Order, 2020, vide\nnotification No. S.O. 1123(E) dated (18-3-2020) and Vide Union Territory of Ladakh Reorganisation\n(Adaptation of Central Laws) Order, 2020, notification No. S.O. 3774(E), dated (23-10-2020).]",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "part",
+      "number": "II",
+      "title": "LIMITATION OF SUITS, APPEALS AND APPLICATIONS",
+      "children": [
+        {
+          "type": "section",
+          "number": "3",
+          "title": "Bar of limitation.",
+          "content": "(1) Subject to the provisions contained in sections 4 to 24 (inclusive), every\nsuit instituted, appeal preferred, and application made after the prescribed period shall be dismissed,\nalthough limitation has not been set up as a defence.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "For the purposes of this Act,—",
+              "children": [
+                {
+                  "type": "clause",
+                  "number": "a",
+                  "content": "a suit is instituted,—",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "i",
+                  "content": "in an ordinary case, when the plaint is presented to the proper officer;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "ii",
+                  "content": "in the case of a pauper, when his application for leave to sue as a pauper is made; and",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "iii",
+                  "content": "in the case of a claim against a company which is being wound up by the court, when the\nclaimant first sends in his claim to the official liquidator;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "b",
+                  "content": "any claim by way of a set off or a counter claim, shall be treated as a separate suit and shall be\ndeemed to have been instituted—",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "i",
+                  "content": "in the case of a set off, on the same date as the suit in which the set off is pleaded;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "ii",
+                  "content": "in the case of a counter claim, on the date on which the counter claim is made in court;",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "c",
+                  "content": "an application by notice of motion in a High Court is made when the application is presented\nto the proper officer of that court.",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "4",
+          "title": "Expiry of prescribed period when court is closed.",
+          "content": "Where the prescribed period for any suit,\nappeal or application expires on a day when the court is closed, the suit, appeal or application may be\ninstituted, preferred or made on the day when the court re-opens.",
+          "children": [
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "A court shall be deemed to be closed on any day within the meaning of this section if\nduring any part of its normal working hours it remains closed on that day.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "5",
+          "title": "Extension of prescribed period in certain cases.",
+          "content": "Any appeal or any application, other than an\napplication under any of the provisions of Order XXI of the Code of Civil Procedure, 1908 (5 of 1908),\nmay be admitted after the prescribed period if the appellant or the applicant satisfies the court that he had\nsufficient cause for not preferring the appeal or making the application within such period.",
+          "children": [
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "The fact that the appellant or the applicant was misled by any order, practice or\njudgment of the High Court in ascertaining or computing the prescribed period may be sufficient cause\nwithin the meaning of this section.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "6",
+          "title": "Legal disability.",
+          "content": "(1) Where a person entitled to institute a suit or make an application for the\nexecution of a decree is, at the time from which the prescribed period is to be reckoned, a minor or insane,\nor an idiot, he may institute the suit or make the application within the same period after the disability has\nceased, as would otherwise have been allowed from the time specified there for in the third column of the\nSchedule.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where such person is, at the time from which the prescribed period is to be reckoned, affected by\ntwo such disabilities, or where, before his disability has ceased, he is affected by another disability, he\nmay institute the suit or make the application within the same period after both disabilities have ceased, as\nwould otherwise have been allowed from the time so specified.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where the disability continues up to the death of that person, his legal representative may institute\nthe suit or make the application within the same period after the death, as would otherwise have been\nallowed from the time so specified.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "Where the legal representative referred to in sub-section (3) is, at the date of the death of the\nperson whom he represents, affected by any such disability, the rules contained sub-sections (1) and (2)\nshall apply.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "5",
+              "content": "Where a person under disability dies after the disability ceases but within the period allowed to\nhim under this section, his legal representative may institute the suit or make the application within the\nsame period after the death, as would otherwise have been available to that person had he not died.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "For the purposes of this section, ‘minor’ includes a child in the womb.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "7",
+          "title": "Disability of one of several persons.",
+          "content": "Where one of several persons jointly entitled to institute a\nsuit or make an application for the execution of a decree is under any such disability, and a discharge can\nbe given without the concurrence of such person, time will run against them all; but, where no such\ndischarge can be given, time will not run as against any of them until one of them becomes capable of\ngiving such discharge without the concurrence of the others or until the disability has ceased.",
+          "children": [
+            {
+              "type": "explanation",
+              "number": "Explanation I.",
+              "content": "This section applies to a discharge from every kind of liability, including a liability\nin respect of any immovable property.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation II.",
+              "content": "For the purposes of this section, the Manager of a Hindu undivided family governed\nby the Mitakshara law shall be deemed to be capable of giving a discharge without the concurrence of the\nother members of the family only if he is in management of the joint family property.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "8",
+          "title": "Special exceptions.",
+          "content": "Nothing in section 6 or in section 7 applies to suits to enforce rights of pre-\nemption, or shall be deemed to extend, for more than three years from the cessation of the disability or the\ndeath of the person affected thereby, the period of limitation for any suit or application.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "9",
+          "title": "Continuous running of time.",
+          "content": "Where once time has begun to run, no subsequent disability or\ninability to institute a suit or make an application stops it:",
+          "children": [
+            {
+              "type": "proviso",
+              "content": "Provided that, where letters of administration to the estate of a creditor have been granted to his\ndebtor, the running of the period of limitation for a suit to recover the debt shall be suspended while the\nadministration continues.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "10",
+          "title": "Suits against trustees and their representatives.",
+          "content": "Notwithstanding anything contained in the\nforegoing provisions of this Act, no suit against a person in whom property has become vested in trust for\nany specific purpose, or against his legal representatives or assigns (not being assigns for valuable\nconsideration), for the purpose of following in his or their hands such property, or the proceeds thereof, or\nfor an account of such property or proceeds, shall be barred by any length of time.",
+          "children": [
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "For the purposes of this section any property comprised in a Hindu, Muslim or\nBuddhist religious or charitable endowment shall be deemed to be property vested in trust for a specific\npurpose and the manager of the property shall be deemed to be the trustee thereof.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "11",
+          "title": "Suits on contracts entered into outside the territories to which the Act extends.",
+          "content": "(1) Suits\ninstituted in the territories to which this Act extends on contracts entered into in the State of Jammu and\nKashmir or in a foreign country shall be subject to the rules of limitation contained in this Act.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "No rule of limitation in force in the State of Jammu and Kashmir or in a foreign country shall be a\ndefence to a suit instituted in the said territories on a contract entered into in that State on in a foreign\ncountry unless—",
+              "children": [
+                {
+                  "type": "clause",
+                  "number": "a",
+                  "content": "the rule has extinguished the contract; and",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "b",
+                  "content": "the parties were domiciled in that State or in the foreign country during the period prescribed\nby such rule.",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "part",
+      "number": "III",
+      "title": "COMPUTATION OF PERIOD OF LIMITATION",
+      "children": [
+        {
+          "type": "section",
+          "number": "12",
+          "title": "Exclusion of time in legal proceedings.",
+          "content": "(1) In computing the period of limitation for any suit,\nappeal or application, the day from which such period is to be reckoned, shall be excluded.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "In computing the period of limitation for an appeal or an application for leave to appeal or for\nrevision or for review of a judgment, the day on which the judgment complained of was pronounced and\nthe time requisite for obtaining a copy of the decree, sentence or order appealed from or sought to be\nrevised or reviewed shall be excluded.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where a decree or order is appealed from or sought to be revised or reviewed, or where an\napplication is made for leave to appeal from a decree or order, the time requisite for obtaining a copy of\nthe judgment\n*** shall also be excluded.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "In computing the period of limitation for an application to set aside an award, the time requisite\nfor obtaining a copy of the award shall be excluded.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "In computing under this section the time requisite for obtaining a copy of a decree or\nan order, any time taken by the court to prepare the decree or order before an application for a copy\nthereof is made shall not be excluded.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "13",
+          "title": "Exclusion of time in cases where leave to sue or appeal as a pauper is applied for.",
+          "content": "In\ncomputing the period of limitation prescribed for any suit or appeal in any case where an application for\nleave to sue or appeal as a pauper has been made and rejected, the time during which the applicant has\nbeen prosecuting in good faith his application for such leave shall be excluded, and the court may, on\npayment of the court fees prescribed for such suit or appeal, treat the suit or appeal as having the same\nforce and effect as if the court fees had been paid in the first instance.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "14",
+          "title": "Exclusion of time of proceeding bona fide in court without jurisdiction.",
+          "content": "(1) In computing the\nperiod of limitation for any suit the time during which the plaintiff has been prosecuting with due\ndiligence another civil proceeding, whether in a court of first instance or of appeal or revision, against the\ndefendant shall be excluded, where the proceeding relates to the same matter in issue and is prosecuted in\ngood faith in a court which, from defect of jurisdiction or other cause of a like nature, is unable to\nentertain it.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "In computing the period of limitation for any application, the time during which the applicant has\nbeen prosecuting with due diligence another civil proceeding, whether in a court of first instance or of\nappeal or revision, against the same party for the same relief shall be excluded, where such proceeding is\nprosecuted in good faith in a court which, from defect of jurisdiction or other cause of a like nature, is\nunable to entertain it.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Notwithstanding anything contained in rule 2 of Order XXIII of the Code of Civil Procedure,",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "1908",
+          "title": "(5 of 1908), the provisions of sub",
+          "content": "section (1) shall apply in relation to a fresh suit instituted on\npermission granted by the court under rule 1 of that Order, where such permission is granted on the\nground that the first suit must fail by reason of a defect in the jurisdiction of the court or other cause of a\nlike nature.",
+          "children": [
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "For the purposes of this section,—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "in excluding the time during which a former civil proceeding was pending, the day on which\nthat proceeding was instituted and the day on which it ended shall both be counted;",
+              "children": []
+            },
+            {
+              "type": "footnote",
+              "number": "1",
+              "content": "The words “on which the decree or order is founded” omitted by Act 46 of 1999, s. 33 (w.e.f. 1-7-2002)."
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "a plaintiff or an applicant resisting an appeal shall be deemed to be prosecuting a proceeding;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "misjoinder of parties or of causes of action shall be deemed to be a cause of a like nature with\ndefect of jurisdiction.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "15",
+          "title": "Exclusion of time in certain other cases.",
+          "content": "(1) In computing the period of limitation of any suit\nor application for the execution of a decree, the institution or execution of which has been stayed by\ninjunction or order, the time of the continuance of the injunction or order, the day on which it was issued\nor made, and the day on which it was withdrawn, shall be excluded.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "In computing the period of limitation for any suit of which notice has been given, or for which the\nprevious consent or sanction of the Government or any other authority is required, in accordance with the\nrequirements of any law for the time being in force, the period of such notice or, as the case may be, the\ntime required for obtaining such consent or sanction shall be excluded.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "In excluding the time required for obtaining the consent or sanction of the\nGovernment or any other authority, the date on which the application was made for obtaining the consent\nor sanction and the date of receipt of the order of the Government or other authority shall both be\ncounted.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "In computing the period of limitation for any suit or application for execution of a decree by any\nreceiver or interim receiver appointed in proceedings for the adjudication of a person as an insolvent or by\nany liquidator or provisional liquidator appointed in proceedings for the winding up of a company, the\nperiod beginning with the date of institution of such proceeding and ending with the expiry of three\nmonths from the date of appointment of such receiver or liquidator, as the case may be, shall be excluded.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "In computing the period of limitation for a suit for possession by a purchaser at a sale in execution\nof a decree, the time during which a proceeding to set aside the sale has been prosecuted shall be\nexcluded.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "5",
+              "content": "In computing the period of limitation for any suit the time during which the defendant has been\nabsent from India and from the territories outside India under the administration of the Central\nGovernment, shall be excluded.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "16",
+          "title": "Effect of death on or before the accrual of the right to sue.",
+          "content": "(1) Where a person who would, if\nhe were living, have a right to institute a suit or make an application dies before the right accrues, or\nwhere a right to institute a suit or make an application accrues only on the death of a person, the period of\nlimitation shall be computed from the time when there is a legal representative of the deceased capable of\ninstituting such suit or making such application.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where a person against whom, if he were living, a right to institute a suit or make an application\nwould have accrued dies before the right accrues, or where a right to institute a suit or make an\napplication against any person accrues on the death of such person, the period of limitation shall be\ncomputed from the time when there is a legal representative of the deceased against whom the plaintiff\nmay institute such suit or make such application.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Nothing in sub-section (1) or sub-section (2) applies to suits to enforce rights of pre-emption or to\nsuits for the possession of immovable property or of a hereditary office.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "17",
+          "title": "Effect of fraud or mistake.",
+          "content": "(1) Where, in the case of any suit or application for which a period\nof limitation is prescribed by this Act,—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "the suit or application is based upon the fraud of the defendant or respondent or his agent; or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "the knowledge of the right or title on which a suit or application is founded is concealed by\nthe fraud of any such person as aforesaid; or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "the suit or application is for relief from the consequences of a mistake; or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "d",
+              "content": "where any document necessary to establish the right of the plaintiff or applicant has been\nfraudulently concealed from him,\nthe period of limitation shall not begin to run until the plaintiff or applicant has discovered the fraud or\nthe mistake or could, with reasonable diligence, have discovered it; or in the case of a concealed\ndocument, until the plaintiff or the applicant first had the means of producing the concealed document or\ncompelling its production:",
+              "children": [
+                {
+                  "type": "proviso",
+                  "content": "Provided that nothing in this section shall enable any suit to be instituted or application to be made to\nrecover or enforce any charge against, or set aside any transaction affecting, any property which—",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "type": "clause",
+              "number": "i",
+              "content": "in the case of fraud, has been purchased for valuable consideration by a person who was not a\nparty to the fraud and did not at the time of the purchase know, or have reason to believe, that any\nfraud had been committed, or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "ii",
+              "content": "in the case of mistake, has been purchased for valuable consideration subsequently to the\ntransaction in which the mistake was made, by a person who did not know, or have reason to believe,\nthat the mistake had been made, or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "iii",
+              "content": "in the case of a concealed document, has been purchased for valuable consideration by a\nperson who was not a party to the concealment and, did not at the time of purchase know, or have\nreason to believe, that the document had been concealed.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where a judgment-debtor has, by fraud or force, prevented the execution of a decree or order\nwithin the period of limitation, the court may, on the application of the judgment-creditor made after the\nexpiry of the said period extend the period for execution of the decree or order:",
+              "children": [
+                {
+                  "type": "proviso",
+                  "content": "Provided that such application is made within one year from the date of the discovery of the fraud or\nthe cessation of force, as the case may be.",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "18",
+          "title": "Effect of acknowledgment in writing.",
+          "content": "(1) Where, before the expiration of the prescribed\nperiod for a suit or application in respect of any property or right, an acknowledgment of liability in\nrespect of such property or right has been made in writing signed by the party against whom such\nproperty or right is claimed, or by any person through whom he derives his title or liability, a fresh period\nof limitation shall be computed from the time when the acknowledgment was so signed.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where the writing containing the acknowledgment is undated, oral evidence may be given of the\ntime when it was signed; but subject to the provisions of the Indian Evidence Act, 1872 (1 of 1872), oral\nevidence of its contents shall not be received.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "For the purposes of this section,—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "an acknowledgment may be sufficient though it omits to specify the exact nature of the\nproperty or right, or avers that the time for payment, delivery, performance or enjoyment has not yet\ncome or is accompanied by a refusal to pay, deliver, perform or permit to enjoy, or is coupled with a\nclaim to set off, or is addressed to a person other than a person entitled to the property or right,",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "the word “signed” means signed either personally or by an agent duly authorised in this\nbehalf, and",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "an application for the execution of a decree or order shall not be deemed to be an application\nin respect of any property or right.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "19",
+          "title": "Effect of payment on account of debt or of interest on legacy.",
+          "content": "Where payment on account of\na debt or of interest on a legacy is made before the expiration of the prescribed period by the person liable\nto pay the debt or legacy or by his agent duly authorised in this behalf, a fresh period of limitation shall be\ncomputed from the time when the payment was made:",
+          "children": [
+            {
+              "type": "proviso",
+              "content": "Provided that, save in the case of payment of interest made before the 1st day of January, 1928, an\nacknowledgment of the payment appears in the handwriting of, or in a writing signed by, the person\nmaking the payment.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "For the purposes of this section,—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "where mortgaged land is in the possession of the mortgagee, the receipt of the rent or produce\nof such land shall be deemed to be a payment;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "“debt” does not include money payable under a decree or order of a court.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "20",
+          "title": "Effect of acknowledgment or payment by another person.",
+          "content": "(1) The expression “agent duly\nauthorised in this behalf” in sections 18 and 19 shall, in the case of a person under disability, include his\nlawful guardian, committee or manager or an agent duly authorised by such guardian, committee or\nmanager to sign the acknowledgment or make the payment.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Nothing in the said sections renders one of several joint contractors, partners, executors or\nmortgagees chargeable by reason only of a written acknowledgment signed by, or of a payment made by,\nor by the agent of, any other or others of them.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "For the purposes of the said sections,—",
+              "children": [
+                {
+                  "type": "clause",
+                  "number": "a",
+                  "content": "an acknowledgment signed or a payment made in respect of any liability by, or by the duly\nauthorised agent of, any limited owner of property who is governed by Hindu law, shall be a valid\nacknowledgment or payment, as the case may be, against a reversioner succeeding to such liability;\nand",
+                  "children": []
+                },
+                {
+                  "type": "clause",
+                  "number": "b",
+                  "content": "where a liability has been incurred by, or on behalf of a Hindu undivided family as such, an\nacknowledgment or payment made by, or by the duly authorised agent of, the manager of the family\nfor the time being shall be deemed to have been made on behalf of the whole family.",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "21",
+          "title": "Effect of substituting or adding new plaintiff or defendant.",
+          "content": "(1) Where after the institution of\na suit, a new plaintiff or defendant is substituted or added, the suit shall, as regards him, be deemed to\nhave been instituted when he was so made a party:",
+          "children": [
+            {
+              "type": "proviso",
+              "content": "Provided that where the court is satisfied that the omission to include a new plaintiff or defendant was\ndue to a mistake made in good faith it may direct that the suit as regards such plaintiff or defendant shall\nbe deemed to have been instituted on any earlier date.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Nothing in sub-section (1) shall apply to a case where a party is added or substituted owing to\nassignment or devolution of any interest during the pendency of a suit or where a plaintiff is made a\ndefendant or a defendant is made a plaintiff.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "22",
+          "title": "Continuing breaches and torts.",
+          "content": "In the case of a continuing breach of contract or in the case of\na continuing tort, a fresh period of limitation begins to run at every moment of the time during which the\nbreach or the tort, as the case may be, continues.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "23",
+          "title": "Suits for compensation for acts not actionable without special damage.",
+          "content": "In the case of a suit\nfor compensation for an act which does not give rise to a cause of action unless some specific injury\nactually results therefrom, the period of limitation shall be computed from the time when the injury\nresults.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "24",
+          "title": "Computation of time mentioned in instruments.",
+          "content": "All instruments shall for the purposes of this\nAct be deemed to be made with reference to the Gregorian calendar.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "type": "part",
+      "number": "IV",
+      "title": "ACQUISITION OF OWNERSHIP BY POSSESSION",
+      "children": [
+        {
+          "type": "section",
+          "number": "25",
+          "title": "Acquisition of easements by prescription.",
+          "content": "(1) Where the access and use of light or air to and\nfor any building have been peaceably enjoyed therewith as an easement, and as of right, without\ninterruption, and for twenty years, and where any way or watercourse or the use of any water or any other\neasement (whether affirmative or negative) has been peaceably and openly enjoyed by any person\nclaiming title thereto as an easement and as of right without interruption and for twenty years, the right to\nsuch access and use of light or air, way, watercourse, use of water, or other easement shall be absolute\nand indefeasible.",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Each of the said periods of twenty years shall be taken to be a period ending within two years next\nbefore the institution of the suit wherein the claim to which such period relates is contested.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Where the property over which a right is claimed under sub-section (1) belongs to the\nGovernment that sub-section shall be read as if for the words “twenty years” the words “thirty years”\nwere substituted.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "Nothing is an interruption within the meaning of this section, unless where there is an\nactual discontinuance of the possession or enjoyment by reason of an obstruction by the act of some\nperson other than the claimant, and unless such obstruction is submitted to or acquiesced in for one year\nafter the claimant has notice thereof and of the person making or authorising the same to be made.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "26",
+          "title": "Exclusion in favour of reversioner of serivent tenement.",
+          "content": "Where any land or water upon, over\nor from, which any easement has been enjoyed or derived has been held under or by virtue of any interest\nfor life or in terms of years exceeding three years from the granting thereof, the time of the enjoyment of\nsuch easement during the continuance of such interest or term shall be excluded in the computation of the\nperiod twenty years in case the claim is, within three years next after the determination of such interest or\nterm, resisted by the person entitled on such determination to the said land or water.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "27",
+          "title": "Extinguishment of right to property.",
+          "content": "At the determination of the period hereby limited to any\nperson for instituting a suit for possession of any property, his right to such property shall be\nextinguished.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "type": "part",
+      "number": "V",
+      "title": "MISCELLANEOUS",
+      "children": [
+        {
+          "type": "section",
+          "number": "28",
+          "title": "[Amendment of certain Acts.]",
+          "content": "Rep. by Repealing and Amending Act, 1974 (56 of 1974),s.\n2andtheFirst Schedule (w.e.f. 20-12-1974).",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "29",
+          "title": "Savings.",
+          "content": "(1) Nothing in this Act shall affect section 25 of the Indian Contract Act, 1872 (9 of\n1872).",
+          "children": [
+            {
+              "type": "subsection",
+              "number": "2",
+              "content": "Where any special or local law prescribes for any suit, appeal or application a period of limitation\ndifferent from the period prescribed by the Schedule, the provisions of section 3 shall apply as if such\nperiod were the period prescribed by the Schedule and for the purpose of determining any period of\nlimitation prescribed for any suit, appeal or application by any special or local law, the provisions\ncontained in sections 4 to 24 (inclusive) shall apply only in so far as, and to the extent to which, they are\nnot expressly excluded by such special or local law.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "3",
+              "content": "Save as otherwise provided in any law for the time being in force with respect to marriage and\ndivorce, nothing in this Act shall apply to any suit or other proceeding under any such law.",
+              "children": []
+            },
+            {
+              "type": "subsection",
+              "number": "4",
+              "content": "Sections 25 and 26 and the definition of “easement” in section 2 shall not apply to cases arising in\nthe territories to which the Indian Easements Act, 1882 (5 of 1882), may for the time being extend.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "30",
+          "title": "Provision for suits, etc",
+          "content": ", for which the prescribed period is shorter than the period\nprescribed by the Indian Limitation Act, 1908.—Notwithstanding anything contained in this Act,—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "any suit for which the period of limitation is shorter than the period of limitation prescribed by\nthe Indian Limitation Act, 1908 (9 of 1908), may be instituted within a period of\n[seven years] next\nafter the commencement of this Act or within the period prescribed for such suit by the Indian\nLimitation Act, 1908 (9 of 1908), whichever period expires earlier:\n[Provided that if in respect of any such suit, the said period of seven years expires earlier than\nthe period of limitation prescribed therefor under the Indian Limitation Act, 1908 (9 of 1908) and the\nsaid period of seven years together with so much of the period of limitation in respect of such suit\nunder the Indian Limitation Act, 1908 (9 of 1908), as has already expired before the commencement\nof this Act is shorter than the period prescribed for such suit under this Act, then, the suit may be\ninstituted within the period of limitation prescribed therefor under this Act;]",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "31",
+          "title": "Provisions as to barred or pending suits, etc.",
+          "content": "Nothing in this Act shall,—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "enable any suit, appeal or application to be instituted, preferred or made, for which the period\nof limitation prescribed by the Indian Limitation Act, 1908 (9 of 1908), expired before the\ncommencement of this Act; or",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "affect any suit, appeal or application instituted, preferred or made before, and pending at, such\ncommencement.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "32",
+          "title": "[Repeal.]",
+          "content": "Rep. by Repealing and Amending Act, 1974 (56 of 1974), s. 2 and the First Schedule\n(w.e.f. 20-12-1974).",
+          "children": []
+        }
+      ]
+    },
+    {
+      "type": "schedule",
+      "number": "",
+      "title": "(PERIODS OF LIMITATION)",
+      "children": [
+        {
+          "type": "section",
+          "number": "2",
+          "title": "Against a factor for an account",
+          "content": "Three years.\nWhen the account is, during the\ncontinuance of the agency, demanded\nand refused or, where no such demand\nis made, when the agency terminates.\n3.\nBy a principal against his agent for\nmovable property received by the\nlatter and not accounted for.\nThree years.\nWhen the account is, during the\ncontinuance of the agency, demanded\nand refused or, where no such demand\nis made, when the agency terminates.\n4.\nOther suits by principals against\nagents for neglect or misconduct.\nThree years.\nWhen the neglect or misconduct becomes\nknown to the plaintiff.\n5.\nFor an account and a share of the\nprofits of a dissolved partnership.\nThree years. The date of the dissolution.\nPART II.—SUITS RELATING TO CONTRACTS",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "6",
+          "title": "For a seaman’s wages Three years",
+          "content": "The end of the voyage during which the\nwages are earned.\n7.\nFor wages in the case of any other\nperson.\nThree years. When the wages accrue due.\n8.\nFor the price of food or drink sold\nby the keeper of a hotel, tavern\nor lodging-house.\nThree years. When the food or drink is delivered.",
+          "children": [
+            {
+              "type": "footnote",
+              "number": "9",
+              "content": "For the price of lodging. Three years. When the price becomes payable.\n10.\nAgainst a carrier for compensation\nfor losing or injuring goods.\nThree years. When the loss or injury occurs.\n11.\nAgainst a carrier for compensation\nfor non-delivery of, or delay in\ndelivering, goods.\nThree years. When the goods ought to be delivered.\n12.\nFor the hire of animals, vehicles,\nboats or household furniture.\nThree years. When the hire becomes payable.\n13.\nFor the balance of money advanced\nin payment of goods to be\ndelivered.\nThree years. When the goods ought to be delivered.\n14.\nFor the price of goods sold and\ndelivered where no fixed period\nof credit is agreed upon.\nThree years. The date of the delivery of the goods.\n15.\nFor the price of goods sold and\ndelivered to be paid for after the\nexpiry of a fixed period of\ncredit.\nThree years. When the period of credit expires.\n16.\nFor the price of goods sold and\ndelivered to be paid for by a bill\nof exchange, no such bill being\ngiven.\nThree years.\nWhen the period of the proposed bill\nelapses.\n17.\nFor the price of trees or growing\ncrops sold by the plaintiff to the\ndefendant where no fixed period\nof credit is agreed upon.\nThree years. The date of the sale.\n18.\nFor the price of work done by the\nplaintiff for the defendant at his\nrequest, where no time has been\nfixed for payment.\nThree years. When the work is done."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "19",
+          "title": "For money payable for money lent",
+          "content": "Three years. When the loan is made.\n20.\nLike suit when the lender has given\na cheque for the money.\nThree years. When the cheque is paid.\n21.\nFor money lent under an agreement\nthat it shall be payable on\ndemand.\nThree years. When the loan is made.\n22.\nFor money deposited under an\nagreement that it shall be\npayable on demand, including\nmoney of a customer in the\nhands of his banker so payable.\nThree years. When the demand is made.\n23.\nFor money payable to the plaintiff\nfor money paid for the\ndefendant.\nThree years. When the money is paid.\n24.\nFor money payable by the\ndefendant to the plaintiff for\nmoney received by the\ndefendant, for the plaintiff's use.\nThree years. When the money is received.\n25.\nFor money payable for interest\nupon money due from the\ndefendant to the plaintiff.\nThree years. When the interest becomes due.\n26.\nFor money payable to the plaintiff\nfor money found to be due from\nthe defendant to the plaintiff on\naccounts stated between them.\nThree years.\nWhen the accounts are stated in writing\nsigned by the defendant or his agent\nduly authorised in this behalf, unless\nwhere the debt is, by a simultaneous\nagreement in writing signed as\naforesaid, made payable at a future\ntime, and then when that time arrives.\n27.\nFor compensation for breach of a\npromise to do anything at a\nspecified time, or upon the\nhappening of a specified\ncontingency.\nThree years.\nWhen the time specified arrives or the\ncontingency happens.\n28.\nOn a single bond, where a day is\nspecified for payment.\nThree years. The day so specified.\n29.\nOn a single bond, where no such\nday is specified.\nThree years. The date of executing the bond.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "30",
+          "title": "On a bond subject to a condition",
+          "content": "Three years. When the condition is broken.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "31",
+          "title": "",
+          "content": "On a bill of exchange or promissory\nnote payable at a fixed time after\ndate.\nThree years. When the bill or note falls due.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "32",
+          "title": "",
+          "content": "On a bill of exchange payable at\nsight, or after sight, but not at a\nfixed time.\nThree years. When the bill is presented.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "33",
+          "title": "",
+          "content": "On a bill of exchange accepted\npayable at a particular place.\nThree years. When the bill is presented at that place.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "34",
+          "title": "",
+          "content": "On a bill of exchange or promissory\nnote payable at a fixed time after\nsight or after demand.\nThree years. When the fixed time expires.\n35.\nOn a bill of exchange or promissory\nnote payable on demand and not\naccompanied by any writing\nrestraining or postponing the\nright to sue.\nThree years. The date of the bill or note.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "36",
+          "title": "",
+          "content": "On a promissory note or bond\npayable by instalments.\nThree years. The expiration of the first term of\npayment as to the part then payable;\nand for the other parts, the expiration\nof the respective terms of payment.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "37",
+          "title": "",
+          "content": "On a promissory note or bond\npayable by instalments, which\nprovides that, if default be made\nin payment of one or more\ninstalments, the whole shall be\ndue.\nThree years. When the default is made, unless where\nthe payee or obligee waives the\nbenefit of the provision and then\nwhen fresh default is made in respect\nof which there is no such waiver.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "38",
+          "title": "",
+          "content": "On a promissory note given by the\nmaker to a third person to be\ndelivered to the payee after a\ncertain event should happen.\nThree years. The date of the delivery to the payee.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "39",
+          "title": "",
+          "content": "On a dishonoured foreign bill\nwhere protest has been made\nand notice given.\nThree years. When the notice is given.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "40",
+          "title": "",
+          "content": "By the payee against the drawer of\na bill of exchange, which has\nbeen dishonoured bynon-\nacceptance.\nThree years. The date of the refusal to accept.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "41",
+          "title": "",
+          "content": "By the acceptor of an\naccommodation-bill against the\ndrawer.\nThree years. When the acceptor pays the amount of the\nbill.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "42",
+          "title": "",
+          "content": "By a surety against the principal\ndebtor.\nThree years. When the surety pays the creditor.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "43",
+          "title": "By a surety against a co",
+          "content": "surety. Three years. When the surety pays anything in excess\nof his own share.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "44",
+          "title": "",
+          "content": "(a) On a policy of insurance when\nthe sum insured is payable after\nproof of the death has been\ngiven to or received by the\ninsurers.\nThree years. The date of the death of the deceased, or\nwhere the claim on the policy is\ndenied, either partly or wholly, the\ndate of such denial.",
+          "children": [
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "On a policy of insurance when\nthe sum insured is payable after\nproof of the loss has been given\nto or received by the insurers.\nThree years. The date of the occurrence causing the\nloss, or where the claim on the policy\nis denied, either partly or wholly, the\ndate of such denial.\n45.\nBy the assured to recover premia\npaid under a policy voidable at\nthe election of the insurers.\nThree years.\nWhen the insurers elect to avoid the\npolicy.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "46",
+          "title": "",
+          "content": "Under the Indian Succession Act,",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "1925",
+          "title": "",
+          "content": "(39 of 1925), section 360\nor section 361, to compel a\nrefund by a person to whom an\nexecutor or administrator has\npaid a legacy or distributed\nassets.\nThree years. The date of the payment or distribution.\n47.\nFor money paid upon an existing\nconsideration which afterwards\nfails.\nThree years. The date of the failure.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "48",
+          "title": "",
+          "content": "For contribution by a party who has\npaid the whole or more than his\nshare of the amount due under a\njoint decree, or by a sharer in a\njoint estate who has paid the\nwhole or more than his share of\nthe amount of revenue due from\nhimself and his co-sharers.\nThree years. The date of the payment in excess of the\nplaintiff’s own share.\n49.\nBy a co-trustee to enforce against\nthe estate of a deceased trustee a\nclaim for contribution.\nThree years. When the right to contribution accrues.\n50.\nBy the manager of a joint estate of\nan undivided family for\ncontribution, in respect of a\npayment made by him on\naccount of the estate.\nThree years. The date of the payment.",
+          "children": [
+            {
+              "type": "footnote",
+              "number": "51",
+              "content": "For the profits of immovable\nproperty belonging to the\nplaintiff which have been\nwrongfully received by the\ndefendant.\nThree years. When the profits are received."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "52",
+          "title": "For arrears of rent",
+          "content": "Three years. When the arrears become due.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "53",
+          "title": "",
+          "content": "By a vendor of immovable property\nfor personal payment of unpaid\npurchase-money.\nThree years. The time fixed for completing the sale,\nor (where the title is accepted after\nthe time fixed for completion) the\ndate of the acceptance.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "54",
+          "title": "",
+          "content": "For specific performance of a\ncontract.\nThree years. The date fixed for the performance, or, if\nno such date is fixed, when the\nplaintiff has notice that performance\nis refused.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "55",
+          "title": "",
+          "content": "For compensation for the breach of\nany contract, express or implied\nnot herein specially provided\nfor.\nThree years. When the contract is broken or (where\nthere are successive breaches) when\nthe breach in respect of which the\nsuit is instituted occurs or (where the\nbreach is continuing) when it ceases.\nPART III.—SUITS RELATING TO DECLARATIONS",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "56",
+          "title": "",
+          "content": "To declare the forgery of an\ninstrument issued or registered.\nThree years. When the issue or registration becomes\nknown to the plaintiff.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "57",
+          "title": "",
+          "content": "To obtain a declaration that an\nalleged adoption is invalid, or\nnever, in fact, took place.\nThree years. When the alleged adoption becomes\nknown to the plaintiff.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "58",
+          "title": "To obtain any other declaration",
+          "content": "Three years. When the right to sue first accrues.\nPART IV.—SUITS RELATING TO DECREES AND INSTRUMENTS",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "59",
+          "title": "",
+          "content": "To cancel or set aside an instrument\nor decree or for the rescission of\na contract.\nThree years. When the facts entitling the plaintiff to\nhave the instrument or decree\ncancelled or set aside or the contract\nrescinded first become known to him.\n60.\nTo set aside a transfer of property\nmade by the guardian of a\nward—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "by the ward who has attained\nmajority;\nThree years. When the ward attains majority.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "by the ward’s legal\nrepresentative—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "i",
+              "content": "when the ward dies within\nthree years from the date of\nattaining majority.\nThree years. When the ward attains majority.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "ii",
+              "content": "when the ward dies before\nattaining majority.\nThree years. When the ward dies.\nPART V.—SUITS RELATING TO IMMOVABLE PROPERTY",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "61",
+          "title": "By a mortgagor",
+          "content": "",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "to redeem or recover\npossession of immovable\nproperty mortgaged;\nThirty years.\nWhen the right to redeem or to recover\npossession accrues.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "to recover possession of\nimmovable property mortgaged\nand afterwards transferred by\nthe mortgagee for a valuable\nconsideration;\nTwelve years. When the transfer becomes known to the\nplaintiff.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "to recover surplus collections\nreceived by the mortgagee after\nthe mortgage has been\nsatisfied.\nThree years. When the mortgagor re-enters on the\nmortgaged property.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "62",
+          "title": "",
+          "content": "To enforce payment of money\nsecured by a mortgage or\notherwise charged upon\nimmovable property.\nTwelve years. When the money sued for becomes due.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "63",
+          "title": "By a mortgagee",
+          "content": "",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "for foreclosure; Thirty years.\nWhen the money secured by the mortgage\nbecomes due.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "for possession of immovable\nproperty mortgaged.\nTwelve years.\nWhen the mortgagee becomes entitled to\npossession.\n64.\nFor possession of immovable\nproperty based on previous\npossession and not on title, when\nthe plaintiff while in possession\nof the property has been\ndispossessed.\nTwelve years. The date of dispossession.\n65.\nFor possession of immovable\nproperty or any interest therein\nbased on title.",
+              "children": []
+            },
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "For the purposes of\nthis article—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "where the suit is by a\nremainderman, a reversioner\n(other than a landlord) or a\ndevisee, the possession of the\ndefendant shall be deemed to\nbecome adverse only when the\nestate of the remainderman,\nreversioner or devisee, as the\ncase may be, falls into\npossession;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "where the suit is by a Hindu\nor Muslim entitled to the\npossession of immovable\nproperty on the death of a\nHindu or Muslim female, the\npossession of the defendant\nshall be deemed to become\nadverse only when the female\ndies;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "where the suit is by a\npurchaser at a sale in execution\nof a decree when the judgment-\ndebtor was out of possession at\nthe date of the sale, the\npurchaser shall be deemed to\nbe a representative of the\njudgment-debtor who was out\nof possession.\nTwelve years. When the possession of the defendant\nbecomes adverse to the plaintiff.\n66.\nFor possession of immovable\nproperty when the plaintiff has\nbecome entitled to possession by\nreason of any forfeiture or breach\nof condition.\nTwelve years.\nWhen the forfeiture is incurred or the\ncondition is broken.\n67.\nBy a landlord to recover possession\nfrom a tenant.\nTwelve years. When the tenancy is determined.\nPART VI.—SUITS RELATING TO MOVABLE PROPERTY\n68.\nFor specific movable property lost,\nor acquired by theft, or dishonest\nmisappropriation or conversion.\nThree years.\nWhen the person having the right to the\npossession of the property first learns\nin whose possession it is.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "69",
+          "title": "For other specific movable property",
+          "content": "Three years. When the property is wrongfully taken.\n70.\nTo recover movable property\ndeposited or pawned from a\ndepositary or pawnee.\nThree years. The date of refusal after demand.\nDescription of suit Period of\nlimitation\nTime from which period begins to run",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "71",
+          "title": "",
+          "content": "To recover movable property\ndeposited or pawned, and\nafterwards bought from the\ndepository or pawnee for a\nvaluable consideration.\nThree years. When the sale becomes known to the\nplaintiff.\nPART VII.—SUITS RELATING TO TORT",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "72",
+          "title": "",
+          "content": "For compensation for doing or for\nomitting to do an act alleged to\nbe in pursuance of any enactment\nin force for the time being in the\nterritories to which this Act\nextends.\nOne year. When the act or omission takes place.\n73.\nFor compensation for false\nimprisonment.\nOne year. When the imprisonment ends.\n74.\nFor compensation for a malicious\nprosecution.\nOne year.\nWhen the plaintiff is acquitted or the\nprosecution is otherwise terminated.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "75",
+          "title": "For compensation for libel",
+          "content": "One year. When the libel is published.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "76",
+          "title": "For compensation for slander",
+          "content": "One year.\nWhen the words are spoken, or, if the\nwords are not actionable in\nthemselves, when the special damage\ncomplained of results.\n77.\nFor compensation for loss of service\noccasioned by the seduction of\nthe plaintiff’s servant or\ndaughter.\nOne year. When the loss occurs.\n78.\nFor compensation for inducing a\nperson to break a contract with\nthe plaintiff.\nOne year. The date of the breach.\n79.\nFor compensation for an illegal,\nirregular or excessive distress.\nOne year. The date of the distress.\n80.\nFor compensation for wrongful\nseizure of movable property\nunder legal process.\nOne year. The date of the seizure.\n81.\nBy executors, administrators or\nrepresentatives under the Legal\nRepresentatives’ Suits Act, 1855\n(12 of 1855).\nOne year.\nThe date of the death of the person\nwronged.\n82.\nBy executors, administrators or\nrepresentatives under the Indian\nFatal Accidents Act, 1855 (13 of\n1855).\nTwo years. The date of the death of the person killed.\n83.\nUnder the Legal Representatives’\nSuits Act, 1855 (12 of 1855),\nagainst an executor, an\nadministrator or any other\nrepresentative.\nTwo years. When the wrong complained of is done.\n84.\nAgainst one who, having a right to\nuse property for specific\npurposes, perverts it to other\npurposes.\nTwo years.\nWhen the perversion first becomes known\nto the person injured thereby.\nDescription of suit\nPeriod of limitation Time from which period begins to run",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "85",
+          "title": "",
+          "content": "For compensation for obstructing a\nway or a water-course.\nThree years. The date of the obstruction.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "86",
+          "title": "",
+          "content": "For compensation for diverting a\nwater-course.\nThree years. The date of the diversion.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "87",
+          "title": "",
+          "content": "For compensation for trespass upon\nimmovable property.\nThree years. The date of the trespass.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "88",
+          "title": "",
+          "content": "For compensation for infringing\ncopyright or any other exclusive\nprivilege.\nThree years. The date of the infringement.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "89",
+          "title": "To restrain waste",
+          "content": "Three years. When the waste begins.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "90",
+          "title": "",
+          "content": "For compensation for injury caused\nby an injunction wrongfully\nobtained.\nThree years. When the injunction ceases.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "91",
+          "title": "For compensation,",
+          "content": "",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "for wrongfully taking or detaining\nany specific movable\nproperty lost, oracquired by theft,\nor dishonest misappropriation, or\nconversion;\nThree years.\nWhen the person having the right to the\npossession of the property first learns\nin whose possession it is.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "for wrongfully taking or injuring\nor wrongfully detaining any other\nspecific movable property.\nThree years. When the property is wrongfully taken or\ninjured, or when the detainer’s\npossession becomes unlawful.\nPART VIII.—SUITS RELATING TO TRUSTS AND TRUST PROPERTY",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "92",
+          "title": "",
+          "content": "To recover possession of immovable\nproperty conveyed or bequeathed\nin trust and afterwards transferred\nby the trustee for a valuable\nconsideration.\nTwelve years. When the transfer becomes known to the\nplaintiff.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "93",
+          "title": "",
+          "content": "To recover possession of movable\nproperty conveyed or bequeathed\nin trust and afterwards transferred\nby the trustee for a valuable\nconsideration.\nThree years. When the transfer becomes known to the\nplaintiff.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "94",
+          "title": "",
+          "content": "To set aside a transfer of immovable\nproperty comprised in a Hindu,\nMuslim or Buddhist religious or\ncharitable endowment, made by a\nmanager thereof for a valuable\nconsideration.\nTwelve years. When the transfer becomes known to the\nplaintiff.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "95",
+          "title": "",
+          "content": "To set aside a transfer of movable\nproperty comprised in a Hindu,\nMuslim or Buddhist religious or\ncharitable endowment, made by a\nmanager thereof for a valuable\nconsideration.\nThree years. When the transfer becomes known to the\nplaintiff.\n96.\nBy the manager of Hindu, Muslim or\nBuddhist religious or charitable\nendowment to recover possession\nof movable or immovable\nproperly comprised in the\nendowment which has been\ntransferred by a previous\nmanager for a valuable\nconsideration.\nTwelve years. The date of death, resignation or removal\nof the transferor or the date of\nappointment of the plaintiff as\nmanager of the endowment,\nwhichever is later.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "1",
+          "title": "Subs. by Act 52 of 1964, s. 3 and the Second Schedule, for “an order under rule 63 or rule 103,” (w.e.f. 29",
+          "content": "12-1964).\nPART IX.—SUITS RELATING TO MISCELLANEOUS MATTERS",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "97",
+          "title": "To enforce a right of pre",
+          "content": "emption\nwhether the right is founded on\nlaw or general usage or on\nspecial contract.\nOne year. When the purchaser take under the sale\nsought to be impeached, physical\npossession of the whole or part of the\nproperty sold, or, where the subject\nmatter of the sale does not admit of\nphysical possession of the whole or part\nof the property, when the instrument of\nsale is registered.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "98",
+          "title": "",
+          "content": "By a person against whom\n[an\norder referred to in rule 63 or in\nrule 103] of Order XXI of the\nCode of Civil Procedure, 1908\n(5 of 1908), or an order under\nsection 28 of thePresidency\nSmall Cause Courts Act, 1882\n(15 of 1882), has been made, to\nestablish the right which he\nclaims to the property\ncomprised in the order.\nOne year. The date of the final order.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "99",
+          "title": "",
+          "content": "To set aside a sale by a civil or\nrevenue court or a sale for\narrears of Government revenue\nor for any demand recoverable\nas such arrears.\nOne year. When the sale is confirmed or would\notherwise have become final and\nconclusive had no such suit been\nbrought.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "100",
+          "title": "",
+          "content": "To alter or set aside any decision\nor order of a civil court in any\nproceeding other than a suit or\nany act or order of an officer of\nGovernment in his official\ncapacity.\nOne year. The date of the final decision or order by the\ncourt or the date of the act or order of\nthe officer, as the case may be.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "101",
+          "title": "",
+          "content": "Upon a judgment, including a\nforeign judgment, or a\nrecognisance.\nThree years. The date of the judgment or recognisance.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "102",
+          "title": "",
+          "content": "For property which the plaintiff has\nconveyed while insane.\nThree years. When the plaintiff is restored to sanity\nand has knowledge of the conveyance.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "103",
+          "title": "",
+          "content": "To make good out of the general\nestate of a deceased trustee the\nloss occasioned by a breach of\ntrust.\nThree years. The date of the trustee's death or if the\nloss has not then resulted, the date of\nthe loss.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "104",
+          "title": "",
+          "content": "To establish a periodically\nrecurring right.\nThree years. When the plaintiff is first refused the\nenjoyment of the right.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "105",
+          "title": "",
+          "content": "By a Hindu for arrears of\nmaintenance.\nThree years. When the arrears are payable.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "106",
+          "title": "",
+          "content": "For a legacy or for a share of a\nresidur bequeathed by a testator\nor for a distributive share of the\nproperty of an intestate against\nan executor or an administrator\nor some other person legally\ncharged with the duty of\ndistributing the estate.\nTwelve years. When the legacy or share becomes\npayable or deliverable.\n107.\nFor possession of a hereditary\noffice.",
+          "children": [
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "A hereditary office\nis possessed when the properties\nthereof are usually received, or\n(if there are no properties) when\nthe duties thereof are usually\nperformed.\nTwelve years.\nWhen the defendant takes possession of\nthe office adversely to the plaintiff.\n108.\nSuit during the life of a Hindu or\nMuslim female by a Hindu or\nMuslim who, if the female died\nat the date of instituting the suit,\nwould be entitled to the\npossession of land, to have an\nalienation of such land made by\nthe female declared to be void\nexcept for her life or until her re-\nmarriage.\nTwelve years. The date of the alienation.\n109.\nBy a Hindu governed by\nMitakshara law to set aside his\nfather’s alienation of ancestral\nproperty.\nTwelve years.\nWhen the alienee takes possession of the\nproperty.\n110.\nBy a person excluded from a joint\nfamily property to enforce a\nright to share therein.\nTwelve years.\nWhen the exclusion becomes known to\nthe plaintiff.\n111.\nBy or on behalf of any local\nauthority for possession of any\npublic street or road or any part\nthereof from which it has been\ndispossessed or of which it has\ndiscontinued the possession.\nThirty years.\nThe date of the dispossession or\ndiscontinuance.\n112.\nAny suit (except a suit before the\nSupreme Court in the exercise of\nits original jurisdiction) by or on\nbehalf of the Central\nGovernment or any State\nGovernment, including the\nGovernment of the State of\nJammu and Kashmir.\nThirty years.\nWhen the period of limitation would\nbegin to run under this Act against a\nlike suit by a private person.\nPART X.—SUITS FOR WHICH THERE IS NO PRESCRIBED PERIOD\n113.\nAny suit for which no period of\nlimitation is provided elsewhere\nin this Schedule.\nThree years. When the right to sue accrues.\nSECOND DIVISION—APPEALS\n114.\nAppeal from an order of\nacquittal,—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "under sub-section (1) or sub-\nsection (2) of section 417 of\nthe Code of Criminal\nProcedure, 1898 (5 of 1898);\nNinety days. The date of the order appealed from.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "under sub-section (3) of\nsection 417 of that Code.\nThirty days. The date of the grant of special leave.\n115.\nUnder the Code of Criminal\nProcedure, 1898 (5 of 1898)—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "from a sentence of death\npassed by a court of session or\nby a High Court in the\nexercise of its original\ncriminal jurisdiction;\nThirty days. The date of the sentence.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "from any other sentence or\nany order not being an order\nof acquittal—",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "i",
+              "content": "to the High Court Sixty days. The date of the sentence or order.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "ii",
+              "content": "to any other court Thirty days. The date of the sentence or order.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "116",
+          "title": "",
+          "content": "Under the Code of Civil Procedure,",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "1908",
+          "title": "(5 of 1908)",
+          "content": "",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "to a High Court from any\ndecree or order.\nNinety days. The date of the decree or order.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "to any other court from any\ndecree or order.\nThirty days. The date of the decree or order.\n117.\nFrom a decree or order of any High\nCourt to the same Court.\nThirty days. The date of the decree or order.\nTHIRD DIVISION—APPLICATIONS\nPART I.—APPLICATIONS IN SPECIFIED CASES",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "118",
+          "title": "",
+          "content": "For leave to appear and defend a\nsuit under summary\nprocedure.\nTen days. When the summons is served.\n119.\nUnder the Arbitration Act, 1940\n(10 of 1940),—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "for the filing in court of an\naward;\nThirty days.\nThe date of service of the notice of the\nmaking of the award;",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "for setting aside an award\nor getting an award remitted\nfor reconsideration.\nThirty days. The date of service of the notice of the\nfiling of the award.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "120",
+          "title": "",
+          "content": "Under the Code of Civil\nProcedure, 1908 (5 of 1908),\nto have the legalrepresentative\nof a deceased plaintiff or\nappellant or of a deceased\ndefendant or respondent, made\na party.\nNinety days. The date of death of the plaintiff,\nappellant, defendant or respondent, as\nthe case may be.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "121",
+          "title": "",
+          "content": "Under the same Code for an order\nto set aside an abatement.\nSixty days. The date of abatement.\n122.\nTo restore a suit or appeal or\napplication for review or\nrevision dismissed for default\nof appearance or for want of\nprosecution or for failure to\npay costs of service of process\nor to furnish security for costs.\nThirty days. The date of dismissal.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "1",
+          "title": "Subs. by Act 104 of 1976, s. 98, for “Thirty days” (w.e.f. 1",
+          "content": "2-1977).\n123.\nTo set aside a decree passed ex\nparte or to rehear an appeal\ndecreed or heard ex parte.",
+          "children": [
+            {
+              "type": "explanation",
+              "number": "Explanation.",
+              "content": "For the purpose of\nthis article, substituted service\nunder rule 20 of Order V of\nthe Code of Civil Procedure,",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "1908",
+          "title": "",
+          "content": "(5 of 1908) shall not be\ndeemed to be due service.\nThirty days.\nThe date of the decree or where the\nsummons or notice was not duly\nserved, when the applicant had\nknowledge of the decree.\n124.\nFor a review of judgment by a\ncourt other than the Supreme\nCourt.\nThirty days. The date of the decree or order.\n125.\nTo record an adjustment or\nsatisfaction of a decree.\nThirty days. When the payment or adjustment is made.\n126.\nFor the payment of the amount of\na decree by instalments.\nThirty days. The date of the decree.\n127.\nTo set aside a sale in execution of\na decree, including any such\napplication by a judgment-\ndebtor.\n[Sixty days]. The date of the sale.\n128.\nFor possession by one\ndispossessed of immovable\nproperty and disputing the\nright of the decree-holder or\npurchaser at a sale in\nexecution of a decree.\nThirty days. The date of the dispossession.\n129.\nFor possession after removing\nresistance or obstruction to\ndelivery of possession of\nimmovable property decreed\nor sold in execution of a\ndecree.\nThirty days. The date of resistance or obstruction.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "130",
+          "title": "For leave to appeal as a pauper",
+          "content": "",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "to the High Court; Sixty days. The date of decree appealed from.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "to any other court. Thirty days. The date of decree appealed from.\n131.\nTo any court for the exercise of\nits powers of revision under\nthe Code of Civil Procedure,",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "1908",
+          "title": "",
+          "content": "(5 of 1908), or the Code\nof Criminal Procedure, 1898\n(5 of 1898).\nNinety days.\nThe date of the decree or order or\nsentence sought to be revised.\n132.\nTo the High Court for a\ncertificate of fitness to appeal\nto the Supreme Court under\nclause (1) of article 132,",
+          "children": []
+        },
+        {
+          "type": "article",
+          "number": "133",
+          "title": "or sub",
+          "content": "clause (c) of\nclause (1) of article 134 of the\nConstitution or under any\nother law for the time being in\nforce.\nSixty days. The date of the decree, order or sentence.",
+          "children": []
+        },
+        {
+          "type": "section",
+          "number": "1",
+          "title": "Subs. by Act 53 of 1964, s. 3 and the Second Schedule, for “Where” (w.e.f. 12",
+          "content": "12-1964.)\n133.\nTo the Supreme Court for special\nleave to appeal,—",
+          "children": [
+            {
+              "type": "clause",
+              "number": "a",
+              "content": "in a case involving death\nsentence;\nSixty days.\nThe date of the judgment final order or\nsentence.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "b",
+              "content": "in a case where leave to\nappeal was refused by the\nHigh Court;\nSixty days. The date of the order of refusal.",
+              "children": []
+            },
+            {
+              "type": "clause",
+              "number": "c",
+              "content": "in any other case. Ninety days. The date of the judgment or order.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "number": "134",
+          "title": "",
+          "content": "For delivery of possession by a\npurchaser of immovable\nproperty at a sale in execution\nof a decree.\nOne year. When the sale becomes absolute.",
+          "children": [
+            {
+              "type": "footnote",
+              "number": "135",
+              "content": "For the enforcement of a decree\ngranting a mandatory\ninjunction.\nThree years. The date of the decree or where a date is\nfixed for performance, such date.\n136.\nFor the execution of any decree\n(other than a decree granting a\nmandatory injunction) or\norder of any civil court.\nTwelve years.\n[When] the decree or order becomes\nenforceable or where the decree or any\nsubsequent order directs any payment\nof money or the delivery of any\nproperty to be made at a certain date or\nat recurring periods, when default in\nmaking the payment or delivery in\nrespect of which execution is sought,\ntakes place:"
+            },
+            {
+              "type": "proviso",
+              "content": "Provided that an application for the\nenforcement or execution of a decree\ngranting a perpetual injunction shall\nnot be subject to any period of\nlimitation.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "content": "[See sections 2(j) and 3]\nFIRST DIVISION—SUITS\nDescription of suit Period of limitation Time from which period begins to run\nPART I.—SUITS RELATING TO ACCOUNTS\n1.\nFor the balance due on a mutual,\nopen and current account, where\nthere have been reciprocal\ndemands between the parties.\nThree years.\nThe close of the year in which the last\nitem admitted or proved is entered in\nthe account; such year to be computed\nas in the account."
+    },
+    {
+      "type": "part",
+      "number": "II",
+      "title": "OTHER APPLICATION",
+      "children": [
+        {
+          "type": "section",
+          "number": "137",
+          "title": "",
+          "content": "Any other application for which\nno period of limitation is\nprovided elsewhere in this\nDivision.\nThree years. When the right to apply accrues.",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

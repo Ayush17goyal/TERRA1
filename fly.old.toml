@@ -1,0 +1,50 @@
+# Fly.io Configuration for LEGATRIXON Backend
+# Deploy with: flyctl deploy
+# Monitor: flyctl logs -a legatrixon-backend
+# Scale: flyctl scale count web=2 (default 1 free)
+
+app = "legatrixon-backend"
+primary_region = "mia" # Miami (closest to India: Singapore = sin, Hong Kong = hkg)
+
+[build]
+builder = "docker"
+dockerfile = "server/Dockerfile"
+dockerfile_entrypoint = "/app/dist/src"
+
+[env]
+# Application Configuration  
+NODE_ENV = "production"
+PORT = "3000"
+LOG_LEVEL = "info"
+
+[http_service]
+internal_port = 3000
+force_https = true
+auto_stop_machines = true
+auto_start_machines = true
+
+# Health check
+[http_service.checks]
+  [http_service.checks.status]
+    enabled = true
+    uri = "/health"
+    interval = "30s"
+    timeout = "10s"
+    success_threshold = 1
+    failure_threshold = 2
+
+[[services]]
+protocol = "tcp"
+internal_port = 3000
+ports = [{ port = 80, handlers = ["http"] }, { port = 443, handlers = ["tls", "http"] }]
+
+# Machine configuration
+[[vm]]
+cpu_kind = "shared"
+cpus = 1
+memory_mb = 256  # Start small, scale up if needed
+
+# Auto-scaling (optional - requires paid plan)
+# [[vm]]
+# auto_stop_machines = true
+# auto_start_machines = true

@@ -1,0 +1,70 @@
+services:
+  # Primary Database Engine
+  postgres:
+    image: postgres:15-alpine
+    container_name: legatrixon-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: legatrixon_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Distributed Memory Cache and Task Queue Broker
+  redis:
+    image: redis:7-alpine
+    container_name: legatrixon-redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+  # Vector Database for semantic search and retrieval
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: legatrixon-qdrant
+    restart: always
+    ports:
+      - '6333:6333'
+      - '6334:6334'
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # BGE-M3 Embedding Sidecar (1024-dim dense embeddings)
+  bge-m3:
+    build:
+      context: ../server/embedding-service
+      dockerfile: Dockerfile
+    container_name: legatrixon-bge-m3
+    restart: always
+    ports:
+      - '8100:8100'
+    environment:
+      BGE_MODEL_NAME: BAAI/bge-m3
+      BGE_PORT: '8100'
+      BGE_MAX_LENGTH: '8192'
+      BGE_BATCH_SIZE: '64'
+    # GPU support — uncomment if NVIDIA GPU is available
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8100/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s  # Model download + load takes time on first start
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+

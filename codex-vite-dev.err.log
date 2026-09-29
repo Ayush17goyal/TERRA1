@@ -1,0 +1,85 @@
+[2m8:36:18 pm[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mClerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[2m8:36:20 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[LexNotebook AI] Backend offline or unreachable. TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at fetchDocuments (http://localhost:5173/src/App.tsx:8092:28)
+    at http://localhost:5173/src/App.tsx:8107:3
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6652:55)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7618:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7606:5)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7672:14)
+[2m8:36:20 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mFailed to fetch session files TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at requestResearchApi (http://localhost:5173/src/App.tsx:9102:26)
+    at fetchSessionFiles (http://localhost:5173/src/App.tsx:9116:24)
+    at http://localhost:5173/src/App.tsx:9134:4
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6652:55)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7618:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7606:5)
+[2m8:36:20 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[LexNotebook AI] Backend offline or unreachable. TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at fetchDocuments (http://localhost:5173/src/App.tsx:8092:28)
+    at http://localhost:5173/src/App.tsx:8107:3
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6652:55)
+    at reconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7701:6)
+    at recursivelyTraverseReconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7688:5)
+    at reconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7713:14)
+[2m8:36:20 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mFailed to fetch session files TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at requestResearchApi (http://localhost:5173/src/App.tsx:9102:26)
+    at fetchSessionFiles (http://localhost:5173/src/App.tsx:9116:24)
+    at http://localhost:5173/src/App.tsx:9134:4
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6652:55)
+    at reconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7701:6)
+    at recursivelyTraverseReconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7688:5)
+[2m8:36:20 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mFailed to record login session on backend: TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at recordLoginSession (http://localhost:5173/src/App.tsx:3185:31)
+[2m8:36:21 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mFailed to load verification status TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at loadVerificationStatus (http://localhost:5173/src/App.tsx:7564:27)
+    at http://localhost:5173/src/App.tsx:7578:4
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6652:55)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7618:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7606:5)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7672:14)
+[2m8:36:22 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mFailed to fetch judgment intelligence history TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at requestResearchApi (http://localhost:5173/src/App.tsx:9102:26)
+    at fetchJudgmentHistory (http://localhost:5173/src/App.tsx:9125:52)
+    at http://localhost:5173/src/App.tsx:9139:4
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6652:55)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7618:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7606:5)
+[2m8:36:22 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[App.tsx] Settings dashboard loading error: TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at loadSettingsDashboard (http://localhost:5173/src/App.tsx:7608:27)
+[2m8:46:57 pm[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mBackend activity logging failed, trying direct Supabase insert: TypeError: Failed to fetch
+    at window.fetch (http://localhost:5173/src/main.tsx:14:26)
+    at window.logUserActivity (http://localhost:5173/src/App.tsx:7843:29)
+    at http://localhost:5173/src/App.tsx:7902:28
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:6652:55)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7618:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7606:5)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=15733b98:7672:14)
+[2m10:47:04 pm[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mClerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview

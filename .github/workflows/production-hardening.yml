@@ -1,0 +1,104 @@
+name: Production Hardening Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Validate migrations
+        run: npm run verify:migrations
+      - name: Release hygiene
+        run: npm run verify:release
+      - name: Frontend lint
+        run: npm run lint
+      - name: Frontend typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm run test:unit
+      - name: Integration tests
+        run: npm run test:integration
+      - name: AI behaviour tests
+        run: npm run test:ai
+      - name: Security tests
+        run: npm run test:security
+      - name: Performance budget tests
+        run: npm run test:performance
+      - name: Coverage
+        run: npm run test:coverage
+      - name: Frontend build
+        run: npm run build
+      - name: Install backend dependencies
+        working-directory: server
+        run: npm ci
+      - name: Backend tests
+        working-directory: server
+        run: npm run test
+      - name: Backend build
+        working-directory: server
+        run: npm run build
+
+  docker-build:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: backend-runtime
+          push: false
+          tags: bare-act-mentor-backend:${{ github.sha }}
+      - name: Build frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: frontend-runtime
+          push: false
+          tags: bare-act-mentor-frontend:${{ github.sha }}
+
+  docker-publish:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: backend-runtime
+          push: true
+          tags: ghcr.io/${{ github.repository }}/bare-act-mentor-backend:${{ github.sha }},ghcr.io/${{ github.repository }}/bare-act-mentor-backend:latest
+      - name: Publish frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: frontend-runtime
+          push: true
+          tags: ghcr.io/${{ github.repository }}/bare-act-mentor-frontend:${{ github.sha }},ghcr.io/${{ github.repository }}/bare-act-mentor-frontend:latest

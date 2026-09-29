@@ -1,0 +1,124 @@
+[
+  {
+    "queryKey": "Article 21",
+    "queryText": "Article 21 Right to Life and Personal Liberty",
+    "citationsCount": 5,
+    "matchedCollections": [
+      "supreme_court",
+      "qdrant"
+    ],
+    "topCitations": [
+      {
+        "collection": "supreme_court",
+        "score": 0.772750805,
+        "source": "Supreme Court Cases | maneka_gandhi.txt | Ref: ratio_decidendi | Point: 58a61c8d-b228-ba7b-8d5a-1415ec66c1bd",
+        "excerpt": "Decision Date: 25 January 1978 Summary: The Supreme Court significantly expanded the scope of Article 21 (Right to Life and Personal Liberty) and ruled that any procedure depriving a person of personal liberty must be \"just, fair, and reasonable\", and not arbitrary or oppressive. Key Principles: 1. Procedure Established by Law vs. Due Process of Law: The court integrated the American concept of..."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.7514317,
+        "source": "Constitution | Constitution of India | Ref: 21 | Point: c5239a51-8354-33f0-c61c-007524df5a9d",
+        "excerpt": "[Constitution of India — Section 21] Article 21: Protection of life and personal liberty No person shall be deprived of his life or personal liberty except according to procedure established by law. This right has been interpreted to include the right to live with human dignity, right to clean environment, and right to privacy."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.702181045,
+        "source": "Judgments | c:\\Users\\goyal\\OneDrive\\Desktop\\LEGATRIXON-3\\server\\test-data\\sample-judgment.txt | Ref: analysis | Point: 22a4881c-f86f-44e5-4651-60bf32f09d23",
+        "excerpt": "The right to work in a safe environment free from sexual harassment is an integral part of Article 21. The Court also noted the duty of the employer to provide a safe working environment and the obligation of the State to ensure that rights are protected not only against State action but also against the acts of private individuals."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.702181045,
+        "source": "Judgments | sample-judgment.txt | Ref: analysis | Point: 2c29e10d-1fae-95f8-ffb0-ca1fef25509f",
+        "excerpt": "The right to work in a safe environment free from sexual harassment is an integral part of Article 21. The Court also noted the duty of the employer to provide a safe working environment and the obligation of the State to ensure that rights are protected not only against State action but also against the acts of private individuals."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.702181045,
+        "source": "Judgments | sample-judgment.txt | Ref: analysis | Point: 6c96e515-1d96-8f81-cbf3-fe4630f20425",
+        "excerpt": "The right to work in a safe environment free from sexual harassment is an integral part of Article 21. The Court also noted the duty of the employer to provide a safe working environment and the obligation of the State to ensure that rights are protected not only against State action but also against the acts of private individuals."
+      }
+    ]
+  },
+  {
+    "queryKey": "Section 103 BNS",
+    "queryText": "Section 103 BNS Punishment for Murder",
+    "citationsCount": 5,
+    "matchedCollections": [
+      "qdrant"
+    ],
+    "topCitations": [
+      {
+        "collection": "qdrant",
+        "score": 0.745727068,
+        "source": "BNS | Bharatiya Nyaya Sanhita | Ref: 103 | Point: 311c0893-6c39-4720-5765-fb069fa2ab54",
+        "excerpt": "[Bharatiya Nyaya Sanhita — Section 103] Section 103: Punishment for Murder (1) Whoever commits murder shall be punished with death or imprisonment for life, and shall also be liable to fine. (2) When a group of five or more persons acting in concert commits murder on the ground of race, caste or community, sex, place of birth, language, personal belief or any other ground, each member of such g..."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.650725183,
+        "source": "BNS | Bharatiya Nyaya Sanhita | Ref: 303 | Point: b180d073-c157-6921-de94-87a3bec0f7ef",
+        "excerpt": "[Bharatiya Nyaya Sanhita — Section 303] Section 303: Theft Whoever, intending to take dishonestly any movable property out of the possession of any person without that person's consent, moves that property in order to such taking, is said to commit theft. Punishment includes imprisonment for a term which may extend to three years, or with fine."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.6497432785,
+        "source": "BNSS | Bharatiya Nagarik Suraksha Sanhita | Ref: full_text | Point: e8130dec-626f-4a6a-b096-466622f94323",
+        "excerpt": "BHARATIYA NAGARIK SURAKSHA SANHITA (BNSS), 2023 The Bharatiya Nagarik Suraksha Sanhita (BNSS) replaces the Code of Criminal Procedure (CrPC), 1973. It establishes timelines and digitizes the justice delivery process. First Information Report (FIR) and Zero FIR: Any information relating to the commission of a cognizable offence can be registered via electronic communication (e-FIR) or at any pol..."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.6495856075,
+        "source": "BNS | Bharatiya Nyaya Sanhita | Ref: 113 | Point: 91328040-7193-76aa-b780-15a49db6cd14",
+        "excerpt": "[Bharatiya Nyaya Sanhita — Section 113] Section 113: Terrorist Act Whoever commits any act with intent to threaten or likely to threaten the unity, integrity, sovereignty, security or economic security of India, or with intent to strike terror or likely to strike terror in the people or any section of the people in India or in any foreign country commits a terrorist act."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.629214695,
+        "source": "BNS | Bharatiya Nyaya Sanhita | Ref: preamble | Point: a862f0b8-bd9f-8af5-3e3f-4a250ef4d618",
+        "excerpt": "BHARATIYA NYAYA SANHITA (BNS), 2023 The Bharatiya Nyaya Sanhita (BNS) replaces the Indian Penal Code (IPC), 1860. It streamlines provisions and introduces modern definitions of crimes."
+      }
+    ]
+  },
+  {
+    "queryKey": "BNSS procedural queries",
+    "queryText": "BNSS arrest procedure and magistrate production",
+    "citationsCount": 5,
+    "matchedCollections": [
+      "india_code",
+      "qdrant"
+    ],
+    "topCitations": [
+      {
+        "collection": "india_code",
+        "score": 0.6594973670000001,
+        "source": "Bare Acts | bharatiya_sakshya_adhiniyam.txt | Ref: full_text | Point: cd5c37a7-ff81-9634-9951-386c3ae5176e",
+        "excerpt": "BHARATIYA SAKSHYA ADHINIYAM (BSA), 2023 The Bharatiya Sakshya Adhiniyam (BSA) replaces the Indian Evidence Act, 1872. It updates rules of evidence to include digital records. Electronic and Digital Records Admissibility: Digital records are given the same legal status as paper documents. This includes emails, server logs, smartphone messages, files stored on cloud databases, and digital signatu..."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.6929005870000001,
+        "source": "BNSS | Bharatiya Nagarik Suraksha Sanhita | Ref: full_text | Point: e8130dec-626f-4a6a-b096-466622f94323",
+        "excerpt": "BHARATIYA NAGARIK SURAKSHA SANHITA (BNSS), 2023 The Bharatiya Nagarik Suraksha Sanhita (BNSS) replaces the Code of Criminal Procedure (CrPC), 1973. It establishes timelines and digitizes the justice delivery process. First Information Report (FIR) and Zero FIR: Any information relating to the commission of a cognizable offence can be registered via electronic communication (e-FIR) or at any pol..."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.6328376000000001,
+        "source": "BNS | Bharatiya Nyaya Sanhita | Ref: preamble | Point: a862f0b8-bd9f-8af5-3e3f-4a250ef4d618",
+        "excerpt": "BHARATIYA NYAYA SANHITA (BNS), 2023 The Bharatiya Nyaya Sanhita (BNS) replaces the Indian Penal Code (IPC), 1860. It streamlines provisions and introduces modern definitions of crimes."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.6272778250000001,
+        "source": "BNS | Bharatiya Nyaya Sanhita | Ref: 103 | Point: 311c0893-6c39-4720-5765-fb069fa2ab54",
+        "excerpt": "[Bharatiya Nyaya Sanhita — Section 103] Section 103: Punishment for Murder (1) Whoever commits murder shall be punished with death or imprisonment for life, and shall also be liable to fine. (2) When a group of five or more persons acting in concert commits murder on the ground of race, caste or community, sex, place of birth, language, personal belief or any other ground, each member of such g..."
+      },
+      {
+        "collection": "qdrant",
+        "score": 0.6234045760000001,
+        "source": "Constitution | Constitution of India | Ref: 32 | Point: 4917496a-4d6d-0a76-a225-c13e08da005f",
+        "excerpt": "[Constitution of India — Section 32] Article 32: Remedies for enforcement of rights conferred by this Part (1) The right to move the Supreme Court by appropriate proceedings for the enforcement of the rights conferred by this Part is guaranteed. (2) The Supreme Court shall have power to issue directions or orders or writs, including writs in the nature of habeas corpus, mandamus, prohibition, q..."
+      }
+    ]
+  }
+]

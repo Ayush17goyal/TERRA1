@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "savedAt": "2026-09-21T11:21:11.693Z",
+  "agents": [],
+  "archived": [],
+  "restorable": [
+    {
+      "id": "jim-msxldtge",
+      "name": "Jim",
+      "character": "jim",
+      "accent": "sky",
+      "description": "on standby",
+      "project": "C:\\Users\\goyal\\OneDrive\\Documents\\LEGATRIXON-3",
+      "tmuxTarget": "",
+      "cwd": "C:\\Users\\goyal\\OneDrive\\Documents\\LEGATRIXON-3",
+      "status": "idle",
+      "action": "reconnecting…",
+      "progress": 0,
+      "ptyId": "pty-jim-msxldtge",
+      "command": "claude --model claude-fable-5 --permission-mode bypassPermissions",
+      "provider": "claude",
+      "model": "claude-fable-5",
+      "archived": false
+    }
+  ],
+  "queues": {},
+  "selectedId": null
+}

@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_q3Kgc8djMBXTSSFVCwZpsoXi78o2",
+  "orgId": "team_vAaZOV141uDbWFrzc8694BM1",
+  "projectName": "legatrixon-3",
+  "settings": {
+    "createdAt": 1782064388026,
+    "framework": "vite",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}

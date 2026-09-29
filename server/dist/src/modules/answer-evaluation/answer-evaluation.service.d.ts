@@ -1,0 +1,34 @@
+import { Repository } from 'typeorm';
+import { ModelAnswerEntryEntity } from '../model-answer/entities/model-answer-entry.entity';
+import { QuestionBankEntryEntity } from '../question-bank/entities/question-bank-entry.entity';
+import { AnswerEvaluationAttemptEntity } from './entities/answer-evaluation-attempt.entity';
+import { AnswerEvaluationRequest, AnswerEvaluationResult } from './answer-evaluation.types';
+export declare class AnswerEvaluationService {
+    private readonly questions;
+    private readonly modelAnswers;
+    private readonly attempts;
+    constructor(questions: Repository<QuestionBankEntryEntity>, modelAnswers: Repository<ModelAnswerEntryEntity>, attempts: Repository<AnswerEvaluationAttemptEntity>);
+    evaluate(userId: string, request: AnswerEvaluationRequest): Promise<AnswerEvaluationResult>;
+    private buildFeedbackNarrative;
+    listHistory(userId: string): Promise<AnswerEvaluationAttemptEntity[]>;
+    listQuestionHistory(userId: string, questionId: string): Promise<AnswerEvaluationAttemptEntity[]>;
+    getAttempt(userId: string, id: string): Promise<AnswerEvaluationAttemptEntity>;
+    private resolveContext;
+    private evaluateDimensions;
+    private expectedSignals;
+    private structuralSignalScore;
+    private rubricAlignmentScore;
+    private rubricMatchesDimension;
+    private buildStrengths;
+    private buildWeaknesses;
+    private buildSuggestions;
+    private suggestionFor;
+    private containsSignal;
+    private keyTerms;
+    private normalize;
+    private normalizeTimeSpent;
+    private normalizeSignal;
+    private dimensionLabel;
+    private clamp;
+    private round;
+}

@@ -1,0 +1,126 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DocumentUploadService = void 0;
+class DocumentUploadService {
+    constructor(documentProcessor, vectorStore) {
+        this.documentProcessor = documentProcessor;
+        this.vectorStore = vectorStore;
+    }
+    async processUpload(fileBuffer, fileName, documentType, userId) {
+        const startTime = Date.now();
+        const documentId = this.generateDocumentId();
+        try {
+            const fileType = this.documentProcessor.normalizeFileType(fileName);
+            let extractedContent;
+            switch (fileType) {
+                case 'PDF':
+                    extractedContent = await this.documentProcessor.extractFromPDF(fileBuffer, fileName);
+                    break;
+                case 'DOCX':
+                    extractedContent = await this.documentProcessor.extractFromDOCX(fileBuffer, fileName);
+                    break;
+                case 'TXT':
+                case 'MD':
+                    extractedContent = await this.documentProcessor.extractFromText(fileBuffer, fileName);
+                    break;
+                default:
+                    throw new Error(`Unsupported file type: ${fileType}`);
+            }
+            const validation = this.documentProcessor.validateExtraction(extractedContent.text, extractedContent.metadata);
+            if (!validation.isValid) {
+                return {
+                    success: false,
+                    documentId,
+                    fileName,
+                    documentType,
+                    extractedWordCount: 0,
+                    chunkCount: 0,
+                    qualityScore: validation.qualityScore,
+                    vectorsStored: 0,
+                    extractionStatus: 'Extraction Failed',
+                    message: `Extraction failed: ${validation.message}`,
+                    previewContent: '',
+                    metadata: extractedContent.metadata,
+                    error: validation.message,
+                };
+            }
+            const chunks = this.documentProcessor.createChunks(extractedContent.text, documentId, fileName, { chunkSize: 2000, overlapSize: 300 });
+            if (chunks.length === 0) {
+                return {
+                    success: false,
+                    documentId,
+                    fileName,
+                    documentType,
+                    extractedWordCount: 0,
+                    chunkCount: 0,
+                    qualityScore: validation.qualityScore,
+                    vectorsStored: 0,
+                    extractionStatus: 'Chunking Failed',
+                    message: 'Failed to create document chunks',
+                    previewContent: '',
+                    metadata: extractedContent.metadata,
+                    error: 'No chunks created',
+                };
+            }
+            const vectorStoreResult = await this.vectorStore.storeChunks(documentId, chunks, {
+                document_type: documentType,
+                user_id: userId,
+                source_file: fileName,
+                quality_score: validation.qualityScore,
+            });
+            if (!vectorStoreResult.success) {
+                console.warn(`Vector storage failed: ${vectorStoreResult.error}`);
+            }
+            const wordCount = extractedContent.text.split(/\s+/).filter(Boolean).length;
+            const processingTime = Date.now() - startTime;
+            return {
+                success: true,
+                documentId,
+                fileName,
+                documentType,
+                extractedWordCount: wordCount,
+                chunkCount: chunks.length,
+                qualityScore: validation.qualityScore,
+                vectorsStored: vectorStoreResult.vectorsGenerated || 0,
+                extractionStatus: 'Indexed Successfully',
+                message: `Document processed successfully in ${processingTime}ms. ${chunks.length} chunks created with embeddings.`,
+                previewContent: extractedContent.text.slice(0, 1200),
+                metadata: extractedContent.metadata,
+            };
+        }
+        catch (error) {
+            console.error(`Document upload failed: ${error.message}`);
+            return {
+                success: false,
+                documentId,
+                fileName,
+                documentType,
+                extractedWordCount: 0,
+                chunkCount: 0,
+                qualityScore: 0,
+                vectorsStored: 0,
+                extractionStatus: 'Error',
+                message: `Processing error: ${error.message}`,
+                previewContent: '',
+                metadata: {
+                    fileName,
+                    fileType: this.documentProcessor.normalizeFileType(fileName),
+                    fileSize: fileBuffer.length,
+                    uploadedAt: new Date().toISOString(),
+                },
+                error: error.message,
+            };
+        }
+    }
+    generateDocumentId() {
+        const prefix = 'doc';
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).slice(2, 10);
+        return `${prefix}_${timestamp}_${random}`;
+    }
+    countWords(text) {
+        return text.trim().split(/\s+/).filter(Boolean).length;
+    }
+}
+exports.DocumentUploadService = DocumentUploadService;
+//# sourceMappingURL=document-upload.js.map

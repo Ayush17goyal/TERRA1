@@ -1,0 +1,65 @@
+[31m[Nest] 13924  - [39m09/06/2026, 2:02:22 pm [31m  ERROR[39m [38;5;3m[BgeM3Provider] [39m[31m[generateBatchEmbeddings[0..1]] Failed after 3 attempts: [39m
+[31m[Nest] 13924  - [39m09/06/2026, 2:02:25 pm [31m  ERROR[39m [38;5;3m[NotebookService] [39m[31mLLM provider openai study generation failed: 404 The model `gpt-4-1106-preview` does not exist or you do not have access to it.. Trying next available provider...[39m
+Error: 404 The model `gpt-4-1106-preview` does not exist or you do not have access to it.
+    at APIError.generate (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\core\error.js:54:20)
+    at OpenAI.makeStatusError (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:258:32)
+    at OpenAI.makeRequest (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:452:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async NotebookService.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1735:34)
+    at async NotebookService.processExtractedText (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:303:32)
+    at async NotebookService.processDocumentAsync (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:205:13)
+[31m[Nest] 13924  - [39m09/06/2026, 2:02:48 pm [31m  ERROR[39m [38;5;3m[NotebookService] [39m[31mLLM provider gemini study generation failed: 503 status code (no body). Trying next available provider...[39m
+Error: 503 status code (no body)
+    at APIError.generate (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\core\error.js:66:20)
+    at OpenAI.makeStatusError (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:258:32)
+    at OpenAI.makeRequest (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:452:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async NotebookService.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1735:34)
+    at async NotebookService.processExtractedText (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:303:32)
+    at async NotebookService.processDocumentAsync (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:205:13)
+[31m[Nest] 13924  - [39m09/06/2026, 2:02:48 pm [31m  ERROR[39m [38;5;3m[NotebookService] [39m[31mLLM provider deepseek study generation failed: 404 404 page not found
+. Trying next available provider...[39m
+Error: 404 404 page not found
+
+    at APIError.generate (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\core\error.js:54:20)
+    at OpenAI.makeStatusError (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:258:32)
+    at OpenAI.makeRequest (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:452:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async NotebookService.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1735:34)
+    at async NotebookService.processExtractedText (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:303:32)
+    at async NotebookService.processDocumentAsync (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:205:13)
+[31m[Nest] 13924  - [39m09/06/2026, 2:04:58 pm [31m  ERROR[39m [38;5;3m[NotebookService] [39m[31mLLM provider openai study generation failed: 404 The model `gpt-4-1106-preview` does not exist or you do not have access to it.. Trying next available provider...[39m
+Error: 404 The model `gpt-4-1106-preview` does not exist or you do not have access to it.
+    at APIError.generate (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\core\error.js:54:20)
+    at OpenAI.makeStatusError (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:258:32)
+    at OpenAI.makeRequest (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:452:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async NotebookService.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1735:34)
+    at async NotebookService.generateStudyForgeForDocument (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1570:28)
+    at async NotebookController.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.controller.js:90:20)
+    at async C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[31m[Nest] 13924  - [39m09/06/2026, 2:05:05 pm [31m  ERROR[39m [38;5;3m[NotebookService] [39m[31mLLM provider gemini study generation failed: 503 status code (no body). Trying next available provider...[39m
+Error: 503 status code (no body)
+    at APIError.generate (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\core\error.js:66:20)
+    at OpenAI.makeStatusError (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:258:32)
+    at OpenAI.makeRequest (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:452:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async NotebookService.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1735:34)
+    at async NotebookService.generateStudyForgeForDocument (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1570:28)
+    at async NotebookController.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.controller.js:90:20)
+    at async C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\router\router-proxy.js:9:17
+[31m[Nest] 13924  - [39m09/06/2026, 2:05:05 pm [31m  ERROR[39m [38;5;3m[NotebookService] [39m[31mLLM provider deepseek study generation failed: 404 404 page not found
+. Trying next available provider...[39m
+Error: 404 404 page not found
+
+    at APIError.generate (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\core\error.js:54:20)
+    at OpenAI.makeStatusError (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:258:32)
+    at OpenAI.makeRequest (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\openai\client.js:452:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async NotebookService.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1735:34)
+    at async NotebookService.generateStudyForgeForDocument (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.service.js:1570:28)
+    at async NotebookController.generateStudyForge (C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\dist\modules\notebook\notebook.controller.js:90:20)
+    at async C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async C:\Users\goyal\OneDrive\Desktop\LEGATRIXON-3\server\node_modules\@nestjs\core\router\router-proxy.js:9:17
