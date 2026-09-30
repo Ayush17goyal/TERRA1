@@ -87,3 +87,28 @@ export declare class AiLearningActivity {
     metadata: any;
     createdAt: Date;
 }
+export declare class AiQuestionVaultItem {
+    id: string;
+    userId: string;
+    isPublic: boolean;
+    subject: string;
+    topic: string;
+    subtopic: string;
+    legalDomain: string;
+    questionType: string;
+    difficulty: string;
+    marks: number;
+    sectionName: string;
+    examType: string;
+    year: string;
+    sourceDocName: string;
+    sourceDocNo: string;
+    question: string;
+    options: string[];
+    modelAnswer: string;
+    rubric: any;
+    legalRef: string;
+    usageCount: number;
+    metadata: any;
+    createdAt: Date;
+}

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AiLearningActivity = exports.AiFlashcardReview = exports.AiStudyKit = exports.AiMindMap = exports.AiMockTestAttempt = exports.AiMockTest = exports.AiLearningSource = void 0;
+exports.AiQuestionVaultItem = exports.AiLearningActivity = exports.AiFlashcardReview = exports.AiStudyKit = exports.AiMindMap = exports.AiMockTestAttempt = exports.AiMockTest = exports.AiLearningSource = void 0;
 const typeorm_1 = require("typeorm");
 let AiLearningSource = class AiLearningSource {
 };
@@ -333,4 +333,102 @@ __decorate([
 exports.AiLearningActivity = AiLearningActivity = __decorate([
     (0, typeorm_1.Entity)('ai_learning_activity')
 ], AiLearningActivity);
+let AiQuestionVaultItem = class AiQuestionVaultItem {
+};
+exports.AiQuestionVaultItem = AiQuestionVaultItem;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'user_id', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'is_public', default: false }),
+    __metadata("design:type", Boolean)
+], AiQuestionVaultItem.prototype, "isPublic", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "subject", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "topic", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "subtopic", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'legal_domain', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "legalDomain", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'question_type' }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "questionType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 'Intermediate' }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "difficulty", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 5 }),
+    __metadata("design:type", Number)
+], AiQuestionVaultItem.prototype, "marks", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'section_name', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "sectionName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'exam_type', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "examType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "year", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'source_doc_name', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "sourceDocName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'source_doc_no', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "sourceDocNo", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text' }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "question", void 0);
+__decorate([
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Array)
+], AiQuestionVaultItem.prototype, "options", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'model_answer', type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "modelAnswer", void 0);
+__decorate([
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Object)
+], AiQuestionVaultItem.prototype, "rubric", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'legal_ref', nullable: true }),
+    __metadata("design:type", String)
+], AiQuestionVaultItem.prototype, "legalRef", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'usage_count', default: 0 }),
+    __metadata("design:type", Number)
+], AiQuestionVaultItem.prototype, "usageCount", void 0);
+__decorate([
+    (0, typeorm_1.Column)('simple-json', { default: '{}' }),
+    __metadata("design:type", Object)
+], AiQuestionVaultItem.prototype, "metadata", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
+    __metadata("design:type", Date)
+], AiQuestionVaultItem.prototype, "createdAt", void 0);
+exports.AiQuestionVaultItem = AiQuestionVaultItem = __decorate([
+    (0, typeorm_1.Entity)('ai_question_vault')
+], AiQuestionVaultItem);
 //# sourceMappingURL=learning-workspace.entities.js.map

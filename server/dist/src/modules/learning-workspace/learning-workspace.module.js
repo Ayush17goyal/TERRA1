@@ -28,6 +28,7 @@ exports.LearningWorkspaceModule = LearningWorkspaceModule = __decorate([
                 learning_workspace_entities_1.AiMockTest,
                 learning_workspace_entities_1.AiMockTestAttempt,
                 learning_workspace_entities_1.AiStudyKit,
+                learning_workspace_entities_1.AiQuestionVaultItem,
             ]),
             retrieval_module_1.RetrievalModule,
             exam_module_1.ExamModule,

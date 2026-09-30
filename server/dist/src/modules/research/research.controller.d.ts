@@ -258,41 +258,6 @@ export declare class ResearchController {
     deleteJudgmentReport(req: any, id: string): Promise<{
         success: boolean;
     }>;
-    getMentorStep(req: any, body: {
-        topic: string;
-        stepIndex: number;
-        researchPlan?: any;
-    }): Promise<{
-        researchPlan?: {
-            areaOfLaw: string;
-            steps: Array<{
-                id: string;
-                title: string;
-                queryFocus: string;
-                sourceFocus: string[];
-            }>;
-        };
-        stepIndex: number;
-        totalSteps: number;
-        stepTitle: string;
-        whatToDo: string;
-        whyItMatters: string;
-        mentorTip: string;
-        authorities: {
-            type: string;
-            title: string;
-            excerpt: string;
-            source: string;
-        }[];
-        isLast: boolean;
-        notebookPatch: any;
-    }>;
-    getMentorMemo(req: any, body: {
-        topic: string;
-        notebook: any;
-    }): Promise<{
-        memo: string;
-    }>;
     challengeResearch(req: any, body: {
         reportId: string;
     }): Promise<{

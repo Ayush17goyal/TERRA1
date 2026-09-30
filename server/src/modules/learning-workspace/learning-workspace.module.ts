@@ -9,6 +9,7 @@ import {
   AiMockTest,
   AiMockTestAttempt,
   AiStudyKit,
+  AiQuestionVaultItem,
 } from './learning-workspace.entities';
 import { LearningWorkspaceService } from './learning-workspace.service';
 import { RetrievalModule } from '../retrieval/retrieval.module';
@@ -24,6 +25,7 @@ import { ExamModule } from '../exam/exam.module';
       AiMockTest,
       AiMockTestAttempt,
       AiStudyKit,
+      AiQuestionVaultItem,
     ]),
     RetrievalModule,
     ExamModule,

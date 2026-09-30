@@ -116,7 +116,7 @@ export declare class CaseReasoningSimulatorService {
         status: string;
     }[]>;
     getAttempt(userId: string, id: string): Promise<{
-        report: any;
+        report: CaseReasoningReport;
         caseNameOrProblem: string;
         studentReasoning: any;
     }>;
@@ -125,10 +125,8 @@ export declare class CaseReasoningSimulatorService {
         status: string;
     }>;
     private buildPrompt;
-    Case: any;
-    name: any;
-    or: any;
-    legal: any;
-    problem: $;
+    private normalizeReport;
+    private section;
+    private localReport;
 }
 export {};

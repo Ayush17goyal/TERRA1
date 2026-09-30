@@ -2307,6 +2307,8 @@ function App() {
     recordLoginSession();
   }, [isSignedIn, user]);
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   const handleLogout = async () => {
     try {
       const token = await getToken();
@@ -2326,6 +2328,8 @@ function App() {
     navigate('/')
   }
 
+  const currentUserEmail = user?.primaryEmailAddress?.emailAddress || (user?.emailAddresses && user.emailAddresses[0]?.emailAddress) || 'student@example.com';
+
   return (
     <div className="app-shell">
       <LazyBoundary><ContractPopup theme={theme} /></LazyBoundary>
@@ -2333,8 +2337,103 @@ function App() {
         theme={theme}
         onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         isLoggedIn={Boolean(isSignedIn)}
-        onLogout={handleLogout}
+        onLogout={() => setShowLogoutConfirm(true)}
       />
+
+      {showLogoutConfirm && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 99999,
+          background: 'rgba(0, 0, 0, 0.65)',
+          backdropFilter: 'blur(6px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: '440px',
+            background: 'var(--card)',
+            border: '1px solid var(--line)',
+            borderRadius: '20px',
+            padding: '28px',
+            boxShadow: 'var(--shadow)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '18px',
+            color: 'var(--text)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                background: 'rgba(239, 68, 68, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ef4444',
+                flexShrink: 0
+              }}>
+                <LogOut size={22} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)' }}>
+                  Do you want to logout of this account?
+                </h3>
+              </div>
+            </div>
+
+            <div style={{
+              padding: '14px 16px',
+              borderRadius: '12px',
+              background: 'var(--card-alt)',
+              border: '1px solid var(--line)',
+              fontSize: '0.88rem'
+            }}>
+              <span style={{ color: 'var(--text-soft)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '4px' }}>
+                Signed in as:
+              </span>
+              <strong style={{ color: 'var(--gold)', wordBreak: 'break-all', fontSize: '0.94rem' }}>
+                {currentUserEmail}
+              </strong>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '6px' }}>
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(false)}
+                className="btn btn-outline"
+                style={{ padding: '10px 18px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setShowLogoutConfirm(false);
+                  await handleLogout();
+                }}
+                className="btn"
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  background: '#ef4444',
+                  color: '#ffffff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 700
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <LazyBoundary>
         <Routes>
           <Route path="/" element={<LandingPageV2 />} />
@@ -16849,7 +16948,7 @@ ${assessmentBody}
         )}
 
         {((activeTab === 'Mock Test') || (activeTab === 'Mock test')) && (
-          <MockTestPlatform apiToken={apiToken} />
+          <MockTestPlatform apiToken={apiToken} theme={theme} />
         )}
 
         {activeTab === 'Legal Research' && (

@@ -287,7 +287,7 @@ IMPORTANT RULES:
 - Write the bestCaseReport and professionalSolution independently as ideal model answers — not derived from the student's flawed reasoning.
 - All scores must be integers 0-100. finalScore = weighted average of all criteria.
 - grade must be one of: A (85-100), B (70-84), C (55-69), D (40-54), F (0-39)
-${isIrrelevant ? '- The student submission appears very short or lacks legal vocabulary. Evaluate accordingly with low scores.' : ''}`; ''}
+${isIrrelevant ? '- The student submission appears very short or lacks legal vocabulary. Evaluate accordingly with low scores.' : ''}
 
 Case name or legal problem:
 ${caseNameOrProblem}

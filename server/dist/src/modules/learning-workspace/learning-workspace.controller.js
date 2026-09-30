@@ -75,10 +75,49 @@ let LearningWorkspaceController = class LearningWorkspaceController {
         await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Reprocessed Learning Source', metadata: { id } });
         return result;
     }
+    async getMockTests(req) {
+        const userId = this.userId(req);
+        return this.service.getMockTests(userId);
+    }
+    async getMockTestAttempt(req, attemptId) {
+        const userId = this.userId(req);
+        return this.service.getMockTestAttempt(userId, attemptId);
+    }
+    async getMockTestById(req, id) {
+        const userId = this.userId(req);
+        return this.service.getMockTest(userId, id);
+    }
+    async getMockTestAttempts(req, id) {
+        const userId = this.userId(req);
+        return this.service.getMockTestAttempts(userId, id);
+    }
     async generateMockTest(req, body) {
         const userId = this.userId(req);
         const result = await this.service.generateMockTest(userId, body);
         await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Generated Mock Test', metadata: { questionCount: result?.questions?.length || 0, mode: body.mode } });
+        return result;
+    }
+    async deleteMockTest(req, id) {
+        const userId = this.userId(req);
+        const result = await this.service.deleteMockTest(userId, id);
+        await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Deleted Mock Test', metadata: { id } });
+        return result;
+    }
+    async getSourceIndexedContent(req, id) {
+        const userId = this.userId(req);
+        return this.service.getSourceIndexedContent(userId, id);
+    }
+    async analyzeReferenceStructure(req, body) {
+        const userId = this.userId(req);
+        return this.service.analyzeReferenceStructure(userId, body.sourceId);
+    }
+    async uploadHandwrittenAnswerSheet(req, id, file) {
+        const userId = this.userId(req);
+        if (!file)
+            throw new common_1.BadRequestException('Handwritten answer sheet file is required.');
+        this.validateUploadedFile(file);
+        const result = await this.service.processHandwrittenAnswerSheet(userId, id, file);
+        await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Uploaded Handwritten Answer Sheet', metadata: { mockTestId: id, fileName: file?.originalname } });
         return result;
     }
     async generateDetailedAnswer(req, id, questionId, body) {
@@ -94,7 +133,7 @@ let LearningWorkspaceController = class LearningWorkspaceController {
     }
     async submitMockTest(req, id, body) {
         const userId = this.userId(req);
-        const result = await this.service.submitMockTest(userId, id, body.answers || {}, body.timeTaken || 0);
+        const result = await this.service.submitMockTest(userId, id, body.answers || {}, body.timeTaken || 0, body.negativeMarkingRate);
         await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Completed Quiz', metadata: { mockTestId: id, score: result?.score } });
         return result;
     }
@@ -274,6 +313,37 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], LearningWorkspaceController.prototype, "reprocessSource", null);
 __decorate([
+    (0, common_1.Get)('mock-tests'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "getMockTests", null);
+__decorate([
+    (0, common_1.Get)('mock-tests/attempts/:attemptId'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('attemptId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "getMockTestAttempt", null);
+__decorate([
+    (0, common_1.Get)('mock-tests/:id'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "getMockTestById", null);
+__decorate([
+    (0, common_1.Get)('mock-tests/:id/attempts'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "getMockTestAttempts", null);
+__decorate([
     (0, common_1.Post)('mock-tests/generate'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
@@ -281,6 +351,40 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], LearningWorkspaceController.prototype, "generateMockTest", null);
+__decorate([
+    (0, common_1.Delete)('mock-tests/:id'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "deleteMockTest", null);
+__decorate([
+    (0, common_1.Get)('sources/:id/indexed-content'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "getSourceIndexedContent", null);
+__decorate([
+    (0, common_1.Post)('mock-tests/analyze-structure'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "analyzeReferenceStructure", null);
+__decorate([
+    (0, common_1.Post)('mock-tests/:id/handwritten-ocr'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', { limits: { fileSize: MAX_LEARNING_UPLOAD_BYTES } })),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", Promise)
+], LearningWorkspaceController.prototype, "uploadHandwrittenAnswerSheet", null);
 __decorate([
     (0, common_1.Post)('mock-tests/:id/questions/:questionId/answer'),
     __param(0, (0, common_1.Req)()),

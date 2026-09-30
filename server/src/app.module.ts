@@ -30,6 +30,7 @@ import { AnswerEvaluationModule } from './modules/answer-evaluation/answer-evalu
 import { AnalyticsEngineModule } from './modules/analytics-engine/analytics-engine.module';
 import { LearningIntelligenceModule } from './modules/learning-intelligence/learning-intelligence.module';
 import { LegislativeDraftingMentorModule } from './modules/legislative-drafting-mentor/legislative-drafting-mentor.module';
+import { MemorialWorkflowModule } from './modules/memorial/memorial-workflow.module';
 import { HardeningModule } from './hardening/hardening.module';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -118,23 +119,9 @@ const databaseOptions: TypeOrmModuleOptions = postgresUrl
     PaymentModule,
     DraftAnalyzerModule,
     LegislativeDraftingMentorModule,
+    MemorialWorkflowModule,
     HealthModule,
     HardeningModule,
   ],
 })
 export class AppModule {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -241,3 +241,76 @@ export class AiLearningActivity {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
+
+@Entity('ai_question_vault')
+export class AiQuestionVaultItem {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ name: 'user_id', nullable: true })
+  userId: string;
+
+  @Column({ name: 'is_public', default: false })
+  isPublic: boolean;
+
+  @Column()
+  subject: string;
+
+  @Column()
+  topic: string;
+
+  @Column({ nullable: true })
+  subtopic: string;
+
+  @Column({ name: 'legal_domain', nullable: true })
+  legalDomain: string;
+
+  @Column({ name: 'question_type' })
+  questionType: string;
+
+  @Column({ default: 'Intermediate' })
+  difficulty: string;
+
+  @Column({ default: 5 })
+  marks: number;
+
+  @Column({ name: 'section_name', nullable: true })
+  sectionName: string;
+
+  @Column({ name: 'exam_type', nullable: true })
+  examType: string;
+
+  @Column({ nullable: true })
+  year: string;
+
+  @Column({ name: 'source_doc_name', nullable: true })
+  sourceDocName: string;
+
+  @Column({ name: 'source_doc_no', nullable: true })
+  sourceDocNo: string;
+
+  @Column({ type: 'text' })
+  question: string;
+
+  @Column('simple-json', { nullable: true })
+  options: string[];
+
+  @Column({ name: 'model_answer', type: 'text', nullable: true })
+  modelAnswer: string;
+
+  @Column('simple-json', { nullable: true })
+  rubric: any;
+
+  @Column({ name: 'legal_ref', nullable: true })
+  legalRef: string;
+
+  @Column({ name: 'usage_count', default: 0 })
+  usageCount: number;
+
+  @Column('simple-json', { default: '{}' })
+  metadata: any;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+}
+

@@ -96,7 +96,7 @@ export declare class LearningWorkspaceService implements OnModuleInit {
         answer: any;
         cached: boolean;
     }>;
-    submitMockTest(userId: string, id: string, answers: Record<string, string>, timeTaken?: number): Promise<AiMockTestAttempt>;
+    submitMockTest(userId: string, id: string, answers: Record<string, any>, timeTaken?: number, negativeMarkingRate?: number): Promise<AiMockTestAttempt>;
     generateMindMap(userId: string, body: any): Promise<AiMindMap>;
     generateStudyKit(userId: string, body: any): Promise<AiStudyKit>;
     reviewFlashcard(userId: string, body: any): Promise<AiFlashcardReview>;
@@ -190,7 +190,75 @@ export declare class LearningWorkspaceService implements OnModuleInit {
     private topMapKeys;
     private safe;
     private kindFromExtension;
+    getMockTests(userId: string): Promise<AiMockTest[]>;
     getMockTest(userId: string, id: string): Promise<AiMockTest>;
+    getMockTestAttempts(userId: string, mockTestId: string): Promise<AiMockTestAttempt[]>;
+    getMockTestAttempt(userId: string, attemptId: string): Promise<AiMockTestAttempt>;
+    deleteMockTest(userId: string, id: string): Promise<{
+        success: boolean;
+    }>;
+    checkObjectiveMatch(userAns: string, expected: string, options?: string[]): boolean;
+    evaluateSubjectiveAnswer(question: any, userAns: string, marks: number, sourceIds: string[]): Promise<{
+        awardedMarks: number;
+        rubricBreakdown: {
+            legalAccuracy: number;
+            issueIdentification: number;
+            reasoningAnalysis: number;
+            useOfAuthorities: number;
+            structureClarity: number;
+        };
+        keyStrengths: string[];
+        missingPoints: string[];
+        incorrectPoints?: string[];
+        suggestedImprovement: string;
+        modelAnswer: string;
+        feedback: string;
+    }>;
+    processHandwrittenAnswerSheet(userId: string, mockTestId: string, file: any): Promise<{
+        success: boolean;
+        fileName: any;
+        mockTestId: string;
+        extractedAnswers: {
+            questionId: string;
+            questionNumber: number;
+            questionText: any;
+            type: any;
+            options: any;
+            marks: any;
+            detectedAnswer: string;
+            confidence: number;
+            confidenceLevel: string;
+            requiresReview: boolean;
+            notes: any;
+        }[];
+        rawOcrText: string;
+        detectedQuestionCount: number;
+        totalQuestions: number;
+    }>;
+    getSourceIndexedContent(userId: string, sourceId: string): Promise<{
+        id: string;
+        name: string;
+        kind: string;
+        documentType: string;
+        subject: string;
+        status: string;
+        indexingProgress: number;
+        wordCount: number;
+        estimatedPages: number;
+        totalChunks: number;
+        sections: any[];
+        chunks: {
+            id: string;
+            chunkIndex: number;
+            textSnippet: string;
+            estPage: number;
+        }[];
+    }>;
+    analyzeReferenceStructure(userId: string, sourceId: string): Promise<{
+        sourceId: string;
+        sourceName: string;
+        structure: any;
+    }>;
     getMindMap(userId: string, id: string): Promise<AiMindMap>;
     getStudyKit(userId: string, id: string): Promise<AiStudyKit>;
     private log;

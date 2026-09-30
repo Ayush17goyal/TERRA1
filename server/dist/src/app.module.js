@@ -38,6 +38,7 @@ const answer_evaluation_module_1 = require("./modules/answer-evaluation/answer-e
 const analytics_engine_module_1 = require("./modules/analytics-engine/analytics-engine.module");
 const learning_intelligence_module_1 = require("./modules/learning-intelligence/learning-intelligence.module");
 const legislative_drafting_mentor_module_1 = require("./modules/legislative-drafting-mentor/legislative-drafting-mentor.module");
+const memorial_workflow_module_1 = require("./modules/memorial/memorial-workflow.module");
 const hardening_module_1 = require("./hardening/hardening.module");
 const fs = require("fs");
 const path = require("path");
@@ -123,6 +124,7 @@ exports.AppModule = AppModule = __decorate([
             payment_module_1.PaymentModule,
             draft_analyzer_module_1.DraftAnalyzerModule,
             legislative_drafting_mentor_module_1.LegislativeDraftingMentorModule,
+            memorial_workflow_module_1.MemorialWorkflowModule,
             health_module_1.HealthModule,
             hardening_module_1.HardeningModule,
         ],

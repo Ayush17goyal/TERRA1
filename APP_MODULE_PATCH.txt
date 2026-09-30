@@ -1,0 +1,9 @@
+TERRA1 server/src/app.module.ts patch
+
+1) Add import:
+import { MemorialWorkflowModule } from './modules/memorial/memorial-workflow.module';
+
+2) Inside @Module({ imports: [ ... ] }) add:
+MemorialWorkflowModule,
+
+Keep every existing current TERRA1 module. Do not replace app.module.ts with the old ZIP version.

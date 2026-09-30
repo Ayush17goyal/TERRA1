@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react'
+import { useAuth } from '@clerk/clerk-react'
 import { useMootSuite } from './MootSuiteContext'
+import { createMemorialWorkspace, MEMORIAL_WORKFLOW_LAYERS, workspaceFromBackendResult, type MemorialWorkspace } from './memorialWorkflow'
 import { jsPDF } from 'jspdf'
 import { AlignmentType, Document, HeadingLevel, Packer, Paragraph, TextRun } from 'docx'
 import pptxgen from 'pptxgenjs'
@@ -21,19 +23,14 @@ import {
   FileDown
 } from 'lucide-react'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1'
+
 // Stepper steps definition
-const WORKFLOW_STEPS = [
-  { step: 1, label: 'Fact Extraction', desc: 'Isolating key events, timelines, and parties from the compromis.' },
-  { step: 2, label: 'Issue Identification', desc: 'Formulating legal questions and maintainability boundaries.' },
-  { step: 3, label: 'Applicable Law Mapping', desc: 'Retrieving relevant articles, acts, and procedural rules.' },
-  { step: 4, label: 'Precedent Research', desc: 'Finding authoritative landmark rulings and contradictory cases.' },
-  { step: 5, label: 'Generate Petitioner Memorial', desc: 'Compiling structured arguments with cover page and prayer (Blue Theme).' },
-  { step: 6, label: 'Generate Respondent Memorial', desc: 'Compiling structured counter-arguments with cover page and prayer (Red Theme).' },
-  { step: 7, label: 'Generate Oral Arguments', desc: 'Structuring courtroom scripts and opening statements.' },
-  { step: 8, label: 'Generate Rebuttals', desc: 'Analyzing Petitioner weaknesses and drafting counter-pleas.' },
-  { step: 9, label: 'Generate Sur-Rebuttals', desc: 'Preparing defences for Petitioner against expected counters.' },
-  { step: 10, label: 'Generate Judge Questions', desc: 'Synthesizing tough questions for mock bench practice.' }
-]
+const WORKFLOW_STEPS = MEMORIAL_WORKFLOW_LAYERS.map(layer => ({
+  step: layer.step,
+  label: layer.label,
+  desc: layer.desc,
+}))
 
 const PETITIONER_MEMORIAL = `IN THE SUPREME COURT OF INDIA
 (APPELLATE JURISDICTION)
@@ -279,6 +276,7 @@ const JUDGE_QUESTIONS = `=======================================================
 
 export default function MemorialArchitect() {
   const { setActiveSubTab, setSelectedSimilarityQuery } = useMootSuite()
+  const { getToken, isSignedIn } = useAuth()
 
   const [isUploading, setIsUploading] = useState(false)
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null)
@@ -291,6 +289,8 @@ export default function MemorialArchitect() {
   // Output View State
   const [activeOutputTab, setActiveOutputTab] = useState<'petitioner' | 'respondent' | 'oral' | 'rebuttals' | 'judge_qs'>('petitioner')
   const [generationComplete, setGenerationComplete] = useState(false)
+  const [memorialWorkspace, setMemorialWorkspace] = useState<MemorialWorkspace | null>(null)
+  const [generationError, setGenerationError] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -299,8 +299,12 @@ export default function MemorialArchitect() {
     setActiveSubTab('JudgmentSimilarity')
   }
 
-  // Handle Moot Proposition Upload and Automatically Start Stepper
-  const handleMootPropositionUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const petitionerMemorialText = memorialWorkspace?.petitionerMemorial ?? PETITIONER_MEMORIAL
+  const respondentMemorialText = memorialWorkspace?.respondentMemorial ?? RESPONDENT_MEMORIAL
+  const getMemorialText = (partyType: 'Petitioner' | 'Respondent') => partyType === 'Petitioner' ? petitionerMemorialText : respondentMemorialText
+
+  // Handle Moot Proposition Upload and run the real backend Layer 0-10 memorial workflow.
+  const handleMootPropositionUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
@@ -309,40 +313,70 @@ export default function MemorialArchitect() {
     setGenerationComplete(false)
     setCurrentStep(0)
     setSimulatedLogs([])
+    setMemorialWorkspace(null)
+    setGenerationError(null)
 
-    // Simulate upload delay
-    setTimeout(() => {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('sourceName', file.name)
+      formData.append('side', 'both')
+
+      const token = isSignedIn ? await getToken() : null
+      const response = await fetch(`${API_BASE}/memorial-workflow/run`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const details = await response.text().catch(() => '')
+        throw new Error(`Backend memorial workflow failed (${response.status}). ${details}`)
+      }
+
+      const result = await response.json()
+      const workspace = workspaceFromBackendResult(file.name, result)
+      setMemorialWorkspace(workspace)
       setIsUploading(false)
-      startWorkflowSimulation()
-    }, 1200)
+      startWorkflowSimulation(workspace.logs)
+    } catch (error: any) {
+      console.error('[MemorialArchitect] Backend workflow failed; using local fallback only.', error)
+      let rawText = ''
+      if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
+        rawText = await file.text()
+      }
+      const fallbackWorkspace = createMemorialWorkspace(file.name, rawText)
+      setMemorialWorkspace(fallbackWorkspace)
+      setGenerationError(`${error?.message || 'Backend workflow failed'} Using local fallback, so PDF quality will remain template-like until the backend endpoint is reached.`)
+      setIsUploading(false)
+      startWorkflowSimulation(fallbackWorkspace.logs)
+    }
   }
 
-  // Simulate Step 1 to Step 10
-  const startWorkflowSimulation = () => {
+  // Step through the refined memorial architecture. Real backend calls should replace each layer incrementally.
+  const startWorkflowSimulation = (workflowLogs?: string[]) => {
     setIsSimulating(true)
     let stepIndex = 0
+    const logs = workflowLogs?.length ? workflowLogs : WORKFLOW_STEPS.map(step => `[LAYER ${step.step}] ${step.label}: ${step.desc}`)
 
     const interval = setInterval(() => {
       if (stepIndex < WORKFLOW_STEPS.length) {
         const step = WORKFLOW_STEPS[stepIndex]
         setCurrentStep(step.step)
-        setSimulatedLogs(prev => [
-          ...prev,
-          `[STEP ${step.step}] ${step.label} complete: ${step.desc}`
-        ])
+        setSimulatedLogs(prev => [...prev, logs[stepIndex] || `[LAYER ${step.step}] ${step.label}: ${step.desc}`])
         stepIndex++
       } else {
         clearInterval(interval)
         setIsSimulating(false)
         setGenerationComplete(true)
       }
-    }, 800)
+    }, 650)
   }
 
   // jsPDF Generation helpers
   const downloadPDF = (partyType: 'Petitioner' | 'Respondent') => {
     const doc = new jsPDF()
-    const content = partyType === 'Petitioner' ? PETITIONER_MEMORIAL : RESPONDENT_MEMORIAL
+    const content = getMemorialText(partyType)
     const lines = doc.splitTextToSize(content, 180)
     
     doc.setFont("times", "normal")
@@ -382,7 +416,7 @@ export default function MemorialArchitect() {
     doc.text("PART I: MEMORIAL ON BEHALF OF THE PETITIONER", 15, 20)
     doc.setFontSize(9)
     doc.setFont("times", "normal")
-    let lines = doc.splitTextToSize(PETITIONER_MEMORIAL, 180)
+    let lines = doc.splitTextToSize(petitionerMemorialText, 180)
     let y = 30
     lines.forEach((line: string) => {
       if (y > 280) {
@@ -401,7 +435,7 @@ export default function MemorialArchitect() {
     doc.text("PART II: MEMORIAL ON BEHALF OF THE RESPONDENT", 15, 20)
     doc.setFontSize(9)
     doc.setFont("times", "normal")
-    lines = doc.splitTextToSize(RESPONDENT_MEMORIAL, 180)
+    lines = doc.splitTextToSize(respondentMemorialText, 180)
     y = 30
     lines.forEach((line: string) => {
       if (y > 280) {
@@ -417,7 +451,7 @@ export default function MemorialArchitect() {
 
   // DOCX Generation helpers
   const downloadDOCX = (partyType: 'Petitioner' | 'Respondent') => {
-    const content = partyType === 'Petitioner' ? PETITIONER_MEMORIAL : RESPONDENT_MEMORIAL
+    const content = getMemorialText(partyType)
     const paragraphs = content.split('\n').map(line => {
       return new Paragraph({
         children: [
@@ -455,7 +489,7 @@ export default function MemorialArchitect() {
   }
 
   const downloadCombinedBookletDOCX = () => {
-    const petParagraphs = PETITIONER_MEMORIAL.split('\n').map(line => {
+    const petParagraphs = petitionerMemorialText.split('\n').map(line => {
       return new Paragraph({
         children: [
           new TextRun({
@@ -467,7 +501,7 @@ export default function MemorialArchitect() {
       })
     })
     
-    const respParagraphs = RESPONDENT_MEMORIAL.split('\n').map(line => {
+    const respParagraphs = respondentMemorialText.split('\n').map(line => {
       return new Paragraph({
         children: [
           new TextRun({
@@ -791,6 +825,16 @@ export default function MemorialArchitect() {
               </div>
             </div>
 
+            {memorialWorkspace && (
+              <div style={{ border: '1px solid rgba(197,168,128,0.25)', borderRadius: '8px', padding: '10px 12px', background: 'rgba(197,168,128,0.06)', fontSize: '0.76rem', color: 'var(--text-soft)' }}>
+                <strong style={{ color: 'var(--gold)' }}>Workflow Quality Score:</strong> {memorialWorkspace.qualityScore}/100 ·
+                <strong style={{ color: 'var(--gold)', marginLeft: '6px' }}>Preserved:</strong> {memorialWorkspace.dossier.paragraphs.length} paragraphs, {memorialWorkspace.dossier.timeline.length} timeline points, {memorialWorkspace.dossier.legalTriggers.length} legal triggers.
+                {memorialWorkspace.validationNotes.length > 0 && (
+                  <div style={{ marginTop: '6px' }}>{memorialWorkspace.validationNotes.join(' • ')}</div>
+                )}
+              </div>
+            )}
+
             {/* Document Tabs */}
             <div style={{ display: 'flex', gap: '6px', borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '6px' }}>
               {[
@@ -854,8 +898,8 @@ export default function MemorialArchitect() {
                   textAlign: 'justify'
                 }}
               >
-                {activeOutputTab === 'petitioner' && PETITIONER_MEMORIAL}
-                {activeOutputTab === 'respondent' && RESPONDENT_MEMORIAL}
+                {activeOutputTab === 'petitioner' && petitionerMemorialText}
+                {activeOutputTab === 'respondent' && respondentMemorialText}
                 {activeOutputTab === 'oral' && ORAL_ARGUMENTS}
                 {activeOutputTab === 'rebuttals' && REBUTTALS}
                 {activeOutputTab === 'judge_qs' && JUDGE_QUESTIONS}

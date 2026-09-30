@@ -97,11 +97,66 @@ export class LearningWorkspaceController {
     return result;
   }
 
+  @Get('mock-tests')
+  async getMockTests(@Req() req: any) {
+    const userId = this.userId(req);
+    return this.service.getMockTests(userId);
+  }
+
+  @Get('mock-tests/attempts/:attemptId')
+  async getMockTestAttempt(@Req() req: any, @Param('attemptId') attemptId: string) {
+    const userId = this.userId(req);
+    return this.service.getMockTestAttempt(userId, attemptId);
+  }
+
+  @Get('mock-tests/:id')
+  async getMockTestById(@Req() req: any, @Param('id') id: string) {
+    const userId = this.userId(req);
+    return this.service.getMockTest(userId, id);
+  }
+
+  @Get('mock-tests/:id/attempts')
+  async getMockTestAttempts(@Req() req: any, @Param('id') id: string) {
+    const userId = this.userId(req);
+    return this.service.getMockTestAttempts(userId, id);
+  }
+
   @Post('mock-tests/generate')
   async generateMockTest(@Req() req: any, @Body() body: any) {
     const userId = this.userId(req);
     const result = await this.service.generateMockTest(userId, body);
     await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Generated Mock Test', metadata: { questionCount: result?.questions?.length || 0, mode: body.mode } });
+    return result;
+  }
+
+  @Delete('mock-tests/:id')
+  async deleteMockTest(@Req() req: any, @Param('id') id: string) {
+    const userId = this.userId(req);
+    const result = await this.service.deleteMockTest(userId, id);
+    await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Deleted Mock Test', metadata: { id } });
+    return result;
+  }
+
+  @Get('sources/:id/indexed-content')
+  async getSourceIndexedContent(@Req() req: any, @Param('id') id: string) {
+    const userId = this.userId(req);
+    return this.service.getSourceIndexedContent(userId, id);
+  }
+
+  @Post('mock-tests/analyze-structure')
+  async analyzeReferenceStructure(@Req() req: any, @Body() body: { sourceId: string }) {
+    const userId = this.userId(req);
+    return this.service.analyzeReferenceStructure(userId, body.sourceId);
+  }
+
+  @Post('mock-tests/:id/handwritten-ocr')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAX_LEARNING_UPLOAD_BYTES } }))
+  async uploadHandwrittenAnswerSheet(@Req() req: any, @Param('id') id: string, @UploadedFile() file: any) {
+    const userId = this.userId(req);
+    if (!file) throw new BadRequestException('Handwritten answer sheet file is required.');
+    this.validateUploadedFile(file);
+    const result = await this.service.processHandwrittenAnswerSheet(userId, id, file);
+    await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Uploaded Handwritten Answer Sheet', metadata: { mockTestId: id, fileName: file?.originalname } });
     return result;
   }
 
@@ -126,7 +181,7 @@ export class LearningWorkspaceController {
   @Post('mock-tests/:id/submit')
   async submitMockTest(@Req() req: any, @Param('id') id: string, @Body() body: any) {
     const userId = this.userId(req);
-    const result = await this.service.submitMockTest(userId, id, body.answers || {}, body.timeTaken || 0);
+    const result = await this.service.submitMockTest(userId, id, body.answers || {}, body.timeTaken || 0, body.negativeMarkingRate);
     await this.settings.log({ userId, module: 'AI Learning & Assessment Studio', action: 'Completed Quiz', metadata: { mockTestId: id, score: result?.score } });
     return result;
   }

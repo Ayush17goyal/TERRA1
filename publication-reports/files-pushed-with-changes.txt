@@ -1,0 +1,6 @@
+Files uploaded with content differing from the local file (line endings ignored):
+
+C:\Users\goyal\OneDrive\Documents\LEGATRIXON-3\.env.production.template
+C:\Users\goyal\OneDrive\Documents\LEGATRIXON-3\.gitignore
+C:\Users\goyal\OneDrive\Documents\LEGATRIXON-3\RENDER_ENV_TEMPLATE.md
+C:\Users\goyal\OneDrive\Documents\LEGATRIXON-3\render.yaml

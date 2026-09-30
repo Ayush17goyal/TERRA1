@@ -95,8 +95,26 @@ let ResearchController = class ResearchController {
     }
     async uploadFile(req, file, body) {
         const userId = await this.userId(req);
-        const result = await this.research.uploadDocument(userId, file, body.queryId, body.docCategory);
-        await this.settings.log({ userId: req.user.id, module: 'Research Command Center', action: 'Uploaded Research Document', metadata: { queryId: body.queryId || null, docCategory: body.docCategory, name: file?.originalname } });
+        let validQueryId = body.queryId?.trim() || undefined;
+        if (validQueryId) {
+            try {
+                await this.research.getQuery(userId, validQueryId);
+            }
+            catch {
+                validQueryId = undefined;
+            }
+        }
+        const result = await this.research.uploadDocument(userId, file, validQueryId, body.docCategory);
+        await this.settings.log({
+            userId: req.user.id,
+            module: 'Research Command Center',
+            action: 'Uploaded Research Document',
+            metadata: {
+                queryId: validQueryId || null,
+                docCategory: body.docCategory,
+                name: file?.originalname,
+            },
+        });
         return result;
     }
     async getDocuments(req, queryId) {
@@ -163,14 +181,6 @@ let ResearchController = class ResearchController {
     }
     async deleteJudgmentReport(req, id) {
         return this.research.deleteJudgmentReport(await this.userId(req), id);
-    }
-    async getMentorStep(req, body) {
-        const userId = await this.userId(req);
-        return this.research.generateMentorStep(userId, body);
-    }
-    async getMentorMemo(req, body) {
-        const userId = await this.userId(req);
-        return this.research.generateMentorMemo(userId, body);
     }
     async challengeResearch(req, body) {
         const userId = await this.userId(req);
@@ -405,22 +415,6 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], ResearchController.prototype, "deleteJudgmentReport", null);
-__decorate([
-    (0, common_1.Post)('mentor-step'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], ResearchController.prototype, "getMentorStep", null);
-__decorate([
-    (0, common_1.Post)('mentor-memo'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], ResearchController.prototype, "getMentorMemo", null);
 __decorate([
     (0, common_1.Post)('challenge'),
     __param(0, (0, common_1.Req)()),

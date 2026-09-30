@@ -36,7 +36,61 @@ export declare class LearningWorkspaceController {
         success: boolean;
     }>;
     reprocessSource(req: any, id: string): Promise<import("./learning-workspace.entities").AiLearningSource>;
+    getMockTests(req: any): Promise<import("./learning-workspace.entities").AiMockTest[]>;
+    getMockTestAttempt(req: any, attemptId: string): Promise<import("./learning-workspace.entities").AiMockTestAttempt>;
+    getMockTestById(req: any, id: string): Promise<import("./learning-workspace.entities").AiMockTest>;
+    getMockTestAttempts(req: any, id: string): Promise<import("./learning-workspace.entities").AiMockTestAttempt[]>;
     generateMockTest(req: any, body: any): Promise<import("./learning-workspace.entities").AiMockTest>;
+    deleteMockTest(req: any, id: string): Promise<{
+        success: boolean;
+    }>;
+    getSourceIndexedContent(req: any, id: string): Promise<{
+        id: string;
+        name: string;
+        kind: string;
+        documentType: string;
+        subject: string;
+        status: string;
+        indexingProgress: number;
+        wordCount: number;
+        estimatedPages: number;
+        totalChunks: number;
+        sections: any[];
+        chunks: {
+            id: string;
+            chunkIndex: number;
+            textSnippet: string;
+            estPage: number;
+        }[];
+    }>;
+    analyzeReferenceStructure(req: any, body: {
+        sourceId: string;
+    }): Promise<{
+        sourceId: string;
+        sourceName: string;
+        structure: any;
+    }>;
+    uploadHandwrittenAnswerSheet(req: any, id: string, file: any): Promise<{
+        success: boolean;
+        fileName: any;
+        mockTestId: string;
+        extractedAnswers: {
+            questionId: string;
+            questionNumber: number;
+            questionText: any;
+            type: any;
+            options: any;
+            marks: any;
+            detectedAnswer: string;
+            confidence: number;
+            confidenceLevel: string;
+            requiresReview: boolean;
+            notes: any;
+        }[];
+        rawOcrText: string;
+        detectedQuestionCount: number;
+        totalQuestions: number;
+    }>;
     generateDetailedAnswer(req: any, id: string, questionId: string, body: any): Promise<{
         questionId: string;
         mode: "10 Marks" | "15 Marks" | "20 Marks" | "Judiciary Style" | "Long Descriptive";

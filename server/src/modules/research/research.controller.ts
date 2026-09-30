@@ -140,8 +140,29 @@ export class ResearchController {
     @Body() body: { queryId?: string; docCategory: string },
   ) {
     const userId = await this.userId(req);
-    const result = await this.research.uploadDocument(userId, file, body.queryId, body.docCategory);
-    await this.settings.log({ userId: req.user.id, module: 'Research Command Center', action: 'Uploaded Research Document', metadata: { queryId: body.queryId || null, docCategory: body.docCategory, name: file?.originalname } });
+
+    // Browser/local-storage sessions can contain a queryId from an older database.
+    // Validate it before inserting research_documents so SQLite/Postgres FK checks do not fail.
+    let validQueryId = body.queryId?.trim() || undefined;
+    if (validQueryId) {
+      try {
+        await this.research.getQuery(userId, validQueryId);
+      } catch {
+        validQueryId = undefined;
+      }
+    }
+
+    const result = await this.research.uploadDocument(userId, file, validQueryId, body.docCategory);
+    await this.settings.log({
+      userId: req.user.id,
+      module: 'Research Command Center',
+      action: 'Uploaded Research Document',
+      metadata: {
+        queryId: validQueryId || null,
+        docCategory: body.docCategory,
+        name: file?.originalname,
+      },
+    });
     return result;
   }
 
@@ -269,24 +290,6 @@ export class ResearchController {
   @Delete('judgment-intelligence/:id')
   async deleteJudgmentReport(@Req() req: any, @Param('id') id: string) {
     return this.research.deleteJudgmentReport(await this.userId(req), id);
-  }
-
-  @Post('mentor-step')
-  async getMentorStep(
-    @Req() req: any,
-    @Body() body: { topic: string; stepIndex: number; researchPlan?: any },
-  ) {
-    const userId = await this.userId(req);
-    return this.research.generateMentorStep(userId, body);
-  }
-
-  @Post('mentor-memo')
-  async getMentorMemo(
-    @Req() req: any,
-    @Body() body: { topic: string; notebook: any },
-  ) {
-    const userId = await this.userId(req);
-    return this.research.generateMentorMemo(userId, body);
   }
 
   @Post('challenge')
