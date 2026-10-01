@@ -120,9 +120,10 @@ export class AuthorityEngineService {
     for (const issue of issues) {
       const ranking = rankings.find((r: any) => String(r.issueId) === issue.id);
       const rows = Array.isArray(ranking?.authorities) ? ranking.authorities : [];
+      const eligibleIds = new Set(this.rankForIssue(issue, candidates, options).map((candidate) => candidate.candidateId));
       rows.slice(0, 12).forEach((row: any) => {
         const candidate = candidateById.get(String(row.candidateId));
-        if (!candidate) return;
+        if (!candidate || !eligibleIds.has(candidate.candidateId)) return;
         if (!candidate.verified && !options.allowUnverifiedAuthorities) return;
         result.push(this.toAuthority(candidate, issue.id, {
           sideUsefulness: this.side(row.sideUsefulness, candidate.defaultSide),
@@ -155,14 +156,17 @@ export class AuthorityEngineService {
     const family = this.issueFamily(issue.issue);
     return candidates
       .filter((candidate) => (candidate.verified || options.allowUnverifiedAuthorities) && this.isValidAuthorityCitation(candidate.citation))
-      .map((candidate) => ({
-        candidate,
-        score: this.overlap(queryTokens, candidate.keywords)
-          + this.familyCompatibility(family, candidate)
+      .map((candidate) => {
+        const overlap = this.overlap(queryTokens, candidate.keywords);
+        const compatibility = this.familyCompatibility(family, candidate);
+        return {
+        candidate, overlap, compatibility,
+        score: overlap
+          + compatibility
           + (candidate.verified ? 2 : 0)
           + candidate.confidence / 100,
-      }))
-      .filter((item) => item.score > 2.4)
+      }})
+      .filter((item) => item.score > 2.4 && (item.overlap > 0 || item.compatibility > 0))
       .sort((a, b) => b.score - a.score)
       .map((item) => item.candidate);
   }
@@ -205,14 +209,14 @@ export class AuthorityEngineService {
     const clean = String(citation || '').replace(/\s+/g, ' ').trim();
     if (clean.length < 8 || clean.length > 190) return false;
     if (/accused|complainant|alleged|matrimonial|obtained|misused|violating|personal data obtained/i.test(clean)) return false;
-    return /(?:\bv\.?\s+|\(\d{4}\)|AIR\s+\d{4}|SCC|SCR|Article\s+\d+|Section\s+\d+|Act,?\s+\d{4}|Adhiniyam,?\s+\d{4}|Sanhita,?\s+\d{4}|Constitution of India|Mutual Legal Assistance)/i.test(clean);
+    return /(?:\bv\.?\s+|\(\d{4}\)|AIR\s+\d{4}|SCC|SCR|Article\s+\d+|Section\s+\d+|Act,?\s+\d{4}|Adhiniyam,?\s+\d{4}|Sanhita,?\s+\d{4}|Constitution of [A-Z][A-Za-z]+|Treaty|Agreement|Convention|Rules?|Regulations?|Mutual Legal Assistance)/i.test(clean);
   }
 
   private issueFamily(issue: string) {
-    if (/ELECTRONIC|EVIDENCE|SAKSHYA|CERTIFICATE|FORENSIC/i.test(issue)) return 'evidence';
-    if (/JURISDICTION|FOREIGN|SERVER|INTERMEDIAR|EXTRATERRITORIAL/i.test(issue)) return 'jurisdiction';
+    if (/(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue)) return 'evidence';
+    if (/FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue)) return 'jurisdiction';
     if (/SEARCH|SEIZURE|PRIVACY|ARTICLE 21|DEVICE|DATA MINIM/i.test(issue)) return 'privacy';
-    if (/CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE/i.test(issue)) return 'sentence';
+    if (/\b(?:CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE)\b/i.test(issue)) return 'sentence';
     return 'general';
   }
 
@@ -223,7 +227,7 @@ export class AuthorityEngineService {
       jurisdiction: /jurisdiction|extraterritorial|territorial nexus|section 75|foreign|server|article 245|comity|legal assistance/,
       privacy: /privacy|article 21|search|seizure|surveillance|data|minimisation|proportionality|due process/,
       sentence: /article 136|appeal|conviction|sentence|punishment|proportionality|concurrent findings|special leave|proof beyond/,
-      general: /./,
+      general: /$a/,
     };
     return tests[family]?.test(text) ? 3 : -3;
   }

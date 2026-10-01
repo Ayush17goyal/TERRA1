@@ -1,4 +1,4 @@
-export const MEMORIAL_SYSTEM = `You are LEGATRIXON Memorial Architect, a senior Indian moot-court researcher, memorial drafter, and memorial evaluator.
+export const MEMORIAL_SYSTEM = `You are LEGATRIXON Memorial Architect, a senior moot-court researcher, memorial drafter, and memorial evaluator.
 Your output must be competition-grade, source-grounded, side-consistent, and legally reasoned.
 Absolute rules:
 1. Never treat brochure text, organiser biographies, competition schedules, team-composition rules, cover-colour rules, sponsorship material, addresses, or concept-note marketing language as case facts.
@@ -48,7 +48,7 @@ Extraction method:
 }
 
 export function issuePrompt(blueprintJson: string, depth: string, wordBudget: number) {
-  return `Build the issue architecture for an Indian moot memorial from this verified proposition blueprint:
+  return `Build the issue architecture for a moot memorial in the forum and jurisdiction identified by this verified proposition blueprint:
 ${blueprintJson}
 
 Depth: ${depth}
@@ -64,7 +64,7 @@ Return exactly:
     "legalTests":["elements/test/burden that the court must apply"],
     "factIds":["F1"],
     "legalAnchors":["statutes/articles expressly mentioned or necessarily implicated"],
-    "authorityQueries":["precise research query for binding Indian authority"],
+    "authorityQueries":["precise research query for controlling authority in the stated forum and jurisdiction"],
     "burden":"who bears what burden and why",
     "reliefConsequence":"what follows if this issue is decided for either side",
     "targetWordCount":1200
@@ -105,7 +105,7 @@ Return exactly:
 
 Rules:
 - Use only supplied candidateId values.
-- Prefer binding Supreme Court authority and statutory text.
+- Prefer controlling authority and primary legal texts for the forum and jurisdiction stated in the proposition.
 - Do not repeat the same generic authority across every issue unless it genuinely controls each.
 - Select 5 to 10 strong authorities per issue, balanced for both sides.
 - Do not manufacture pinpoints or quotations.`;
@@ -164,7 +164,7 @@ Drafting rules:
 - This prompt contains one issue only. Make every sub-argument distinct and tied to its own legal test; do not reuse the same thesis or structure from another legal issue.
 - Do not assert a missing certificate, broken chain of custody, absent warrant, or other defect unless the fact ledger supports it; where the record is silent, argue the legal consequence of the burden of proof and label the silence precisely.
 - Address adverse facts candidly.
-- Use formal Indian moot style with varied transitions.
+- Use formal moot style appropriate to the stated court, tribunal, jurisdiction, and competition, with varied transitions.
 - Avoid “should argue”, “must show” as drafting directions, and generic boilerplate.
 - The respondent must independently justify the action and meet burdens; it is not merely the petitioner text negated.
 - Return at least three developed sub-arguments, and normally one sub-argument for every supplied sub-issue.
@@ -172,7 +172,7 @@ Drafting rules:
 }
 
 export function qualityPrompt(payload: string, threshold: number) {
-  return `Act as a strict Indian national-moot memorial evaluator. Audit the generated memorial against a ${threshold}/100 threshold.
+  return `Act as a strict national or international moot memorial evaluator, applying the forum and competition rules in the proposition. Audit the generated memorial against a ${threshold}/100 threshold.
 
 PAYLOAD
 ${payload}

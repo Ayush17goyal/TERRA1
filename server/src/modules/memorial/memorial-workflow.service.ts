@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { createHash } from 'crypto';
 import {
   MemorialSide,
+  MemorialReferenceAnalysis,
   MemorialWorkflowAudit,
   MemorialWorkflowOptions,
   MemorialWorkflowResult,
@@ -16,6 +18,7 @@ import { MemorialJudgeService } from './memorial-judge.service';
 
 interface RunInput extends MemorialWorkflowOptions {
   file?: any;
+  referenceFiles?: any[];
   propositionText?: string;
   sourceName?: string;
 }
@@ -23,6 +26,7 @@ interface RunInput extends MemorialWorkflowOptions {
 @Injectable()
 export class MemorialWorkflowService {
   private readonly logger = new Logger(MemorialWorkflowService.name);
+  private readonly referenceCache = new Map<string, Promise<MemorialReferenceAnalysis>>();
 
   constructor(
     private readonly preservation: PropositionPreservationService,
@@ -36,12 +40,17 @@ export class MemorialWorkflowService {
   ) {}
 
   async run(input: RunInput): Promise<MemorialWorkflowResult> {
-    const options = this.normalizeOptions(input);
+    let options = this.normalizeOptions(input);
     const audit: MemorialWorkflowAudit = {
       version: '3.0.0-reference-format',
       stages: [],
       warnings: [],
     };
+
+    const references = await this.stage(audit, '0 — Reference classification and authority ordering', async () =>
+      this.analyzeReferences(input.referenceFiles || []),
+    (value) => `${value.length} reference document(s) classified without using sample facts as proposition facts.`);
+    options = this.applyReferenceRules(options, references);
 
     const document = await this.stage(audit, '0A — Full document preservation', async () => {
       const extracted = await this.preservation.extractDocument(input.file, input.propositionText);
@@ -92,23 +101,29 @@ export class MemorialWorkflowService {
       issues,
       authorities,
       audit,
+      references,
     };
 
     const sides: Array<Exclude<MemorialSide, 'both'>> = options.side === 'both' || !options.side
       ? ['petitioner', 'respondent']
       : [options.side];
 
-    for (const side of sides) {
-      const sideResult = await this.generateSide(side, dossier, blueprint, graph, issues, authorities, options, audit);
-      result[side] = sideResult;
-    }
+    const sideResults = await Promise.all(sides.map(async (side) => ({
+      side,
+      value: await this.generateSide(side, dossier, blueprint, graph, issues, authorities, options, audit),
+    })));
+    sideResults.forEach(({ side, value }) => { result[side] = value; });
 
     return result;
   }
 
   async extractBlueprint(input: RunInput) {
-    const options = this.normalizeOptions(input);
+    let options = this.normalizeOptions(input);
     const audit: MemorialWorkflowAudit = { version: '3.0.0-reference-format', stages: [], warnings: [] };
+    const references = await this.stage(audit, '0 — Reference classification and authority ordering', async () =>
+      this.analyzeReferences(input.referenceFiles || []),
+    (value) => `${value.length} reference document(s) classified.`);
+    options = this.applyReferenceRules(options, references);
     const document = await this.stage(audit, '0A — Full document preservation', async () => {
       const extracted = await this.preservation.extractDocument(input.file, input.propositionText);
       if (!extracted.rawText || extracted.rawText.trim().length < 500) {
@@ -126,7 +141,81 @@ export class MemorialWorkflowService {
     if (propositionResult.warning) audit.warnings.push(propositionResult.warning);
     this.assertBlueprintIsUsable(propositionResult.blueprint);
     const graph = this.graphService.build(dossier, propositionResult.blueprint);
-    return { dossier, blueprint: propositionResult.blueprint, graph, audit };
+    return { dossier, blueprint: propositionResult.blueprint, graph, references, audit };
+  }
+
+  private async analyzeReferences(files: any[]): Promise<MemorialReferenceAnalysis[]> {
+    const analyses = await Promise.all(files.slice(0, 12).map((file) => {
+      const buffer = Buffer.isBuffer(file?.buffer) ? file.buffer : Buffer.from(file?.buffer || '');
+      const cacheKey = createHash('sha256').update(buffer).digest('hex');
+      const cached = this.referenceCache.get(cacheKey);
+      if (cached) return cached;
+      const pending = this.analyzeReference(file).catch((error) => {
+        this.referenceCache.delete(cacheKey);
+        throw error;
+      });
+      this.referenceCache.set(cacheKey, pending);
+      return pending;
+    }));
+    return analyses.sort((a, b) => a.authorityLevel - b.authorityLevel);
+  }
+
+  private async analyzeReference(file: any): Promise<MemorialReferenceAnalysis> {
+      const extracted = await this.preservation.extractDocument(file);
+      const fileName = String(file?.originalname || 'reference document');
+      const haystack = `${fileName}\n${extracted.rawText.slice(0, 60000)}`.toLowerCase();
+      let category: MemorialReferenceAnalysis['category'] = 'other';
+      let authorityLevel = 7;
+      let contentUse: MemorialReferenceAnalysis['contentUse'] = 'other';
+
+      if (/competition rules|specific instructions|brochure|schedule|scoring criteria|penal deductions/i.test(haystack) && !/master guide|drafting rulebook/i.test(haystack)) {
+        category = 'competition_rules'; authorityLevel = 2; contentUse = 'formatting';
+      } else if (/template/i.test(fileName) && /petitioner|appellant/i.test(haystack)) {
+        category = 'petitioner_template'; authorityLevel = 3; contentUse = 'structure';
+      } else if (/template/i.test(fileName) && /respondent|defendant/i.test(haystack)) {
+        category = 'respondent_template'; authorityLevel = 3; contentUse = 'structure';
+      } else if (/rulebook|drafting master guide|formatting rules|technical formatting|handbook/i.test(haystack)) {
+        category = 'drafting_rulebook'; authorityLevel = 4; contentUse = 'formatting';
+      } else if (/completed|winning/i.test(fileName) && /memorial on behalf of the petitioner|memorial for the petitioner/i.test(haystack)) {
+        category = 'completed_petitioner_memorial'; authorityLevel = 5; contentUse = 'example';
+      } else if (/completed|winning/i.test(fileName) && /memorial on behalf of the respondent|memorial for the respondent/i.test(haystack)) {
+        category = 'completed_respondent_memorial'; authorityLevel = 5; contentUse = 'example';
+      } else if (/memorial on behalf of the petitioner|memorial for the petitioner/i.test(haystack)) {
+        category = 'completed_petitioner_memorial'; authorityLevel = 5; contentUse = 'example';
+      } else if (/memorial on behalf of the respondent|memorial for the respondent/i.test(haystack)) {
+        category = 'completed_respondent_memorial'; authorityLevel = 5; contentUse = 'example';
+      } else if (/practice|sample|mock/i.test(fileName) || /practice memorial|sample memorial/i.test(haystack)) {
+        category = 'practice_material'; authorityLevel = 6; contentUse = 'example';
+      } else if (/moot proposition|compromis|statement of facts|issues raised/i.test(haystack)) {
+        category = 'moot_proposition'; authorityLevel = 2; contentUse = 'case_material';
+      } else if (/citation|case law|legal research|authorit|compilation/i.test(haystack)) {
+        category = 'legal_research'; authorityLevel = 6; contentUse = 'case_material';
+      }
+
+      const rules = [
+        /blue cover|blue background/i.test(haystack) ? 'Petitioner/Appellant cover must have a solid blue full-page background.' : '',
+        /red cover|red background/i.test(haystack) ? 'Respondent/Defendant cover must have a solid red full-page background.' : '',
+        /times new roman/i.test(haystack) ? 'Use Times New Roman throughout.' : '',
+        /10\s*(?:points?|pt).*footnote|footnote[^\n]{0,50}10\s*(?:points?|pt)/i.test(haystack) ? 'Use 10 pt footnotes with single line spacing.' : '',
+        /12\s*(?:points?|pt).*body|body[^\n]{0,50}12\s*(?:points?|pt)/i.test(haystack) ? 'Use 12 pt body text with 1.5 line spacing.' : '',
+        /1\.5\s*(?:line )?spacing/i.test(haystack) ? 'Use 1.5 line spacing for body text, fully justified.' : '',
+        /1\s*inch|2\.54\s*cm/i.test(haystack) ? 'Maintain 1-inch (2.54 cm) margins on all 4 sides.' : '',
+        /page border|box border/i.test(haystack) ? 'Apply single box border (0.5 pt - 1 pt) on all pages.' : '',
+        /roman[^\n]{0,100}prelim|prelim[^\n]{0,100}roman/i.test(haystack) ? 'Use lowercase Roman numerals for preliminary pages (i, ii, iii...).' : '',
+        /arabic[^\n]{0,100}arguments|arguments[^\n]{0,100}arabic/i.test(haystack) ? 'Begin Arabic pagination (1, 2...) at Arguments Advanced.' : '',
+        /anonym/i.test(haystack) ? 'Preserve 100% anonymity: identify participants only by assigned team code.' : '',
+      ].filter(Boolean);
+      return { fileName, category, authorityLevel, pageCount: extracted.pages.length, extractedRules: rules, contentUse };
+  }
+
+  private applyReferenceRules(options: MemorialWorkflowOptions, references: MemorialReferenceAnalysis[]): MemorialWorkflowOptions {
+    const authoritativeRules = references
+      .filter((reference) => reference.authorityLevel <= 4)
+      .flatMap((reference) => reference.extractedRules.map((rule) => `[${reference.category}] ${rule}`));
+    return {
+      ...options,
+      competitionRulesText: [options.competitionRulesText, ...authoritativeRules].filter(Boolean).join('\n'),
+    };
   }
 
   private async generateSide(

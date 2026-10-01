@@ -26,7 +26,7 @@ export class MemorialCompilerService {
     const authorityGroups = this.authorityGroups(usedAuthorities);
     const jurisdictionParagraphs = this.jurisdictionParagraphs(blueprint, graph, side);
     const factParagraphs = this.factParagraphs(blueprint, side);
-    const summaries = this.summaryRows(args, issues, side);
+    const summaries = this.summaryRows(args, issues, side, blueprint);
     const prayerParagraphs = this.prayerParagraphs(side, blueprint, issues);
 
     const renderModel: MemorialRenderModel = {
@@ -41,9 +41,8 @@ export class MemorialCompilerService {
         respondentLabel: blueprint.caseMetadata.respondentLabel || 'RESPONDENT',
         teamCode: blueprint.caseMetadata.teamCode || '',
         side,
-        coverColor: side === 'petitioner'
-          ? (blueprint.competitionRules.petitionerCoverColor || 'blue')
-          : (blueprint.competitionRules.respondentCoverColor || 'red'),
+        // Side colour is a mandatory filing rule and cannot be overridden by a sample/template.
+        coverColor: side === 'petitioner' ? 'blue' : 'red',
       },
       abbreviations,
       authorityGroups,
@@ -130,7 +129,7 @@ export class MemorialCompilerService {
       'Statement of Facts ................................................................. [computed on export]',
       'Issues for Consideration ........................................................... [computed on export]',
       'Summary of Arguments ............................................................... [computed on export]',
-      'Advance Arguments .................................................................. [computed on export]',
+      'Arguments Advanced ................................................................. [computed on export]',
       ...issueRows,
       'Prayer .............................................................................. [computed on export]',
     ].join('\n');
@@ -142,28 +141,35 @@ export class MemorialCompilerService {
     side: Exclude<MemorialSide, 'both'>,
   ) {
     const meta = blueprint.caseMetadata;
+    const partyLabel = side === 'petitioner' ? (meta.petitionerLabel || 'Petitioner') : (meta.respondentLabel || 'Respondent');
     const provision = meta.jurisdictionProvision || meta.jurisdiction || 'the applicable constitutional provision';
     const appellate = /136|appellate|special leave/i.test(`${provision} ${meta.proceduralStage}`);
+    const arbitration = /tribunal|arbitrat|investment agreement/i.test(`${meta.court} ${provision} ${meta.proceduralStage}`);
+    const forumLabel = arbitration ? 'Tribunal' : 'Court';
     const procedural = this.bestProceduralFacts(blueprint.facts);
 
     if (side === 'petitioner') {
       return [
-        `The Petitioner respectfully invokes the ${appellate ? 'extraordinary appellate' : 'constitutional'} jurisdiction of this Hon'ble Court under ${provision}.`,
+        `The ${partyLabel} respectfully invokes the ${arbitration ? 'arbitral' : appellate ? 'extraordinary appellate' : 'constitutional'} jurisdiction of this Hon'ble ${forumLabel} under ${provision}.`,
         appellate
-          ? 'The questions presented concern the legal admissibility of electronic evidence, the territorial reach of cyber jurisdiction, the constitutional limits of digital search, and the sustainability of the conviction and sentence. Each alleged error goes to the legal foundation of the impugned judgment rather than to a mere request for re-appreciation of facts.'
-          : 'The petition raises substantial questions concerning the enforcement of fundamental rights and the legality of the impugned State action.',
+          ? 'The questions presented concern the legal errors identified in the issues for consideration. Each alleged error is addressed against the governing law and the proposition record rather than as a bare request for re-appreciation of facts.'
+          : arbitration
+            ? 'The claims raise substantial questions concerning the Tribunal’s jurisdiction, the applicable investment protections, the responsibility alleged, and the relief claimed under the instruments identified in the proposition.'
+            : 'The petition raises substantial questions concerning the enforcement of fundamental rights and the legality of the impugned State action.',
         procedural.length
-          ? `The proposition records that ${this.lowerFirst(procedural.join(' '))} The Petitioner therefore submits that the threshold for this Hon'ble Court's intervention is satisfied.`
-          : 'The Petitioner therefore submits that this Hon\'ble Court is competent to entertain the matter and grant the reliefs prayed for.',
+          ? `The proposition records that ${this.lowerFirst(procedural.join(' '))} The ${partyLabel} therefore submits that the threshold for this Hon'ble ${forumLabel}'s intervention is satisfied.`
+          : `The ${partyLabel} therefore submits that this Hon'ble ${forumLabel} is competent to entertain the matter and grant the reliefs prayed for.`,
       ];
     }
 
     const appellateBurden = graph.burdens.find((burden) => /article 136|appellant|appellate/i.test(burden));
     return [
-      `The Respondent submits to the jurisdiction of this Hon'ble Court under ${provision}, subject to the strict threshold governing its exercise.`,
+      `The ${partyLabel} submits to the jurisdiction of this Hon'ble ${forumLabel} under ${provision}, subject to the strict threshold governing its exercise.`,
       appellate
         ? (appellateBurden || 'Article 136 is extraordinary and discretionary; it is not intended to operate as a routine third appeal on facts. Interference requires a substantial legal error, perversity, grave miscarriage of justice, or constitutional infirmity.')
-        : 'The party invoking constitutional jurisdiction must establish the pleaded infringement and the legal basis for the relief sought.',
+        : arbitration
+          ? 'The party invoking arbitral jurisdiction must establish consent, the applicable jurisdictional requirements, and the legal basis for each relief sought.'
+          : 'The party invoking constitutional jurisdiction must establish the pleaded infringement and the legal basis for the relief sought.',
       procedural.length
         ? `The proposition records that ${this.lowerFirst(procedural.join(' '))} In the absence of a demonstrated foundational error, the concurrent findings ought to be sustained.`
         : 'In the absence of a demonstrated legal or constitutional error warranting interference, the impugned action ought to be sustained.',
@@ -177,22 +183,15 @@ export class MemorialCompilerService {
       return ['The uploaded document did not yield a sufficiently reliable statement of material facts. The system has declined to invent a factual narrative.'];
     }
 
-    const groups: Array<{ regex: RegExp; facts: PropositionFact[] }> = [
-      { regex: /aged|student|technician|republic|state|matrimonial|introduced|alliance|private account|social media/i, facts: [] },
-      { regex: /message|phone number|threat|call|escort|fake|impersonat|morphed|obscene|circulat|disclosed|harass|ostrac/i, facts: [] },
-      { regex: /foreign|server|intermediary|service provider|section 75|southeast asia|europe|jurisdiction/i, facts: [] },
-      { regex: /complaint|cyber crime|warrant|search|seiz|laptop|mobile|storage|forensic|deleted|browser|certificate|data minim/i, facts: [] },
-      { regex: /trial court|high court|supreme court|convict|sentence|appeal|judgment|aggrieved|petition/i, facts: [] },
-    ];
-    const ungrouped: PropositionFact[] = [];
-    for (const fact of facts) {
-      const group = groups.find((candidate) => candidate.regex.test(fact.text));
-      (group ? group.facts : ungrouped).push(fact);
-    }
-    if (ungrouped.length) groups[0].facts.unshift(...ungrouped);
+    const ordered = [...facts].sort((a, b) => {
+      const materiality = { high: 0, medium: 1, low: 2 } as const;
+      return materiality[a.materiality] - materiality[b.materiality];
+    });
+    const groups: PropositionFact[][] = [];
+    for (let index = 0; index < ordered.length; index += 4) groups.push(ordered.slice(index, index + 4));
 
     const paragraphs = groups
-      .map((group) => this.composeFactParagraph(group.facts, side))
+      .map((group) => this.composeFactParagraph(group, side))
       .filter((paragraph) => paragraph.length > 50);
     return paragraphs.slice(0, 8);
   }
@@ -207,14 +206,15 @@ export class MemorialCompilerService {
     if (fact.status === 'finding') return text;
     if (fact.status === 'alleged' || fact.status === 'disputed') {
       if (/^(?:the prosecution|the complainant|the accused|the petitioner|the respondent)/i.test(text)) return text;
-      return side === 'petitioner'
-        ? `The prosecution alleges that ${this.lowerFirst(text)}`
-        : `The record alleges that ${this.lowerFirst(text)}`;
+      return `The proposition records the allegation that ${this.lowerFirst(text)}`;
     }
     return text;
   }
 
-  private summaryRows(args: ArgumentBlock[], issues: IssueMatrixItem[], side: Exclude<MemorialSide, 'both'>) {
+  private summaryRows(args: ArgumentBlock[], issues: IssueMatrixItem[], side: Exclude<MemorialSide, 'both'>, blueprint: PropositionBlueprint) {
+    const partyLabel = side === 'petitioner'
+      ? (blueprint.caseMetadata.petitionerLabel || 'Petitioner')
+      : (blueprint.caseMetadata.respondentLabel || 'Respondent');
     return args.map((argument, index) => {
       const issue = issues[index];
       const paragraphOne = this.ensurePeriod(argument.thesis);
@@ -224,7 +224,7 @@ export class MemorialCompilerService {
       }).join(' ');
       const paragraphTwo = this.ensurePeriod(subArgumentSummary);
       const paragraphThree = argument.rebuttal
-        ? `The ${side === 'petitioner' ? 'Petitioner' : 'Respondent'} further submits that ${this.lowerFirst(this.ensurePeriod(argument.rebuttal))}`
+        ? `The ${partyLabel} further submits that ${this.lowerFirst(this.ensurePeriod(argument.rebuttal))}`
         : this.ensurePeriod(argument.conclusion);
       return {
         issueId: argument.issueId,
@@ -254,35 +254,35 @@ export class MemorialCompilerService {
 
   private prayerParagraphs(side: Exclude<MemorialSide, 'both'>, blueprint: PropositionBlueprint, issues: IssueMatrixItem[]) {
     const issueLabels = issues.map((_, index) => this.roman(index + 1));
+    const partyLabel = side === 'petitioner'
+      ? (blueprint.caseMetadata.petitionerLabel || 'Petitioner')
+      : (blueprint.caseMetadata.respondentLabel || 'Respondent');
     const propositionReliefs = blueprint.reliefs
       .filter((relief) => relief.side === side || relief.side === 'neutral')
       .map((relief) => this.cleanFact(relief.text))
       .filter((relief) => !this.isJunk(relief))
       .slice(0, 5);
 
-    const opening = `WHEREFORE, in light of the facts stated, issues raised, authorities cited, and arguments advanced, the ${side === 'petitioner' ? 'Petitioner' : 'Respondent'} most respectfully prays that this Hon'ble Court may be pleased to:`;
+    const forum = /tribunal|arbitrat/i.test(blueprint.caseMetadata.court || '') ? 'Tribunal' : 'Court';
+    const opening = `WHEREFORE, in light of the facts stated, issues raised, authorities cited, and arguments advanced, the ${partyLabel} most respectfully prays that this Hon'ble ${forum} may be pleased to:`;
     const defaults = side === 'petitioner'
       ? [
         'Allow the present petition or appeal;',
-        'Set aside the impugned judgment and the findings founded upon inadmissible electronic evidence;',
-        'Hold that jurisdiction over cross-border cyber material must satisfy the statutory nexus and lawful process identified in the written submissions;',
-        'Grant appropriate relief for any search or forensic examination found inconsistent with Article 21 and due process;',
-        'Set aside or suitably modify the conviction and sentence to the extent required by the findings on Issues I to IV;',
+        'Set aside the impugned action or judgment to the extent found unlawful;',
+        `Grant the reliefs that follow from the findings on Issues ${issueLabels.join(', ')};`,
       ]
       : [
         'Dismiss the present petition or appeal as devoid of merit;',
-        'Uphold the admission and reliance upon the electronic evidence challenged under Issue I;',
-        'Affirm the jurisdiction of the courts in Indica over the conduct and consequences challenged under Issue II;',
-        'Hold that the search, seizure, and forensic examination were lawful and constitutionally proportionate;',
-        'Affirm the conviction and sentence recorded by the courts below;',
+        'Uphold the impugned action or judgment to the extent challenged;',
+        `Reject the reliefs sought against the Respondent under Issues ${issueLabels.join(', ')};`,
       ];
     const reliefs = propositionReliefs.length ? propositionReliefs.map((relief) => this.ensureSemicolon(relief)) : defaults;
     return [
       opening,
       ...reliefs.map((relief, index) => `${index + 1}. ${this.ensureSemicolon(relief)}`),
-      `${reliefs.length + 1}. Pass any other order that this Hon'ble Court may deem fit in the interests of justice;`,
+      `${reliefs.length + 1}. Pass any other order that this Hon'ble ${forum} may deem fit in the interests of justice;`,
       '',
-      `AND FOR THIS ACT OF KINDNESS, THE ${side === 'petitioner' ? 'PETITIONER' : 'RESPONDENT'} SHALL, AS IN DUTY BOUND, EVER PRAY.`,
+      `AND FOR THIS ACT OF KINDNESS, THE ${partyLabel.toUpperCase()} SHALL, AS IN DUTY BOUND, EVER PRAY.`,
     ];
   }
 
@@ -357,7 +357,7 @@ export class MemorialCompilerService {
       statementOfFacts: 'STATEMENT OF FACTS',
       issuesRaised: 'ISSUES FOR CONSIDERATION',
       summaryOfArguments: 'SUMMARY OF ARGUMENTS',
-      argumentsAdvanced: 'ADVANCE ARGUMENTS',
+      argumentsAdvanced: 'ARGUMENTS ADVANCED',
       prayer: 'PRAYER',
     };
     return (Object.keys(sections) as Array<keyof MemorialSectionSet>)

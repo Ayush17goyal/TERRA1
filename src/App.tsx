@@ -86,6 +86,19 @@ import React, { useEffect, useState, useRef, type FormEvent, type ReactNode } fr
 import { createPortal } from 'react-dom'
 import { Link, NavLink, Route, Routes, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from './lib/supabase-client'
+import { workspaceFromBackendResult, type MemorialWorkspace } from './modules/moot-court/memorialWorkflow'
+import {
+  buildMemorialPdf,
+  memorialDocxBlob,
+  mergeMemorialPdfs,
+  downloadBlob as downloadMemorialBlob,
+} from './modules/moot-court/memorialExport'
+import {
+  memorialCitationCsv,
+  requestedMemorialSide,
+  selectMemorialDocuments,
+  type MemorialWorkspaceTab,
+} from './modules/moot-court/memorialCommandCenter'
 // Removed ByokSettingsPanel import
 import { useExamDashboard } from './hooks/useExamDashboard'
 import { AVATARS, renderAvatar, getAvatarName } from './lib/avatars'
@@ -7279,7 +7292,7 @@ My Year of Study: ${yearOfStudy}
   const [docPreviewPage, setDocPreviewPage] = useState<number>(1)
 
   // Memorial Generation Engine States
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'analysis' | 'petitioner' | 'respondent' | 'comparison'>('analysis')
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<MemorialWorkspaceTab>('analysis')
   const [selectedCitationStyle, setSelectedCitationStyle] = useState<'Bluebook' | 'OSCOLA' | 'Indian'>('Bluebook')
   const [activeSectionId, setActiveSectionId] = useState<string>('cover_page')
   const [activeIssueIndex, setActiveIssueIndex] = useState<number>(1)
@@ -7447,10 +7460,150 @@ My Year of Study: ${yearOfStudy}
   const [activeMemorialAction, setActiveMemorialAction] = useState<string | null>(null)
   const [activeMemorialActionLabel, setActiveMemorialActionLabel] = useState<string>('')
   const [memorialActionContent, setMemorialActionContent] = useState<string>('')
+  const [memorialWorkspace, setMemorialWorkspace] = useState<MemorialWorkspace | null>(null)
+  const uploadedResearchFilesRef = useRef<Record<string, File>>({})
 
   // Dynamic Workspace States
   const [smartDetectEnabled, setSmartDetectEnabled] = useState(true)
   const [showDocumentWorkspace, setShowDocumentWorkspace] = useState(true)
+
+  const runMootMemorialAction = async (actionId: string, actionLabel: string) => {
+    const requestedSide = requestedMemorialSide(actionId)
+    const isBlueprint = actionId === 'extract_blueprint'
+    const workflow = DOCUMENT_WORKFLOWS['Moot Proposition']
+    const action = workflow.actions.find(item => item.id === actionId)
+    const sourceFile = uploadedResearchFilesRef.current['Moot Proposition']
+    const uploadedDocument = sessionFiles.find(file => file.docCategory === 'Moot Proposition')
+    const sourceText = String(uploadedDocument?.content || uploadedDocument?.previewContent || '').trim()
+
+    setActiveMemorialAction(actionId)
+    setActiveMemorialActionLabel(actionLabel)
+    setMemorialActionContent('')
+
+    if (!requestedSide && !isBlueprint) {
+      if (!memorialWorkspace) {
+        setResearchStatus('Generate a Petitioner or Respondent memorial first.')
+        return
+      }
+      if (actionId === 'authorities_list') {
+        const documents = selectMemorialDocuments(activeWorkspaceTab === 'analysis' ? 'comparison' : activeWorkspaceTab, memorialWorkspace)
+        const output = documents.flatMap(({ side, data }) => [
+          `# ${side} Authorities`,
+          ...data.model.authorityGroups.flatMap(group => [`## ${group.title}`, ...group.entries.map(entry => `- ${entry.citation}${entry.pinpoint ? `, ${entry.pinpoint}` : ''}`)]),
+        ]).join('\n')
+        setMemorialActionContent(output || 'No cited authorities are available for the generated memorial.')
+      } else if (actionId === 'issues_matrix') {
+        setMemorialActionContent([
+          '# Issues Matrix',
+          ...memorialWorkspace.issues.flatMap((issue, index) => [
+            `## Issue ${index + 1}: ${issue.question}`,
+            `Petitioner: ${issue.petitionerPosition || 'Not generated.'}`,
+            `Respondent: ${issue.respondentPosition || 'Not generated.'}`,
+            `Factual anchors: ${issue.factualAnchors.join('; ') || 'None extracted.'}`,
+          ]),
+        ].join('\n\n'))
+      } else {
+        setMemorialActionContent([
+          '# Memorial Research Memo',
+          `Source: ${memorialWorkspace.dossier.fileName}`,
+          `Court: ${memorialWorkspace.dossier.court || 'Not stated in the proposition'}`,
+          `Issues extracted: ${memorialWorkspace.issues.length}`,
+          ...memorialWorkspace.issues.map((issue, index) => `${index + 1}. ${issue.question}`),
+          '',
+          ...memorialWorkspace.validationNotes.map(note => `- ${note}`),
+        ].join('\n'))
+      }
+      setActiveWorkspaceTab('analysis')
+      return
+    }
+
+    if (!sourceFile && sourceText.length < 500) {
+      setResearchStatus('Upload a complete moot proposition before generating a memorial.')
+      return
+    }
+
+    setIsAnalyzingMemorial(true)
+    setResearchStatus(isBlueprint
+      ? 'Extracting the proposition blueprint from the uploaded document...'
+      : `Generating ${requestedSide === 'both' ? 'both memorials' : `${requestedSide} memorial`} from the uploaded proposition...`)
+    let stepIndex = 0
+    setMemorialProgressStep(action?.steps[0] || 'Preserving proposition text...')
+    const progressTimer = window.setInterval(() => {
+      if (!action?.steps.length) return
+      stepIndex = Math.min(stepIndex + 1, action.steps.length - 1)
+      setMemorialProgressStep(action.steps[stepIndex])
+    }, 5_000)
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 180_000)
+
+    try {
+      const formData = new FormData()
+      if (sourceFile) formData.append('file', sourceFile, sourceFile.name)
+      else formData.append('propositionText', sourceText)
+      formData.append('sourceName', sourceFile?.name || uploadedDocument?.name || 'moot proposition')
+      if (requestedSide) formData.append('side', requestedSide)
+      formData.append('depth', researchDepth === 'standard' ? 'standard' : researchDepth === 'exhaustive' ? 'exhaustive' : 'deep')
+      formData.append('citationStyle', selectedCitationStyle.toLowerCase())
+      formData.append('selectedSources', JSON.stringify(selectedSources))
+
+      const response = await fetch(`${API_BASE_URL}/memorial-workflow/${isBlueprint ? 'blueprint' : 'run'}`, {
+        method: 'POST',
+        headers: apiToken ? { Authorization: `Bearer ${apiToken}` } : undefined,
+        body: formData,
+        signal: controller.signal,
+      })
+      if (!response.ok) throw new Error((await response.text().catch(() => '')) || `Memorial workflow failed (${response.status}).`)
+      const result = await response.json()
+      const nextWorkspace = workspaceFromBackendResult(sourceFile?.name || uploadedDocument?.name || 'moot proposition', result)
+      setMemorialWorkspace(previous => ({
+        ...nextWorkspace,
+        petitionerMemorial: nextWorkspace.petitionerMemorial || previous?.petitionerMemorial || '',
+        respondentMemorial: nextWorkspace.respondentMemorial || previous?.respondentMemorial || '',
+        petitionerDocument: nextWorkspace.petitionerDocument || previous?.petitionerDocument,
+        respondentDocument: nextWorkspace.respondentDocument || previous?.respondentDocument,
+      }))
+      setActiveIssueIndex(1)
+      setMemorialAnalysisResult({
+        score: nextWorkspace.qualityScore,
+        metrics: workflow.metrics,
+        structure: workflow.extractedInfo.items,
+        citations: workflow.citations,
+        intelligence: (result.audit?.warnings || []).map((warning: string) => ({ type: 'Workflow warning', desc: warning })),
+        enhancement: nextWorkspace.validationNotes.map(desc => ({ type: 'Quality control', desc })),
+      })
+      const generatedText = isBlueprint
+        ? [
+            '# Moot Proposition Blueprint',
+            `Source: ${sourceFile?.name || uploadedDocument?.name || 'moot proposition'}`,
+            '## Material Facts',
+            ...(result.blueprint?.facts || []).map((fact: any, index: number) => `${index + 1}. ${fact.text}`),
+            '## Issues Expressly Raised',
+            ...(result.blueprint?.explicitIssues || []).map((issue: any, index: number) => `${index + 1}. ${issue.text}`),
+            '## Laws and Provisions Mentioned',
+            ...(result.blueprint?.lawsMentioned || []).map((law: any) => `- ${law.citation}`),
+          ].join('\n')
+        : requestedSide === 'petitioner'
+          ? nextWorkspace.petitionerMemorial
+          : requestedSide === 'respondent'
+            ? nextWorkspace.respondentMemorial
+            : [nextWorkspace.petitionerMemorial, nextWorkspace.respondentMemorial].filter(Boolean).join('\n\n---\n\n')
+      setMemorialActionContent(generatedText)
+      setResearchStatus(isBlueprint
+        ? `Extracted proposition blueprint from ${sourceFile?.name || uploadedDocument?.name}.`
+        : `Generated ${requestedSide === 'both' ? 'Petitioner and Respondent memorials' : `${requestedSide} memorial`} from ${sourceFile?.name || uploadedDocument?.name}.`)
+    } catch (error: any) {
+      const message = error?.name === 'AbortError'
+        ? 'Memorial generation exceeded three minutes and was stopped. Please retry with Deep Research instead of Exhaustive.'
+        : error?.message || 'The memorial workflow could not complete.'
+      setResearchStatus(message)
+      setMemorialActionContent(`Generation failed: ${message}`)
+    } finally {
+      window.clearInterval(progressTimer)
+      window.clearTimeout(timeout)
+      setIsAnalyzingMemorial(false)
+      setMemorialProgressStep('')
+    }
+  }
 
   const triggerDocAction = (category: string, actionId: string, actionLabel: string) => {
     let dbModule = 'Legal Research Command Center';
@@ -7464,6 +7617,11 @@ My Year of Study: ${yearOfStudy}
       dbModule = 'Legal Research Command Center';
     }
     (window as any).logUserActivity?.(dbModule, `Ran ${actionLabel}`, { category, actionId });
+
+    if (category === 'Moot Proposition') {
+      void runMootMemorialAction(actionId, actionLabel)
+      return
+    }
 
     setActiveMemorialAction(actionId);
     setActiveMemorialActionLabel(actionLabel);
@@ -7572,11 +7730,15 @@ My Year of Study: ${yearOfStudy}
   }
 
   const fetchSessionFiles = async (qId: string) => {
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 10_000)
     try {
-      const files = await requestResearchApi<any[]>(`/documents/${qId}`)
+      const files = await requestResearchApi<any[]>(`/documents/${qId}`, { signal: controller.signal })
       setSessionFiles(files)
     } catch (err) {
       console.error('Failed to fetch session files', err)
+    } finally {
+      window.clearTimeout(timeout)
     }
   }
 
@@ -7610,10 +7772,15 @@ My Year of Study: ${yearOfStudy}
     const nameLower = file.name.toLowerCase()
     let textLower = ''
 
-    try {
-      textLower = (await file.text()).slice(0, 25000).toLowerCase()
-    } catch {
-      textLower = ''
+    // Reading an entire PDF/DOCX as a UTF-8 string is both expensive and useless
+    // for category detection. Only sample bounded plain-text input in the browser;
+    // binary documents are classified from the filename and parsed once on the API.
+    if (file.type.startsWith('text/') || file.name.toLowerCase().endsWith('.txt')) {
+      try {
+        textLower = (await file.slice(0, 25_000).text()).toLowerCase()
+      } catch {
+        textLower = ''
+      }
     }
 
     const combined = `${nameLower}\n${textLower}`
@@ -7762,6 +7929,13 @@ My Year of Study: ${yearOfStudy}
       ? await detectLegalResearchDocumentCategory(file)
       : selectedWorkspace
     const targetCategory = smartDetectEnabled ? detectedCategory : selectedWorkspace
+    uploadedResearchFilesRef.current[targetCategory] = file
+    if (targetCategory === 'Moot Proposition') {
+      setMemorialWorkspace(null)
+      setMemorialActionContent('')
+      setEditableMemorialTexts({})
+      setActiveWorkspaceTab('analysis')
+    }
 
     if (
       smartDetectEnabled &&
@@ -7815,6 +7989,8 @@ My Year of Study: ${yearOfStudy}
     formData.append('selectedWorkspace', selectedWorkspace)
     formData.append('detectedCategory', detectedCategory)
 
+    const uploadController = new AbortController()
+    const uploadTimeout = window.setTimeout(() => uploadController.abort(), 20_000)
     try {
       const response = await fetch(`${API_BASE_URL}/research/upload`, {
         method: 'POST',
@@ -7822,12 +7998,24 @@ My Year of Study: ${yearOfStudy}
           Authorization: `Bearer ${apiToken}`,
         },
         body: formData,
+        signal: uploadController.signal,
       })
       if (!response.ok) {
         throw new Error(await response.text())
       }
-      setResearchStatus('Document uploaded')
-      await fetchSessionFiles(currentQueryId);
+      const uploadedRecord = await response.json()
+      window.clearTimeout(uploadTimeout)
+      setResearchStatus('Document uploaded. Search indexing continues in the background.')
+      setIsUploading(false)
+      setSessionFiles(prev => [
+        ...prev.filter(item => item.docCategory !== targetCategory),
+        {
+          ...uploadedRecord,
+          detectedCategory,
+          fileSize: localFile.fileSize,
+          previewContent: uploadedRecord.content || localFile.previewContent,
+        },
+      ])
 
       (window as any).logUserActivity?.('Legal Research Command Center', 'Uploaded Document', { fileName: file.name, fileSize: file.size, category: targetCategory, selectedWorkspace, detectedCategory });
 
@@ -7840,7 +8028,12 @@ My Year of Study: ${yearOfStudy}
         }
       }
       setShowDocumentWorkspace(true)
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.name === 'AbortError') {
+        setSessionFiles(prev => prev.filter(item => item.id !== localFile.id))
+        setResearchStatus('Upload timed out after 20 seconds. Please retry; the upload control has been reset.')
+        return
+      }
       console.warn('Backend upload failed, utilizing high-precision local copy.', error)
       setResearchStatus('Document loaded (Sandbox Mode)');
 
@@ -7856,7 +8049,9 @@ My Year of Study: ${yearOfStudy}
       }
       setShowDocumentWorkspace(true)
     } finally {
+      window.clearTimeout(uploadTimeout)
       setIsUploading(false)
+      event.target.value = ''
     }
   }
 
@@ -8249,6 +8444,62 @@ My Year of Study: ${yearOfStudy}
   }
 
   const exportResearch = async (option: string) => {
+    if (uploadCategory === 'Moot Proposition') {
+      const documents = selectMemorialDocuments(activeWorkspaceTab, memorialWorkspace)
+      if (!documents.length) {
+        setResearchStatus(activeWorkspaceTab === 'analysis'
+          ? 'Select the Petitioner, Respondent, or Side-by-Side tab before exporting.'
+          : `Generate the ${activeWorkspaceTab === 'petitioner' ? 'Petitioner' : 'Respondent'} memorial before exporting.`)
+        return
+      }
+      const exportLabel = documents.length === 2 ? 'Both_Memorials' : `${documents[0].side}_Memorial`
+
+      if (option === 'PDF') {
+        if (documents.length === 2) {
+          const merged = await mergeMemorialPdfs(documents[0].data, documents[1].data)
+          const bytes = merged.buffer.slice(merged.byteOffset, merged.byteOffset + merged.byteLength) as ArrayBuffer
+          downloadMemorialBlob(new Blob([bytes], { type: 'application/pdf' }), 'Petitioner_and_Respondent_Memorials.pdf')
+        } else {
+          buildMemorialPdf(documents[0].data).save(`${exportLabel}.pdf`)
+        }
+        setResearchStatus(`Downloaded ${documents.length === 2 ? 'both generated memorials' : `${documents[0].side} memorial`} as PDF.`)
+        return
+      }
+
+      if (option === 'DOCX') {
+        if (documents.length !== 1) {
+          setResearchStatus('Select the Petitioner or Respondent tab to download that memorial as DOCX.')
+          return
+        }
+        downloadMemorialBlob(await memorialDocxBlob(documents[0].data), `${exportLabel}.docx`)
+        setResearchStatus(`Downloaded ${documents[0].side} memorial as DOCX.`)
+        return
+      }
+
+      if (option === 'Citation Table') {
+        downloadBlob(`${exportLabel}_Citation_Sheet.csv`, memorialCitationCsv(documents), 'text/csv;charset=utf-8')
+        setResearchStatus(`Downloaded the citation sheet for ${documents.length === 2 ? 'both memorials' : `the ${documents[0].side} memorial`}.`)
+        return
+      }
+
+      if (option === 'Source Bundle') {
+        const sourceFile = sessionFiles.find(file => file.docCategory === 'Moot Proposition')
+        const files = [
+          {
+            name: 'source-proposition.txt',
+            content: String(memorialWorkspace?.dossier.rawText || sourceFile?.content || sourceFile?.previewContent || ''),
+          },
+          ...documents.flatMap(({ side, data }) => [
+            { name: `${side.toLowerCase()}-render-model.json`, content: JSON.stringify(data.model, null, 2) },
+            { name: `${side.toLowerCase()}-sections.json`, content: JSON.stringify(data.sections, null, 2) },
+          ]),
+        ]
+        downloadBlob(`${exportLabel}_Source_Bundle.zip`, createZipBlob(files), 'application/zip')
+        setResearchStatus(`Downloaded the source bundle for ${documents.length === 2 ? 'both memorials' : `the ${documents[0].side} memorial`}.`)
+        return
+      }
+    }
+
     if (!activeResearchReport) {
       setResearchStatus('Create a research workspace first')
       return
@@ -17737,6 +17988,27 @@ ${assessmentBody}
 
                             const getMemorialSectionContent = (side: 'Petitioner' | 'Respondent', sectionId: string, citationStyle: 'Bluebook' | 'OSCOLA' | 'Indian'): string => {
                               const isPetitioner = side === 'Petitioner';
+                              const generatedDocument = isPetitioner
+                                ? memorialWorkspace?.petitionerDocument
+                                : memorialWorkspace?.respondentDocument;
+                              const generatedSectionKey: Record<string, keyof NonNullable<typeof generatedDocument>['sections']> = {
+                                cover_page: 'cover',
+                                table_of_contents: 'tableOfContents',
+                                list_of_abbreviations: 'abbreviations',
+                                index_of_authorities: 'indexOfAuthorities',
+                                statement_of_jurisdiction: 'jurisdiction',
+                                statement_of_facts: 'statementOfFacts',
+                                issues_raised: 'issuesRaised',
+                                summary_of_arguments: 'summaryOfArguments',
+                                arguments_advanced: 'argumentsAdvanced',
+                                prayer: 'prayer',
+                              };
+                              if (generatedDocument && generatedSectionKey[sectionId]) {
+                                return generatedDocument.sections[generatedSectionKey[sectionId]];
+                              }
+                              if (!generatedDocument || !generatedSectionKey[sectionId]) {
+                                return `No ${side} memorial has been generated for the uploaded proposition. Use Generate ${side} Memorial to create it.`;
+                              }
                               const getCite = (caseKey: string) => {
                                 const citations: Record<string, Record<'Bluebook' | 'OSCOLA' | 'Indian', string>> = {
                                   chandra: {
@@ -17816,6 +18088,56 @@ ${assessmentBody}
 
                             const getIssueDetailedArgument = (side: 'Petitioner' | 'Respondent', issueIndex: number, citationStyle: 'Bluebook' | 'OSCOLA' | 'Indian') => {
                               const isPetitioner = side === 'Petitioner';
+                              const generatedDocument = isPetitioner
+                                ? memorialWorkspace?.petitionerDocument
+                                : memorialWorkspace?.respondentDocument;
+                              const generatedArgument = generatedDocument?.model.arguments[issueIndex - 1];
+                              if (generatedArgument) {
+                                const authorityById = new Map(generatedDocument.model.authorities.map(authority => [authority.id, authority]));
+                                const allAnalysis = generatedArgument.subArguments.flatMap(sub => sub.paragraphs);
+                                const supportingAuthorities = Array.from(new Set(generatedArgument.subArguments
+                                  .flatMap(sub => sub.authorityIds)
+                                  .map(id => authorityById.get(id)?.citation)
+                                  .filter((citation): citation is string => Boolean(citation))));
+                                return {
+                                  heading: generatedArgument.heading,
+                                  subIssues: generatedArgument.subArguments.map(sub => `${sub.label} ${sub.heading}`),
+                                  legalPosition: generatedArgument.thesis,
+                                  constitutionalAnalysis: allAnalysis[0] || generatedArgument.roadmap,
+                                  statutoryAnalysis: allAnalysis[1] || generatedArgument.roadmap,
+                                  caseLawAnalysis: allAnalysis[2] || generatedArgument.roadmap,
+                                  internationalLawAnalysis: allAnalysis[3] || 'No separate international-law submission was generated from the selected sources.',
+                                  scholarlyAnalysis: allAnalysis[4] || 'No separate scholarly submission was generated from the selected sources.',
+                                  counterArguments: generatedArgument.concludingParagraphs[0] || 'The opposing submission is addressed in the issue analysis.',
+                                  rebuttals: generatedArgument.concludingParagraphs[1] || generatedArgument.concludingParagraphs.at(-1) || '',
+                                  reliefsSought: generatedDocument.model.prayerParagraphs.join(' '),
+                                  supportingAuthorities,
+                                  detailedDrafting: [
+                                    generatedArgument.thesis,
+                                    generatedArgument.roadmap,
+                                    ...generatedArgument.subArguments.flatMap(sub => [`${sub.label} ${sub.heading}`, ...sub.paragraphs]),
+                                    ...generatedArgument.concludingParagraphs,
+                                  ].join('\n\n'),
+                                };
+                              }
+                              if (!generatedArgument) {
+                                const unavailable = `Generate the ${side} memorial from the uploaded proposition to view this issue analysis.`;
+                                return {
+                                  heading: unavailable,
+                                  subIssues: [],
+                                  legalPosition: unavailable,
+                                  constitutionalAnalysis: unavailable,
+                                  statutoryAnalysis: unavailable,
+                                  caseLawAnalysis: unavailable,
+                                  internationalLawAnalysis: unavailable,
+                                  scholarlyAnalysis: unavailable,
+                                  counterArguments: unavailable,
+                                  rebuttals: unavailable,
+                                  reliefsSought: unavailable,
+                                  supportingAuthorities: [],
+                                  detailedDrafting: unavailable,
+                                };
+                              }
                               const getCite = (caseKey: string) => {
                                 const citations: Record<string, Record<'Bluebook' | 'OSCOLA' | 'Indian', string>> = {
                                   chandra: {
@@ -17942,6 +18264,26 @@ ${assessmentBody}
                             };
 
                             const downloadMemorial = async (format: string, side: 'Petitioner' | 'Respondent') => {
+                              const generatedDocument = side === 'Petitioner'
+                                ? memorialWorkspace?.petitionerDocument
+                                : memorialWorkspace?.respondentDocument;
+                              if (!generatedDocument) {
+                                setResearchStatus(`Generate the ${side} memorial before downloading it.`);
+                                return;
+                              }
+                              const generatedFileName = `${side}_Moot_Court_Memorial`;
+                              if (format === 'pdf') {
+                                buildMemorialPdf(generatedDocument).save(`${generatedFileName}.pdf`);
+                                return;
+                              }
+                              if (format === 'docx') {
+                                const blob = await memorialDocxBlob(generatedDocument);
+                                downloadMemorialBlob(blob, `${generatedFileName}.docx`);
+                                return;
+                              }
+                              setResearchStatus('Choose PDF or DOCX for the generated memorial.');
+                              return;
+                              /* Legacy sample renderer retained below for non-generated historical previews. */
                               const sections = [
                                 'cover_page',
                                 'table_of_contents',
@@ -18183,19 +18525,23 @@ ${assessmentBody}
                                         type="button"
                                         className="btn btn-outline"
                                         style={{ padding: '7px 10px', fontSize: '0.76rem' }}
+                                        disabled={isAnalyzingMemorial}
                                         onClick={() => {
                                           if (option.id === 'generate_petitioner') {
                                             setActiveWorkspaceTab('petitioner')
                                             setActiveSectionId('cover_page')
+                                            triggerDocAction('Moot Proposition', option.id, option.label)
                                             return
                                           }
                                           if (option.id === 'generate_respondent') {
                                             setActiveWorkspaceTab('respondent')
                                             setActiveSectionId('cover_page')
+                                            triggerDocAction('Moot Proposition', option.id, option.label)
                                             return
                                           }
                                           if (option.id === 'generate_both') {
                                             setActiveWorkspaceTab('comparison')
+                                            triggerDocAction('Moot Proposition', option.id, option.label)
                                             return
                                           }
                                           triggerDocAction('Moot Proposition', option.id, option.label)
@@ -19050,7 +19396,9 @@ ${assessmentBody}
                                                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                                     {/* Issue Selector */}
                                                     <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #E5E7EB', paddingBottom: '12px' }}>
-                                                      {[1, 2].map(idx => (
+                                                      {Array.from({ length: Math.max(1, (side === 'Petitioner'
+                                                        ? memorialWorkspace?.petitionerDocument
+                                                        : memorialWorkspace?.respondentDocument)?.model.arguments.length || 0) }, (_, index) => index + 1).map(idx => (
                                                         <button
                                                           key={idx}
                                                           type="button"
@@ -19067,7 +19415,7 @@ ${assessmentBody}
                                                           }}
                                                           onClick={() => setActiveIssueIndex(idx)}
                                                         >
-                                                          Issue {idx === 1 ? 'I' : 'II'}
+                                                          Issue {['I', 'II', 'III', 'IV', 'V', 'VI'][idx - 1] || idx}
                                                         </button>
                                                       ))}
                                                     </div>
@@ -19355,20 +19703,16 @@ ${assessmentBody}
                                             if (compareSection === 'issues') {
                                               return <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', color: 'inherit' }}>{getMemorialSectionContent('Petitioner', 'issues_raised', selectedCitationStyle)}</pre>;
                                             } else if (compareSection === 'arguments') {
-                                              const arg1 = getIssueDetailedArgument('Petitioner', 1, selectedCitationStyle);
-                                              const arg2 = getIssueDetailedArgument('Petitioner', 2, selectedCitationStyle);
+                                              const argumentsForSide = memorialWorkspace?.petitionerDocument?.model.arguments || [];
                                               return (
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                                  <div style={{ borderBottom: '1px solid #E5E7EB', paddingBottom: '10px' }}>
-                                                    <span style={{ fontWeight: '700', color: '#D4A72C', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>ISSUE I</span>
-                                                    <strong style={{ display: 'block', color: '#1E293B', margin: '4px 0' }}>{arg1.heading}</strong>
-                                                    <p style={{ fontStyle: 'italic', margin: '4px 0 0 0', fontSize: '0.82rem', color: '#4B5563' }}>Position: {arg1.legalPosition}</p>
-                                                  </div>
-                                                  <div>
-                                                    <span style={{ fontWeight: '700', color: '#D4A72C', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>ISSUE II</span>
-                                                    <strong style={{ display: 'block', color: '#1E293B', margin: '4px 0' }}>{arg2.heading}</strong>
-                                                    <p style={{ fontStyle: 'italic', margin: '4px 0 0 0', fontSize: '0.82rem', color: '#4B5563' }}>Position: {arg2.legalPosition}</p>
-                                                  </div>
+                                                  {(argumentsForSide.length ? argumentsForSide : [{ heading: 'Generate the Petitioner memorial to compare arguments.', thesis: '' }]).map((argument: any, index: number) => (
+                                                    <div key={index} style={{ borderBottom: index < argumentsForSide.length - 1 ? '1px solid #E5E7EB' : 'none', paddingBottom: '10px' }}>
+                                                      <span style={{ fontWeight: '700', color: '#D4A72C', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>ISSUE {['I', 'II', 'III', 'IV', 'V', 'VI'][index] || index + 1}</span>
+                                                      <strong style={{ display: 'block', color: '#1E293B', margin: '4px 0' }}>{argument.heading}</strong>
+                                                      {argument.thesis && <p style={{ fontStyle: 'italic', margin: '4px 0 0 0', fontSize: '0.82rem', color: '#4B5563' }}>Position: {argument.thesis}</p>}
+                                                    </div>
+                                                  ))}
                                                 </div>
                                               );
                                             } else if (compareSection === 'authorities') {
@@ -19416,20 +19760,16 @@ ${assessmentBody}
                                             if (compareSection === 'issues') {
                                               return <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', color: 'inherit' }}>{getMemorialSectionContent('Respondent', 'issues_raised', selectedCitationStyle)}</pre>;
                                             } else if (compareSection === 'arguments') {
-                                              const arg1 = getIssueDetailedArgument('Respondent', 1, selectedCitationStyle);
-                                              const arg2 = getIssueDetailedArgument('Respondent', 2, selectedCitationStyle);
+                                              const argumentsForSide = memorialWorkspace?.respondentDocument?.model.arguments || [];
                                               return (
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                                  <div style={{ borderBottom: '1px solid #E5E7EB', paddingBottom: '10px' }}>
-                                                    <span style={{ fontWeight: '700', color: '#D4A72C', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>ISSUE I</span>
-                                                    <strong style={{ display: 'block', color: '#1E293B', margin: '4px 0' }}>{arg1.heading}</strong>
-                                                    <p style={{ fontStyle: 'italic', margin: '4px 0 0 0', fontSize: '0.82rem', color: '#4B5563' }}>Position: {arg1.legalPosition}</p>
-                                                  </div>
-                                                  <div>
-                                                    <span style={{ fontWeight: '700', color: '#D4A72C', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>ISSUE II</span>
-                                                    <strong style={{ display: 'block', color: '#1E293B', margin: '4px 0' }}>{arg2.heading}</strong>
-                                                    <p style={{ fontStyle: 'italic', margin: '4px 0 0 0', fontSize: '0.82rem', color: '#4B5563' }}>Position: {arg2.legalPosition}</p>
-                                                  </div>
+                                                  {(argumentsForSide.length ? argumentsForSide : [{ heading: 'Generate the Respondent memorial to compare arguments.', thesis: '' }]).map((argument: any, index: number) => (
+                                                    <div key={index} style={{ borderBottom: index < argumentsForSide.length - 1 ? '1px solid #E5E7EB' : 'none', paddingBottom: '10px' }}>
+                                                      <span style={{ fontWeight: '700', color: '#D4A72C', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>ISSUE {['I', 'II', 'III', 'IV', 'V', 'VI'][index] || index + 1}</span>
+                                                      <strong style={{ display: 'block', color: '#1E293B', margin: '4px 0' }}>{argument.heading}</strong>
+                                                      {argument.thesis && <p style={{ fontStyle: 'italic', margin: '4px 0 0 0', fontSize: '0.82rem', color: '#4B5563' }}>Position: {argument.thesis}</p>}
+                                                    </div>
+                                                  ))}
                                                 </div>
                                               );
                                             } else if (compareSection === 'authorities') {

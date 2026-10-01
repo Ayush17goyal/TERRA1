@@ -1,6 +1,26 @@
 export type MemorialSide = 'petitioner' | 'respondent' | 'both';
 export type MemorialDepth = 'standard' | 'deep' | 'exhaustive';
 export type CitationStyle = 'bluebook' | 'oscola' | 'indian' | 'scc';
+export type MemorialReferenceCategory =
+  | 'petitioner_template'
+  | 'respondent_template'
+  | 'drafting_rulebook'
+  | 'completed_petitioner_memorial'
+  | 'completed_respondent_memorial'
+  | 'practice_material'
+  | 'moot_proposition'
+  | 'legal_research'
+  | 'competition_rules'
+  | 'other';
+
+export interface MemorialReferenceAnalysis {
+  fileName: string;
+  category: MemorialReferenceCategory;
+  authorityLevel: number;
+  pageCount: number;
+  extractedRules: string[];
+  contentUse: 'structure' | 'formatting' | 'example' | 'case_material' | 'other';
+}
 
 export type DossierParagraphCategory =
   | 'fact'
@@ -314,6 +334,7 @@ export interface MemorialWorkflowResult {
   issues: IssueMatrixItem[];
   authorities: ResearchAuthority[];
   audit: MemorialWorkflowAudit;
+  references?: MemorialReferenceAnalysis[];
   petitioner?: { arguments: ArgumentBlock[]; sections: MemorialSectionSet; renderModel: MemorialRenderModel; quality: MemorialQualityScore; markdown: string };
   respondent?: { arguments: ArgumentBlock[]; sections: MemorialSectionSet; renderModel: MemorialRenderModel; quality: MemorialQualityScore; markdown: string };
 }

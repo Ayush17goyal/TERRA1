@@ -425,10 +425,10 @@ export class ArgumentEngineService {
   }
 
   private issueFamily(issue: string) {
-    if (/ELECTRONIC|EVIDENCE|SAKSHYA|CERTIFICATE|FORENSIC/i.test(issue)) return 'evidence';
-    if (/JURISDICTION|FOREIGN|SERVER|INTERMEDIAR|EXTRATERRITORIAL/i.test(issue)) return 'jurisdiction';
+    if (/(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue)) return 'evidence';
+    if (/FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue)) return 'jurisdiction';
     if (/SEARCH|SEIZURE|PRIVACY|ARTICLE 21|DEVICE|DATA MINIM/i.test(issue)) return 'privacy';
-    if (/CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE/i.test(issue)) return 'sentence';
+    if (/\b(?:CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE)\b/i.test(issue)) return 'sentence';
     return 'general';
   }
 

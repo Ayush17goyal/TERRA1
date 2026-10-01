@@ -191,8 +191,8 @@ export class PropositionPreservationService {
     if (pageType === 'competition_rules' || this.isCompetitionRule(text)) return 'instruction';
     if (/prayer|relief sought|therefore.*pray/i.test(text)) return 'relief';
     if (/^\s*(issues raised|whether)\b|question(?:s)? (?:presented|for consideration)/i.test(text)) return 'issue';
-    if (/trial court|high court|supreme court|appeal|convicted|conviction|sentence|impugned judgment|procedural history/i.test(text)) return 'procedure';
-    if (/article\s+\d+|section\s+\d+|constitution|act,?\s+\d{4}|sakshya|nyaya sanhita|information technology act/i.test(text)) return 'law';
+    if (/trial court|high court|supreme court|arbitral tribunal|arbitration|appeal|suit|petition|claimant|request for arbitration|convicted|conviction|sentence|impugned judgment|procedural history|interim direction/i.test(text)) return 'procedure';
+    if (/article\s+\d+|section\s+\d+|constitution|act,?\s+\d{4}|treaty|agreement|convention|arbitration rules|sakshya|nyaya sanhita|information technology act/i.test(text)) return 'law';
     if (/annexure|appendix|schedule/i.test(text)) return 'annexure';
     if (this.caseFactScore(l) >= 2) return 'fact';
     return 'ambiguous';
@@ -211,7 +211,7 @@ export class PropositionPreservationService {
   }
 
   private caseFactScore(l: string) {
-    return this.count(l, [/accused|complainant|victim|petitioner|respondent|lodged|warrant|forensic|seized|search|trial court|high court|convicted|appeal|alleged|discovered|received|created|circulated|registered|investigation|morphed|fake account|threat|harassment|server|device|laptop|mobile|certificate/g]);
+    return this.count(l, [/accused|complainant|victim|petitioner|appellant|claimant|respondent|state|republic|union|government|authority|company|corporation|lodged|filed|admitted|issued|enacted|notified|entered|terminated|cancelled|warrant|forensic|seized|search|trial court|high court|supreme court|arbitral tribunal|arbitration|convicted|appeal|suit|alleged|asserted|contended|maintained|protested|challenged|disputed|discovered|received|created|circulated|registered|investigation|morphed|fake account|threat|harassment|server|device|laptop|mobile|certificate|boundary|border|corridor|demarcat|territorial|river|water project|tribunal|treaty|agreement|contract|investment|expropriat|parliament|constitution|article\s+\d+|section\s+\d+/g]);
   }
 
   private count(text: string, regexes: RegExp[]) {

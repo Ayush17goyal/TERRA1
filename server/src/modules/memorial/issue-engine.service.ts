@@ -91,10 +91,18 @@ export class IssueEngineService {
   private fallback(graph: CaseGraph, blueprint: PropositionBlueprint, totalBudget: number) {
     const explicit = blueprint.explicitIssues.map((i) => this.normalizeIssue(i.text));
     const inferred = [
-      /electronic|evidence|certificate|sakshya|forensic/i.test(this.corpus(blueprint)) ? 'WHETHER THE ELECTRONIC EVIDENCE RELIED UPON IS ADMISSIBLE IN ACCORDANCE WITH THE APPLICABLE EVIDENTIARY SAFEGUARDS?' : '',
-      /section 75|foreign|server|intermediary|extraterritorial|jurisdiction/i.test(this.corpus(blueprint)) ? 'WHETHER THE COURT HAS JURISDICTION OVER THE ALLEGED CROSS-BORDER CYBER CONDUCT AND FOREIGN-HOSTED MATERIAL?' : '',
+      /(?:electronic|digital).{0,40}evidence|certificate.{0,60}(?:electronic|computer)|sakshya|forensic|computer output/i.test(this.corpus(blueprint)) ? 'WHETHER THE ELECTRONIC EVIDENCE RELIED UPON IS ADMISSIBLE IN ACCORDANCE WITH THE APPLICABLE EVIDENTIARY SAFEGUARDS?' : '',
+      /section 75|foreign[- ]hosted|foreign server|server|intermediary|extraterritorial|cross[- ]border cyber/i.test(this.corpus(blueprint)) ? 'WHETHER THE COURT HAS JURISDICTION OVER THE ALLEGED CROSS-BORDER CYBER CONDUCT AND FOREIGN-HOSTED MATERIAL?' : '',
       /search|seizure|device|privacy|article 21|data minimisation/i.test(this.corpus(blueprint)) ? 'WHETHER THE SEARCH, SEIZURE, AND FORENSIC EXAMINATION OF DIGITAL DEVICES COMPLIED WITH ARTICLE 21 AND DUE PROCESS?' : '',
-      /conviction|sentence|punishment|proportionate/i.test(this.corpus(blueprint)) ? 'WHETHER THE IMPUGNED CONVICTION AND SENTENCE ARE LEGALLY SUSTAINABLE AND PROPORTIONATE?' : '',
+      /\b(?:conviction|sentence|punishment|proportionate)\b/i.test(this.corpus(blueprint)) ? 'WHETHER THE IMPUGNED CONVICTION AND SENTENCE ARE LEGALLY SUSTAINABLE AND PROPORTIONATE?' : '',
+      /(?:inter-state|interstate|state).{0,80}(?:boundary|border|demarcat)|(?:boundary|border|demarcat).{0,80}(?:inter-state|interstate|state)/i.test(this.corpus(blueprint))
+        ? 'WHETHER THE COMPETING INTER-STATE BOUNDARY CLAIMS ARE JUSTICIABLE BEFORE THE FORUM IDENTIFIED IN THE PROPOSITION, AND HOW THE RELIED-UPON HISTORICAL INSTRUMENTS AFFECT THOSE CLAIMS?' : '',
+      /inter-state river|river water|water dispute|water disputes act|article 262|river project|tribunal/i.test(this.corpus(blueprint))
+        ? 'WHETHER THE INTER-STATE WATER DISPUTE AND THE CHALLENGED WATER PROJECT MAY BE ADJUDICATED BY THE PRESENT FORUM IN LIGHT OF THE CONSTITUTIONAL AND STATUTORY DISPUTE-RESOLUTION FRAMEWORK?' : '',
+      /article 131|original jurisdiction|article 3|parliament.{0,80}(?:boundary|territor)|boundary.{0,80}parliament/i.test(this.corpus(blueprint))
+        ? 'WHETHER THE PRESENT DISPUTE FALLS WITHIN THE COURT’S ORIGINAL JURISDICTION OR WITHIN A CONSTITUTIONAL POWER RESERVED TO PARLIAMENT OR ANOTHER INSTITUTION?' : '',
+      /central forces|armed contingent|article 355|public order|status quo/i.test(this.corpus(blueprint))
+        ? 'WHETHER THE DEPLOYMENT OF CENTRAL FORCES AND THE INTERIM SECURITY ARRANGEMENTS ARE CONSISTENT WITH THE APPLICABLE CONSTITUTIONAL DISTRIBUTION OF POWERS?' : '',
     ].filter(Boolean).map((x) => this.normalizeIssue(x));
     const issues = (explicit.length ? explicit : inferred).slice(0, 6);
     return issues.map((issue, index) => this.fallbackIssue(issue, index, graph, totalBudget / Math.max(1, issues.length)));
@@ -102,16 +110,16 @@ export class IssueEngineService {
 
   private fallbackIssue(issue: string, index: number, graph: CaseGraph, target: number): IssueMatrixItem {
     const facts = this.pickFacts(issue, graph.facts);
-    const isEvidence = /ELECTRONIC|EVIDENCE|SAKSHYA|FORENSIC/i.test(issue);
-    const isJurisdiction = /JURISDICTION|FOREIGN|SERVER|INTERMEDIAR|EXTRATERRITORIAL/i.test(issue);
+    const isEvidence = /(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue);
+    const isCyberJurisdiction = /FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue);
     const isPrivacy = /SEARCH|SEIZURE|PRIVACY|ARTICLE 21|DEVICE/i.test(issue);
-    const isSentence = /CONVICTION|SENTENCE|PROPORTIONATE|PUNISHMENT/i.test(issue);
+    const isSentence = /\b(?:CONVICTION|SENTENCE|PROPORTIONATE|PUNISHMENT)\b/i.test(issue);
     return {
       id: `ISSUE_${index + 1}`,
       issue,
       petitionerPosition: isEvidence
         ? 'The Petitioners submit that the prosecution cannot rely on the electronic record unless every mandatory requirement governing authentication, source integrity, chain of custody, and forensic reliability is satisfied.'
-        : isJurisdiction
+        : isCyberJurisdiction
           ? 'The Petitioners submit that cross-border internet use does not by itself create unlimited jurisdiction; the statutory nexus, territorial connection, and lawful acquisition of foreign material must each be established.'
           : isPrivacy
             ? 'The Petitioners submit that digital search and forensic examination violate Article 21 when they exceed lawful scope or lack necessity, proportionality, minimisation, and auditable safeguards.'
@@ -120,7 +128,7 @@ export class IssueEngineService {
               : 'The Petitioners submit that the impugned action is legally unsustainable and warrants relief.',
       respondentPosition: isEvidence
         ? 'The Respondents submit that the electronic record is admissible because the statutory certificate, seizure record, forensic recovery, and surrounding circumstances cumulatively establish source, integrity, and reliability.'
-        : isJurisdiction
+        : isCyberJurisdiction
           ? 'The Respondents submit that jurisdiction is established by the domestic accused, victim, harmful effects, investigation, and statutory nexus, notwithstanding the use of foreign infrastructure.'
           : isPrivacy
             ? 'The Respondents submit that the warrant-backed search and forensic examination were lawful, necessary, proportionate, and accompanied by safeguards appropriate to serious cybercrime.'
@@ -128,12 +136,12 @@ export class IssueEngineService {
               ? 'The Respondents submit that the concurrent findings and sentence are legally sustainable, supported by reliable evidence, and proportionate to the proved conduct and harm.'
               : 'The Respondents submit that the impugned action is lawful, proportionate, and should be upheld.',
       subIssues: isEvidence ? ['Statutory authentication', 'Source and authorship', 'Chain of custody and forensic integrity', 'Effect of any defect or prejudice']
-        : isJurisdiction ? ['Statutory nexus', 'Territorial connection and effects', 'Foreign intermediaries and comity', 'Lawful acquisition and enforceability']
+        : isCyberJurisdiction ? ['Statutory nexus', 'Territorial connection and effects', 'Foreign intermediaries and comity', 'Lawful acquisition and enforceability']
           : isPrivacy ? ['Legality and warrant scope', 'Necessity', 'Proportionality and minimisation', 'Auditability and procedural safeguards']
             : isSentence ? ['Standard of appellate interference', 'Proof beyond reasonable doubt', 'Effect of foundational defects', 'Proportionality of sentence']
               : ['Governing rule', 'Application', 'Counterargument', 'Relief'],
       legalTests: isEvidence ? ['statutory certificate compliance', 'authenticity', 'integrity', 'chain of custody', 'prejudice']
-        : isJurisdiction ? ['statutory computer-system nexus', 'real territorial connection', 'effects', 'comity', 'lawful cross-border process']
+        : isCyberJurisdiction ? ['statutory computer-system nexus', 'real territorial connection', 'effects', 'comity', 'lawful cross-border process']
           : isPrivacy ? ['legality', 'legitimate aim', 'necessity', 'proportionality', 'scope limitation', 'procedural safeguards']
             : isSentence ? ['substantial legal error', 'reliability of evidence', 'proved ingredients', 'individualised proportionality']
               : ['rule', 'application', 'relief'],
@@ -148,10 +156,10 @@ export class IssueEngineService {
   }
 
   private pickFacts(issue: string, facts: CaseGraph['facts']) {
-    const regex = /ELECTRONIC|EVIDENCE|SAKSHYA|FORENSIC/i.test(issue) ? /evidence|certificate|forensic|device|deleted|browser|account|seiz|record/i
-      : /JURISDICTION|FOREIGN|SERVER|INTERMEDIAR|EXTRATERRITORIAL/i.test(issue) ? /foreign|server|intermediary|jurisdiction|territor|victim|harm|service provider/i
+    const regex = /(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue) ? /electronic|digital|certificate|forensic|device|deleted|browser|account|seiz|record/i
+      : /FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue) ? /foreign|server|intermediary|jurisdiction|territor|victim|harm|service provider/i
       : /SEARCH|SEIZURE|PRIVACY|ARTICLE 21|DEVICE/i.test(issue) ? /search|seizure|device|privacy|data|minimis|warrant|forensic|personal/i
-      : /CONVICTION|SENTENCE|PROPORTIONATE|PUNISHMENT/i.test(issue) ? /convict|sentence|high court|trial court|appeal|punish|harm|finding/i
+      : /\b(?:CONVICTION|SENTENCE|PROPORTIONATE|PUNISHMENT)\b/i.test(issue) ? /convict|sentence|high court|trial court|appeal|punish|harm|finding/i
       : /./;
     const primary = facts.filter((f) => regex.test(f.text));
     return [...primary, ...facts.filter((f) => f.materiality === 'high' && !primary.includes(f))].slice(0, 12);
@@ -161,10 +169,10 @@ export class IssueEngineService {
   private isCompatibleStructure(issue: string, items: string[]) {
     if (items.length < 3) return false;
     const joined = items.join(' ').toLowerCase();
-    if (/ELECTRONIC|EVIDENCE|SAKSHYA|CERTIFICATE|FORENSIC/i.test(issue)) return /certificate|authentic|source|custody|forensic|prejudice/.test(joined);
-    if (/JURISDICTION|FOREIGN|SERVER|INTERMEDIAR|EXTRATERRITORIAL/i.test(issue)) return /jurisdiction|nexus|territor|foreign|comity|assistance|enforce/.test(joined);
+    if (/(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue)) return /certificate|authentic|source|custody|forensic|prejudice/.test(joined);
+    if (/FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue)) return /jurisdiction|nexus|territor|foreign|comity|assistance|enforce/.test(joined);
     if (/SEARCH|SEIZURE|PRIVACY|ARTICLE 21|DEVICE|DATA MINIM/i.test(issue)) return /legality|warrant|necessity|proportion|privacy|minimis|scope|audit|safeguard/.test(joined) && !/certificate|source and authorship|chain of custody/.test(joined);
-    if (/CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE/i.test(issue)) return /appeal|proof|conviction|sentence|punish|proportion|mitigat|aggravat/.test(joined);
+    if (/\b(?:CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE)\b/i.test(issue)) return /appeal|proof|conviction|sentence|punish|proportion|mitigat|aggravat/.test(joined);
     return true;
   }
 
@@ -181,6 +189,6 @@ export class IssueEngineService {
   private dedupe(items: IssueMatrixItem[]) { const seen = new Set<string>(); return items.filter((item) => { const key = item.issue.toLowerCase().replace(/[^a-z0-9]+/g, ' ').slice(0, 180); if (seen.has(key)) return false; seen.add(key); return true; }); }
   private corpus(blueprint: PropositionBlueprint) { return [...blueprint.explicitIssues.map((x) => x.text), ...blueprint.facts.map((x) => x.text), ...blueprint.lawsMentioned.map((x) => x.citation)].join(' '); }
   private relevantBurden(issue: string, burden: string) { const tokens = issue.toLowerCase().split(/\W+/).filter((x) => x.length > 6); return tokens.some((t) => burden.toLowerCase().includes(t)); }
-  private anchorsFor(issue: string) { if (/EVIDENCE|SAKSHYA/i.test(issue)) return ['Bharatiya Sakshya Adhiniyam, 2023', 'electronic-record authentication']; if (/JURISDICTION|FOREIGN|SERVER/i.test(issue)) return ['Section 75, Information Technology Act, 2000', 'territorial nexus']; if (/PRIVACY|SEARCH|SEIZURE|ARTICLE 21/i.test(issue)) return ['Article 21, Constitution of India', 'privacy and due process']; if (/CONVICTION|SENTENCE/i.test(issue)) return ['Article 136, Constitution of India', 'criminal appellate review', 'proportionality']; return []; }
-  private queriesFor(issue: string) { if (/EVIDENCE|SAKSHYA/i.test(issue)) return ['Supreme Court electronic evidence certificate Section 63 BSA chain of custody forensic extraction', 'electronic record authorship deleted data admissibility India']; if (/JURISDICTION|FOREIGN|SERVER/i.test(issue)) return ['Supreme Court Section 75 IT Act extraterritorial jurisdiction foreign server territorial nexus', 'cross-border cybercrime jurisdiction Indian courts foreign intermediary']; if (/PRIVACY|SEARCH|SEIZURE|ARTICLE 21/i.test(issue)) return ['Supreme Court digital device search privacy Article 21 proportionality warrant scope', 'forensic examination device data minimisation due process India']; if (/CONVICTION|SENTENCE/i.test(issue)) return ['Supreme Court Article 136 concurrent criminal findings electronic evidence sentence proportionality', 'criminal sentence proportionality cyber offence India']; return [issue]; }
+  private anchorsFor(issue: string) { if (/(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue)) return ['Bharatiya Sakshya Adhiniyam, 2023', 'electronic-record authentication']; if (/FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue)) return ['Section 75, Information Technology Act, 2000', 'territorial nexus']; if (/PRIVACY|SEARCH|SEIZURE|ARTICLE 21/i.test(issue)) return ['Article 21, Constitution of India', 'privacy and due process']; if (/CONVICTION|SENTENCE/i.test(issue)) return ['Article 136, Constitution of India', 'criminal appellate review', 'proportionality']; return []; }
+  private queriesFor(issue: string) { if (/(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue)) return ['Supreme Court electronic evidence certificate Section 63 BSA chain of custody forensic extraction', 'electronic record authorship deleted data admissibility India']; if (/FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue)) return ['Supreme Court Section 75 IT Act extraterritorial jurisdiction foreign server territorial nexus', 'cross-border cybercrime jurisdiction Indian courts foreign intermediary']; if (/PRIVACY|SEARCH|SEIZURE|ARTICLE 21/i.test(issue)) return ['Supreme Court digital device search privacy Article 21 proportionality warrant scope', 'forensic examination device data minimisation due process India']; if (/CONVICTION|SENTENCE/i.test(issue)) return ['Supreme Court Article 136 concurrent criminal findings electronic evidence sentence proportionality', 'criminal sentence proportionality cyber offence India']; return [issue]; }
 }

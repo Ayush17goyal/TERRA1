@@ -1,5 +1,5 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CitationStyle, MemorialDepth, MemorialSide } from './memorial.types';
 import { MemorialWorkflowService } from './memorial-workflow.service';
 
@@ -24,20 +24,27 @@ export class MemorialWorkflowController {
   constructor(private readonly workflow: MemorialWorkflowService) {}
 
   @Post('blueprint')
-  @UseInterceptors(FileInterceptor('file'))
-  async blueprint(@UploadedFile() file: any, @Body() body: MemorialWorkflowBody) {
-    return this.workflow.extractBlueprint(this.toInput(file, body));
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'file', maxCount: 1 },
+    { name: 'references', maxCount: 12 },
+  ]))
+  async blueprint(@UploadedFiles() files: { file?: any[]; references?: any[] }, @Body() body: MemorialWorkflowBody) {
+    return this.workflow.extractBlueprint(this.toInput(files?.file?.[0], files?.references || [], body));
   }
 
   @Post('run')
-  @UseInterceptors(FileInterceptor('file'))
-  async run(@UploadedFile() file: any, @Body() body: MemorialWorkflowBody) {
-    return this.workflow.run(this.toInput(file, body));
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'file', maxCount: 1 },
+    { name: 'references', maxCount: 12 },
+  ]))
+  async run(@UploadedFiles() files: { file?: any[]; references?: any[] }, @Body() body: MemorialWorkflowBody) {
+    return this.workflow.run(this.toInput(files?.file?.[0], files?.references || [], body));
   }
 
-  private toInput(file: any, body: MemorialWorkflowBody) {
+  private toInput(file: any, referenceFiles: any[], body: MemorialWorkflowBody) {
     return {
       file,
+      referenceFiles,
       propositionText: body.propositionText,
       side: body.side || 'both',
       sourceName: body.sourceName,
