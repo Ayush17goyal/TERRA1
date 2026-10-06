@@ -5,10 +5,14 @@ export declare class MemorialCompilerService {
         renderModel: MemorialRenderModel;
         markdown: string;
     };
+    private buildMetadata;
+    private resolvePartyName;
     private cover;
+    private submissionTitle;
     private toc;
     private jurisdictionParagraphs;
     private factParagraphs;
+    private firstSourcePage;
     private composeFactParagraph;
     private qualifyFact;
     private summaryRows;
@@ -20,10 +24,14 @@ export declare class MemorialCompilerService {
     private usedAuthorities;
     private validAuthority;
     private renderMarkdown;
+    private partyLabel;
+    private isArbitration;
+    private isArbitrationMetadata;
     private isUsableFact;
     private isJunk;
-    private proceduralOrder;
     private cleanFact;
+    private cleanName;
+    private cleanLabel;
     private dedupeFacts;
     private dedupeAuthorities;
     private dedupeText;
@@ -32,4 +40,6 @@ export declare class MemorialCompilerService {
     private lowerFirst;
     private short;
     private roman;
+    private titleCase;
+    private escapeRegex;
 }

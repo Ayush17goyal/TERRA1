@@ -34,10 +34,9 @@ function getClerkUserId(authHeader: string | null): string | null {
 // Server-side source of truth for plan pricing (INR).
 // Client-supplied amount is ignored to prevent price tampering.
 const PLAN_PRICES: Record<string, number> = {
-  'Basic Plan': 299,
-  'Pro Plan': 499,
-  'Pro Max Plan': 699,
-  'API Credit': 799,
+  starter: 199,
+  pro: 399,
+  'pro-max': 599,
 }
 
 Deno.serve(async (req) => {
@@ -85,7 +84,7 @@ Deno.serve(async (req) => {
     }
 
     // Retrieve Razorpay keys from environment variables
-    const keyId = Deno.env.get('RAZORPAY_KEY_ID') || 'rzp_test_T8FJFRwicSO3TC';
+    const keyId = Deno.env.get('RAZORPAY_KEY_ID');
     const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
 
     if (!keySecret) {

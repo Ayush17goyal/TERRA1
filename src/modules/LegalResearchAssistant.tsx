@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { DemoUsageBadge } from '../components/DemoUsageBadge'
 import {
   AlertCircle,
   BarChart2,
@@ -818,6 +819,7 @@ function IntakeScreen({
             <div className="lra-error">
               <AlertCircle size={14} />
               <span>{error}</span>
+              {/upgrade|limit|trial/i.test(error) && <a href="/pricing">View Plans</a>}
             </div>
           )}
         </form>
@@ -1291,6 +1293,7 @@ export default function LegalResearchAssistant({ apiToken }: { apiToken: string 
 
   return (
     <div className={`lra-workspace lra-workspace--${phase}`}>
+      <div style={{ position: 'fixed', right: 18, bottom: 18, zIndex: 40 }}><DemoUsageBadge feature="legal_research" /></div>
       {showSidebars && (
         <LeftSidebar
           recentResearch={recentResearch}

@@ -153,5 +153,3 @@ export class LegalIntelligenceController {
     return this.service.renameConversation(req.user.id, id, title);
   }
 }
-
-

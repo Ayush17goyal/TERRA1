@@ -40,8 +40,10 @@ let LegislativeDraftingMentorController = LegislativeDraftingMentorController_1 
             throw error;
         }
     }
-    gradeAcademyMastery(req, index, answer) { return this.professor.mastery(req.user.id, Number(index), answer); }
-    generatePractice(req, index, prompt, difficulty) {
+    async gradeAcademyMastery(req, index, answer) {
+        return this.professor.mastery(req.user.id, Number(index), answer);
+    }
+    async generatePractice(req, index, prompt, difficulty) {
         return this.professor.generatePractice(req.user.id, Number(index), prompt, difficulty);
     }
     getAcademyState(req) {
@@ -103,7 +105,7 @@ __decorate([
     __param(2, (0, common_1.Body)('answer')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], LegislativeDraftingMentorController.prototype, "gradeAcademyMastery", null);
 __decorate([
     (0, common_1.Post)('academy/lessons/:index/practice'),
@@ -113,7 +115,7 @@ __decorate([
     __param(3, (0, common_1.Body)('difficulty')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], LegislativeDraftingMentorController.prototype, "generatePractice", null);
 __decorate([
     (0, common_1.Get)('academy/state'),
@@ -187,6 +189,7 @@ __decorate([
 exports.LegislativeDraftingMentorController = LegislativeDraftingMentorController = LegislativeDraftingMentorController_1 = __decorate([
     (0, common_1.Controller)('drafting-mentor'),
     (0, common_1.UseGuards)(clerk_auth_guard_1.ClerkAuthGuard),
-    __metadata("design:paramtypes", [drafting_workflow_engine_service_1.DraftingWorkflowEngineService, academy_professor_service_1.AcademyProfessorService])
+    __metadata("design:paramtypes", [drafting_workflow_engine_service_1.DraftingWorkflowEngineService,
+        academy_professor_service_1.AcademyProfessorService])
 ], LegislativeDraftingMentorController);
 //# sourceMappingURL=legislative-drafting-mentor.controller.js.map

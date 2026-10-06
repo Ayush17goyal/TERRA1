@@ -381,13 +381,13 @@ let ArgumentEngineService = ArgumentEngineService_1 = class ArgumentEngineServic
         return (ranked.length ? ranked : authorities).slice(0, index === 0 ? 3 : 2);
     }
     issueFamily(issue) {
-        if (/ELECTRONIC|EVIDENCE|SAKSHYA|CERTIFICATE|FORENSIC/i.test(issue))
+        if (/(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue))
             return 'evidence';
-        if (/JURISDICTION|FOREIGN|SERVER|INTERMEDIAR|EXTRATERRITORIAL/i.test(issue))
+        if (/FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue))
             return 'jurisdiction';
         if (/SEARCH|SEIZURE|PRIVACY|ARTICLE 21|DEVICE|DATA MINIM/i.test(issue))
             return 'privacy';
-        if (/CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE/i.test(issue))
+        if (/\b(?:CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE)\b/i.test(issue))
             return 'sentence';
         return 'general';
     }

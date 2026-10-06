@@ -1,3 +1,4 @@
+import './memorialFixes.css'
 import type { MemorialExportData } from './memorialExport'
 
 export type MemorialWorkspaceTab = 'analysis' | 'petitioner' | 'respondent' | 'comparison'

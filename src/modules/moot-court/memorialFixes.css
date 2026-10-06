@@ -1,0 +1,144 @@
+/*
+ * LEGATRIXON Memorial/Research Command Center stability fixes.
+ *
+ * Scope is intentionally limited to the existing research/memorial workspace.
+ * No colors, typography, navigation, card design, or application-wide layout are changed.
+ */
+
+.research-command-center,
+.research-command-grid,
+.research-command-grid > *,
+.research-center,
+.research-right,
+.research-panel,
+.research-input-card,
+.research-results-card,
+.research-side-section,
+.research-nav-item,
+.research-result-item {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* The three-column layout may only consume the width available to the command center. */
+.research-command-grid {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Prevent the export card from painting over the centre column. */
+.research-right {
+  width: 100%;
+  overflow: hidden;
+  align-self: start;
+}
+
+.research-side-section {
+  width: 100%;
+  overflow: hidden;
+}
+
+.research-side-section button {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.research-side-section button > svg {
+  flex: 0 0 auto;
+}
+
+/* Long document/file names must never determine the width of the workspace. */
+.research-nav-item > *,
+.research-result-item > *,
+.research-command-center [data-file-name],
+.research-command-center .file-name,
+.research-command-center .filename,
+.research-command-center .uploaded-file-name {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.research-nav-item strong,
+.research-nav-item small,
+.research-command-center [data-file-name],
+.research-command-center .file-name,
+.research-command-center .filename,
+.research-command-center .uploaded-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Keep large generated strings/URLs inside their existing cards. */
+.research-command-center p,
+.research-command-center li,
+.research-command-center code,
+.research-command-center pre {
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+/* Preserve the current responsive design while preventing the two-column
+   tablet layout from creating an intrinsic-width overflow. */
+@media (max-width: 1120px) {
+  .research-command-grid {
+    overflow: visible;
+  }
+
+  .research-right,
+  .research-nav-list {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .research-right,
+  .research-nav-list {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Existing uploaded-file chips are flex rows. The missing min-width:0 on the
+   flex item is the root cause of a long filename widening the whole grid. */
+.research-command-center .research-file-list,
+.research-command-center .research-file-chip,
+.research-command-center .research-file-chip > span {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.research-command-center .research-file-chip {
+  overflow: hidden;
+}
+
+.research-command-center .research-file-chip > span {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.research-command-center .research-file-chip > span > svg {
+  flex: 0 0 auto;
+}
+
+.research-command-center .research-file-chip > small {
+  flex: 0 0 auto;
+  max-width: 42%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.research-command-center .research-upload-options,
+.research-command-center .research-upload-options > * {
+  min-width: 0;
+  max-width: 100%;
+}

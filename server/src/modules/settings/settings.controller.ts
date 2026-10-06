@@ -1,12 +1,39 @@
-import { Body, Controller, Get, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ClerkAuthGuard } from '../../guards/clerk-auth.guard';
 import { AdminRoleGuard } from '../../guards/admin-role.guard';
 import { SettingsService } from './settings.service';
+import { FeatureEntitlementService } from './feature-entitlement.service';
+import { DemoFeature } from './subscription-plans';
+
+const DEMO_FEATURES = new Set<DemoFeature>(['drafting_mentor', 'case_law_reasoning', 'mock_test', 'legal_research', 'drafting_academy', 'lexmentor_ai', 'guidebot_ai', 'voice_ai', 'bare_act_ai', 'document_processing', 'judgment_ai', 'draft_analysis', 'academic_ai', 'memorial_ai']);
 
 @Controller('settings')
 @UseGuards(ClerkAuthGuard)
 export class SettingsController {
-  constructor(private readonly settings: SettingsService) {}
+  constructor(private readonly settings: SettingsService, private readonly entitlements: FeatureEntitlementService) {}
+
+  @Get('demo-mode')
+  async getDemoMode() {
+    return this.entitlements.getDemoConfig();
+  }
+
+  @Get('demo-usage')
+  async getDemoUsage(@Req() req: any, @Query('feature') feature: DemoFeature) {
+    if (!DEMO_FEATURES.has(feature)) throw new BadRequestException('Unknown feature.');
+    return this.entitlements.getUsage(req.user.id, feature);
+  }
+
+  @Get('demo-mode/admin-overview')
+  @UseGuards(AdminRoleGuard)
+  async getDemoAdminOverview() {
+    return this.entitlements.getAdminOverview();
+  }
+
+  @Put('demo-mode')
+  @UseGuards(AdminRoleGuard)
+  async updateDemoMode(@Req() req: any, @Body() body: { enabled?: boolean; limitPerFeaturePerDay?: number }) {
+    return this.entitlements.updateDemoConfig(req.user.id, body);
+  }
 
   @Get('dashboard')
   async dashboard(@Req() req: any) {

@@ -29,10 +29,6 @@ export class AdminRoleGuard implements CanActivate {
       .map((value) => value.trim().toLowerCase())
       .filter(Boolean);
 
-    return new Set([
-      'admin@legatrixon.com',
-      'legatrixon2026@gmail.com',
-      ...configured,
-    ]);
+    return new Set(configured);
   }
 }

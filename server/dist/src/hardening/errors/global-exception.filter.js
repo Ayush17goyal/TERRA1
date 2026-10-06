@@ -32,7 +32,10 @@ let GlobalExceptionFilter = class GlobalExceptionFilter {
         this.logger.error({ correlationId, status, path: request.path, method: request.method, error: (0, logger_1.errorToLog)(exception) }, 'Request failed');
         if (status >= 500)
             (0, telemetry_1.reportError)(exception, { request: { path: request.path, method: request.method, correlationId } });
-        response.status(status).json({ error: isApp ? exception.code : isHttp ? 'REQUEST_FAILED' : 'INTERNAL_ERROR', message, correlationId, retryable: isApp ? exception.retryable : status >= 500 });
+        const safeDetails = isHttp && typeof payload === 'object' && payload && status < 500
+            ? Object.fromEntries(Object.entries(payload).filter(([key]) => ['code', 'feature', 'mode', 'plan', 'limit', 'used', 'remaining', 'reset', 'timezone', 'action'].includes(key)))
+            : {};
+        response.status(status).json({ error: isApp ? exception.code : safeDetails.code || (isHttp ? 'REQUEST_FAILED' : 'INTERNAL_ERROR'), message, correlationId, retryable: isApp ? exception.retryable : status >= 500, ...safeDetails });
     }
 };
 exports.GlobalExceptionFilter = GlobalExceptionFilter;

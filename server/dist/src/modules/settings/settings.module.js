@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SettingsModule = void 0;
 const common_1 = require("@nestjs/common");
+const core_1 = require("@nestjs/core");
 const typeorm_1 = require("@nestjs/typeorm");
 const exam_entities_1 = require("../exam/exam.entities");
 const notebook_entity_1 = require("../notebook/notebook.entity");
@@ -15,6 +16,9 @@ const research_entities_1 = require("../research/research.entities");
 const settings_entities_1 = require("./settings.entities");
 const byok_entity_1 = require("./byok.entity");
 const credit_entity_1 = require("./credit.entity");
+const feature_usage_entity_1 = require("./feature-usage.entity");
+const feature_entitlement_service_1 = require("./feature-entitlement.service");
+const api_usage_protection_interceptor_1 = require("./api-usage-protection.interceptor");
 const provider_management_entity_1 = require("./provider-management.entity");
 const settings_controller_1 = require("./settings.controller");
 const byok_controller_1 = require("./byok.controller");
@@ -62,6 +66,10 @@ exports.SettingsModule = SettingsModule = __decorate([
                 credit_entity_1.AiPlanEntitlement,
                 credit_entity_1.UserAiCreditBalance,
                 credit_entity_1.AiCreditTransaction,
+                feature_usage_entity_1.FeatureUsageCounter,
+                feature_usage_entity_1.DemoModeSetting,
+                feature_usage_entity_1.DemoModeAuditLog,
+                feature_usage_entity_1.ApiUsageError,
                 provider_management_entity_1.AiProvider,
                 provider_management_entity_1.AiProviderKey,
                 provider_management_entity_1.AiProviderFailure,
@@ -70,8 +78,8 @@ exports.SettingsModule = SettingsModule = __decorate([
             ]),
         ],
         controllers: [settings_controller_1.SettingsController, byok_controller_1.ByokController, provider_management_controller_1.ProviderManagementController],
-        providers: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, provider_management_service_1.ProviderManagementService, clerk_account_service_1.ClerkAccountService, supabase_service_1.SupabaseService, admin_role_guard_1.AdminRoleGuard],
-        exports: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, provider_management_service_1.ProviderManagementService, supabase_service_1.SupabaseService],
+        providers: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, feature_entitlement_service_1.FeatureEntitlementService, provider_management_service_1.ProviderManagementService, clerk_account_service_1.ClerkAccountService, supabase_service_1.SupabaseService, admin_role_guard_1.AdminRoleGuard, { provide: core_1.APP_INTERCEPTOR, useClass: api_usage_protection_interceptor_1.ApiUsageProtectionInterceptor }],
+        exports: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, feature_entitlement_service_1.FeatureEntitlementService, provider_management_service_1.ProviderManagementService, supabase_service_1.SupabaseService],
     })
 ], SettingsModule);
 //# sourceMappingURL=settings.module.js.map

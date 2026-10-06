@@ -15,20 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemorialWorkflowController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
+const clerk_auth_guard_1 = require("../../guards/clerk-auth.guard");
 const memorial_workflow_service_1 = require("./memorial-workflow.service");
 let MemorialWorkflowController = class MemorialWorkflowController {
     constructor(workflow) {
         this.workflow = workflow;
     }
-    async blueprint(file, body) {
-        return this.workflow.extractBlueprint(this.toInput(file, body));
+    async blueprint(req, files, body) {
+        return this.workflow.extractBlueprint(this.toInput(files?.file?.[0], files?.references || [], body, req.user.id));
     }
-    async run(file, body) {
-        return this.workflow.run(this.toInput(file, body));
+    async run(req, files, body) {
+        return this.workflow.run(this.toInput(files?.file?.[0], files?.references || [], body, req.user.id));
     }
-    toInput(file, body) {
+    toInput(file, referenceFiles, body, authenticatedUserId) {
         return {
             file,
+            referenceFiles,
             propositionText: body.propositionText,
             side: body.side || 'both',
             sourceName: body.sourceName,
@@ -41,7 +43,7 @@ let MemorialWorkflowController = class MemorialWorkflowController {
             maxWords: this.parseOptionalNumber(body.maxWords),
             qualityThreshold: this.parseOptionalNumber(body.qualityThreshold) || 92,
             allowUnverifiedAuthorities: body.allowUnverifiedAuthorities === true || String(body.allowUnverifiedAuthorities).toLowerCase() === 'true',
-            userId: body.userId,
+            userId: authenticatedUserId,
         };
     }
     parseStringArray(value) {
@@ -67,24 +69,33 @@ let MemorialWorkflowController = class MemorialWorkflowController {
 exports.MemorialWorkflowController = MemorialWorkflowController;
 __decorate([
     (0, common_1.Post)('blueprint'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
-    __param(0, (0, common_1.UploadedFile)()),
-    __param(1, (0, common_1.Body)()),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
+        { name: 'file', maxCount: 1 },
+        { name: 'references', maxCount: 12 },
+    ])),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MemorialWorkflowController.prototype, "blueprint", null);
 __decorate([
     (0, common_1.Post)('run'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
-    __param(0, (0, common_1.UploadedFile)()),
-    __param(1, (0, common_1.Body)()),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
+        { name: 'file', maxCount: 1 },
+        { name: 'references', maxCount: 12 },
+    ])),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MemorialWorkflowController.prototype, "run", null);
 exports.MemorialWorkflowController = MemorialWorkflowController = __decorate([
     (0, common_1.Controller)('memorial-workflow'),
+    (0, common_1.UseGuards)(clerk_auth_guard_1.ClerkAuthGuard),
     __metadata("design:paramtypes", [memorial_workflow_service_1.MemorialWorkflowService])
 ], MemorialWorkflowController);
 //# sourceMappingURL=memorial-workflow.controller.js.map

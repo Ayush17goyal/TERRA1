@@ -26,6 +26,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     CLERK_SECRET_KEY: z.ZodOptional<z.ZodString>;
     ADMIN_EMAILS: z.ZodEffects<z.ZodOptional<z.ZodString>, string[], string>;
     FOUNDER_EMAILS: z.ZodEffects<z.ZodOptional<z.ZodString>, string[], string>;
+    ADMIN_PORTAL_ID: z.ZodOptional<z.ZodString>;
+    ADMIN_PORTAL_PASSWORD_HASH: z.ZodOptional<z.ZodString>;
+    DEMO_LIMIT_PER_FEATURE_PER_DAY: z.ZodDefault<z.ZodNumber>;
     ALLOW_DEV_AUTH_BYPASS: z.ZodEffects<z.ZodOptional<z.ZodEnum<["true", "false"]>>, boolean, "true" | "false">;
     LOG_LEVEL: z.ZodDefault<z.ZodEnum<["fatal", "error", "warn", "info", "debug", "trace", "silent"]>>;
     SENTRY_DSN: z.ZodUnion<[z.ZodOptional<z.ZodString>, z.ZodEffects<z.ZodLiteral<"">, any, "">]>;
@@ -70,6 +73,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     ADMIN_EMAILS?: string[];
     FOUNDER_EMAILS?: string[];
     PORT?: number;
+    ADMIN_PORTAL_ID?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: string;
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;
@@ -118,6 +124,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     ADMIN_EMAILS?: string;
     FOUNDER_EMAILS?: string;
     PORT?: number;
+    ADMIN_PORTAL_ID?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: string;
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;
@@ -166,6 +175,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     ADMIN_EMAILS?: string[];
     FOUNDER_EMAILS?: string[];
     PORT?: number;
+    ADMIN_PORTAL_ID?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: string;
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;
@@ -214,6 +226,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     ADMIN_EMAILS?: string;
     FOUNDER_EMAILS?: string;
     PORT?: number;
+    ADMIN_PORTAL_ID?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: string;
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;

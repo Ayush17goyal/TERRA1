@@ -1,4 +1,5 @@
 import { Global, Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CalendarEvent, Exam, MockTest, ReadinessSnapshot } from '../exam/exam.entities';
 import { NotebookDocument } from '../notebook/notebook.entity';
@@ -24,6 +25,9 @@ import {
 } from './settings.entities';
 import { UserApiKey, UserByokUsageMetric } from './byok.entity';
 import { AiCreditTransaction, AiPlanEntitlement, UserAiCreditBalance } from './credit.entity';
+import { ApiUsageError, DemoModeAuditLog, DemoModeSetting, FeatureUsageCounter } from './feature-usage.entity';
+import { FeatureEntitlementService } from './feature-entitlement.service';
+import { ApiUsageProtectionInterceptor } from './api-usage-protection.interceptor';
 import {
   AiProvider,
   AiProviderAlert,
@@ -75,6 +79,10 @@ import { AdminRoleGuard } from '../../guards/admin-role.guard';
       AiPlanEntitlement,
       UserAiCreditBalance,
       AiCreditTransaction,
+      FeatureUsageCounter,
+      DemoModeSetting,
+      DemoModeAuditLog,
+      ApiUsageError,
       AiProvider,
       AiProviderKey,
       AiProviderFailure,
@@ -83,7 +91,7 @@ import { AdminRoleGuard } from '../../guards/admin-role.guard';
     ]),
   ],
   controllers: [SettingsController, ByokController, ProviderManagementController],
-  providers: [SettingsService, ByokService, CreditService, ProviderManagementService, ClerkAccountService, SupabaseService, AdminRoleGuard],
-  exports: [SettingsService, ByokService, CreditService, ProviderManagementService, SupabaseService],
+  providers: [SettingsService, ByokService, CreditService, FeatureEntitlementService, ProviderManagementService, ClerkAccountService, SupabaseService, AdminRoleGuard, { provide: APP_INTERCEPTOR, useClass: ApiUsageProtectionInterceptor }],
+  exports: [SettingsService, ByokService, CreditService, FeatureEntitlementService, ProviderManagementService, SupabaseService],
 })
 export class SettingsModule {}

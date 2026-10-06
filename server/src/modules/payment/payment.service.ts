@@ -3,15 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Payment } from './payment.entity';
 import { UserSubscription } from '../settings/settings.entities';
+import { getPaidPlan } from '../settings/subscription-plans';
 import * as crypto from 'crypto';
-
-// Plan credit mapping
-const PLAN_CREDITS: Record<string, number> = {
-  'Basic Plan': 2000,
-  'Pro Plan': 5000,
-  'Pro Max Plan': 15000,
-  'API Credit': 5000, // stackable booster
-};
 
 @Injectable()
 export class PaymentService {
@@ -44,11 +37,11 @@ export class PaymentService {
       throw new InternalServerErrorException('Razorpay credentials not configured on server');
     }
 
-    if (!amount || amount <= 0) {
-      throw new BadRequestException('Invalid amount');
-    }
+    const plan = getPaidPlan(planId);
+    if (!plan) throw new BadRequestException('Unknown or non-payable plan');
+    if (Number(amount) !== plan.price) throw new BadRequestException('Plan price does not match the current catalogue');
 
-    const amountInPaise = amount * 100;
+    const amountInPaise = plan.price * 100;
     const receipt = `rcpt_${userId.slice(-8)}_${Date.now()}`;
 
     // Call Razorpay Orders API
@@ -64,7 +57,7 @@ export class PaymentService {
         currency: 'INR',
         receipt,
         notes: {
-          plan_id: planId,
+          plan_id: plan.id,
           user_id: userId,
           platform: 'LEGATRIXON',
         },
@@ -83,8 +76,8 @@ export class PaymentService {
     const payment = this.paymentRepo.create({
       userId,
       razorpayOrderId: order.id,
-      planId,
-      amount,
+      planId: plan.id,
+      amount: plan.price,
       currency: 'INR',
       status: 'created',
     });
@@ -112,6 +105,14 @@ export class PaymentService {
       throw new InternalServerErrorException('Razorpay secret not configured');
     }
 
+    const plan = getPaidPlan(planId);
+    if (!plan) throw new BadRequestException('Unknown or non-payable plan');
+    const existingPayment = await this.paymentRepo.findOne({ where: { razorpayOrderId: orderId } });
+    if (!existingPayment || existingPayment.userId !== userId || existingPayment.planId !== plan.id) {
+      throw new BadRequestException('Payment order does not match this user and plan');
+    }
+    if (existingPayment.status === 'captured') throw new BadRequestException('Payment order has already been processed');
+
     // 1. Verify HMAC signature
     const expectedSignature = crypto
       .createHmac('sha256', this.razorpayKeySecret)
@@ -136,15 +137,19 @@ export class PaymentService {
       method = rzpData.method || 'unknown';
       rzpAmount = rzpData.amount || 0;
       if (rzpData.status !== 'captured' && rzpData.status !== 'authorized') {
-        this.logger.warn(`Payment ${paymentId} status is ${rzpData.status}, not captured`);
+        throw new BadRequestException(`Payment is not captured (status: ${rzpData.status})`);
       }
+      if (rzpData.order_id !== orderId || Number(rzpData.amount) !== plan.price * 100 || rzpData.currency !== 'INR') {
+        throw new BadRequestException('Payment amount or order does not match the selected plan');
+      }
+    } else {
+      throw new BadRequestException('Unable to confirm payment with Razorpay');
     }
 
     // 3. Generate invoice number
     const invoiceNumber = `LGTX-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
     // 4. Update payment record
-    const existingPayment = await this.paymentRepo.findOne({ where: { razorpayOrderId: orderId } });
     if (existingPayment) {
       existingPayment.razorpayPaymentId = paymentId;
       existingPayment.razorpaySignature = signature;
@@ -152,25 +157,10 @@ export class PaymentService {
       existingPayment.method = method;
       existingPayment.invoiceNumber = invoiceNumber;
       await this.paymentRepo.save(existingPayment);
-    } else {
-      // Create new record if order wasn't tracked
-      const payment = this.paymentRepo.create({
-        userId,
-        razorpayOrderId: orderId,
-        razorpayPaymentId: paymentId,
-        razorpaySignature: signature,
-        planId,
-        amount: rzpAmount / 100,
-        currency: 'INR',
-        status: 'captured',
-        method,
-        invoiceNumber,
-      });
-      await this.paymentRepo.save(payment);
     }
 
     // 5. Activate subscription in user_subscriptions
-    await this.activateSubscription(userId, planId);
+    await this.activateSubscription(userId, plan.id);
 
     return {
       success: true,
@@ -184,32 +174,25 @@ export class PaymentService {
    * Activates or upgrades the user's subscription and resets/stacks credits.
    */
   private async activateSubscription(userId: string, planId: string) {
-    const credits = PLAN_CREDITS[planId] || 0;
-    const isBooster = planId === 'API Credit';
+    const plan = getPaidPlan(planId);
+    if (!plan) throw new BadRequestException('Unknown subscription plan');
 
     let sub = await this.subscriptionRepo.findOne({ where: { userId } });
 
     if (sub) {
-      if (isBooster) {
-        // Stack credits for API Credit booster
-        sub.aiCreditsLimit = (sub.aiCreditsLimit || 0) + credits;
-      } else {
-        // Full plan upgrade: reset credits
-        sub.planName = planId;
-        sub.status = 'active';
-        sub.aiCreditsUsed = 0;
-        sub.aiCreditsLimit = credits;
-        sub.renewalDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-      }
+      sub.planName = plan.id;
+      sub.status = 'active';
+      sub.aiCreditsUsed = 0;
+      sub.aiCreditsLimit = plan.aiCredits;
+      sub.renewalDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
       await this.subscriptionRepo.save(sub);
     } else {
-      // Create new subscription
       const newSub = this.subscriptionRepo.create({
         userId,
-        planName: isBooster ? 'API Credit' : planId,
+        planName: plan.id,
         status: 'active',
         aiCreditsUsed: 0,
-        aiCreditsLimit: credits,
+        aiCreditsLimit: plan.aiCredits,
         renewalDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       });
       await this.subscriptionRepo.save(newSub);

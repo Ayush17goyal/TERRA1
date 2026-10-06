@@ -20,7 +20,7 @@ let CaseReasoningSimulatorController = class CaseReasoningSimulatorController {
     constructor(simulator) {
         this.simulator = simulator;
     }
-    analyze(req, body) {
+    async analyze(req, body) {
         return this.simulator.analyze(req.user.id, body);
     }
     history(req) {
@@ -40,7 +40,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CaseReasoningSimulatorController.prototype, "analyze", null);
 __decorate([
     (0, common_1.Get)('history'),

@@ -24,7 +24,8 @@
     "sync:legal-corpus:force": "ts-node -r tsconfig-paths/register src/scripts/legal-corpus-sync.ts --force",
     "validate:corpus": "ts-node -r tsconfig-paths/register src/scripts/legal-corpus-sync.ts --validate-only",
     "repair:corpus": "ts-node -r tsconfig-paths/register src/scripts/legal-corpus-sync.ts --repair-only",
-    "test:sync": "jest --runInBand src/modules/ingestion/corpus-sync.spec.ts"
+    "test:sync": "jest --runInBand src/modules/ingestion/corpus-sync.spec.ts",
+    "admin:hash-secret": "npm run build && node dist/src/scripts/hash-admin-secret.js"
   },
   "dependencies": {
     "@clerk/backend": "^3.5.0",

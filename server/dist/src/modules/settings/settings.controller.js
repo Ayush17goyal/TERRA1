@@ -17,9 +17,26 @@ const common_1 = require("@nestjs/common");
 const clerk_auth_guard_1 = require("../../guards/clerk-auth.guard");
 const admin_role_guard_1 = require("../../guards/admin-role.guard");
 const settings_service_1 = require("./settings.service");
+const feature_entitlement_service_1 = require("./feature-entitlement.service");
+const DEMO_FEATURES = new Set(['drafting_mentor', 'case_law_reasoning', 'mock_test', 'legal_research', 'drafting_academy', 'lexmentor_ai', 'guidebot_ai', 'voice_ai', 'bare_act_ai', 'document_processing', 'judgment_ai', 'draft_analysis', 'academic_ai', 'memorial_ai']);
 let SettingsController = class SettingsController {
-    constructor(settings) {
+    constructor(settings, entitlements) {
         this.settings = settings;
+        this.entitlements = entitlements;
+    }
+    async getDemoMode() {
+        return this.entitlements.getDemoConfig();
+    }
+    async getDemoUsage(req, feature) {
+        if (!DEMO_FEATURES.has(feature))
+            throw new common_1.BadRequestException('Unknown feature.');
+        return this.entitlements.getUsage(req.user.id, feature);
+    }
+    async getDemoAdminOverview() {
+        return this.entitlements.getAdminOverview();
+    }
+    async updateDemoMode(req, body) {
+        return this.entitlements.updateDemoConfig(req.user.id, body);
     }
     async dashboard(req) {
         return this.settings.getDashboard(req.user);
@@ -106,6 +123,36 @@ let SettingsController = class SettingsController {
     }
 };
 exports.SettingsController = SettingsController;
+__decorate([
+    (0, common_1.Get)('demo-mode'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "getDemoMode", null);
+__decorate([
+    (0, common_1.Get)('demo-usage'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('feature')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "getDemoUsage", null);
+__decorate([
+    (0, common_1.Get)('demo-mode/admin-overview'),
+    (0, common_1.UseGuards)(admin_role_guard_1.AdminRoleGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "getDemoAdminOverview", null);
+__decorate([
+    (0, common_1.Put)('demo-mode'),
+    (0, common_1.UseGuards)(admin_role_guard_1.AdminRoleGuard),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "updateDemoMode", null);
 __decorate([
     (0, common_1.Get)('dashboard'),
     __param(0, (0, common_1.Req)()),
@@ -300,6 +347,6 @@ __decorate([
 exports.SettingsController = SettingsController = __decorate([
     (0, common_1.Controller)('settings'),
     (0, common_1.UseGuards)(clerk_auth_guard_1.ClerkAuthGuard),
-    __metadata("design:paramtypes", [settings_service_1.SettingsService])
+    __metadata("design:paramtypes", [settings_service_1.SettingsService, feature_entitlement_service_1.FeatureEntitlementService])
 ], SettingsController);
 //# sourceMappingURL=settings.controller.js.map

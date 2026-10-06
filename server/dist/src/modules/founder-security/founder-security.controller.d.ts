@@ -4,7 +4,6 @@ export declare class FounderSecurityController {
     private readonly founderSecurityService;
     constructor(founderSecurityService: FounderSecurityService);
     private getClientOrigin;
-    private getRequiredAdminCredential;
     getSettings(): Promise<import("./founder-security.entities").FounderSecuritySettings>;
     getAdminAnalytics(): Promise<{
         usersCount: number;
@@ -38,20 +37,20 @@ export declare class FounderSecurityController {
         message: string;
         locked?: undefined;
         step2Required?: undefined;
-        sessionToken?: undefined;
-        question?: undefined;
+        pendingApproval?: undefined;
+        token?: undefined;
     } | {
         ok: boolean;
         locked: boolean;
         message: string;
         step2Required?: undefined;
-        sessionToken?: undefined;
-        question?: undefined;
+        pendingApproval?: undefined;
+        token?: undefined;
     } | {
         ok: boolean;
         step2Required: boolean;
-        sessionToken: string;
-        question: string;
+        pendingApproval: boolean;
+        token: string;
         message?: undefined;
         locked?: undefined;
     }>;

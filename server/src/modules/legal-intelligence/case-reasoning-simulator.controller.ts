@@ -18,7 +18,7 @@ export class CaseReasoningSimulatorController {
   constructor(private readonly simulator: CaseReasoningSimulatorService) {}
 
   @Post('analyze')
-  analyze(@Req() req: AuthenticatedRequest, @Body() body: AnalyzeBody) {
+  async analyze(@Req() req: AuthenticatedRequest, @Body() body: AnalyzeBody) {
     return this.simulator.analyze(req.user.id, body);
   }
 

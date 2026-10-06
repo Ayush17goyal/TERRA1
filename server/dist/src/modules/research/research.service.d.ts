@@ -121,6 +121,8 @@ export declare class ResearchService {
         assetData: Record<string, unknown>;
     }): Promise<ResearchAsset>;
     uploadDocument(userId: string, file: any, queryId?: string, docCategory?: string): Promise<ResearchDocument>;
+    private indexResearchDocument;
+    private withTimeout;
     getDocuments(userId: string, queryId: string): Promise<ResearchDocument[]>;
     generateJudgmentIntelligence(userId: string, body: {
         queryId?: string;

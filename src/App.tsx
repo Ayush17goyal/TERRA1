@@ -102,6 +102,7 @@ import {
 // Removed ByokSettingsPanel import
 import { useExamDashboard } from './hooks/useExamDashboard'
 import { AVATARS, renderAvatar, getAvatarName } from './lib/avatars'
+import { PRICING_PLANS, normalizePlanId, type PricingPlan } from './config/pricing'
 const GuideBot = React.lazy(() => import('./modules/GuideBot'))
 const AdminPortal = React.lazy(() => import('./modules/AdminPortal'))
 const AcademicNavigator = React.lazy(() => import('./modules/AcademicNavigator'))
@@ -2824,27 +2825,145 @@ function ProductPage() {
 }
 
 function PricingPage() {
+  const { isSignedIn, getToken } = useAuth()
+  const navigate = useNavigate()
+  const [currentPlan, setCurrentPlan] = useState<PricingPlan['id']>('free')
+  const [loadingPlan, setLoadingPlan] = useState(Boolean(isSignedIn))
+  const [checkoutPlan, setCheckoutPlan] = useState<PricingPlan['id'] | null>(null)
+  const [checkoutMessage, setCheckoutMessage] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+    const loadCurrentPlan = async () => {
+      if (!isSignedIn) {
+        setCurrentPlan('free')
+        setLoadingPlan(false)
+        return
+      }
+      try {
+        const token = await getToken()
+        const response = await fetch(`${API_BASE_URL}/settings/dashboard`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        })
+        if (response.ok && !cancelled) {
+          const dashboard = await response.json()
+          setCurrentPlan(normalizePlanId(dashboard?.subscription?.planName))
+        }
+      } finally {
+        if (!cancelled) setLoadingPlan(false)
+      }
+    }
+    loadCurrentPlan()
+    return () => { cancelled = true }
+  }, [getToken, isSignedIn])
+
+  const loadRazorpay = async () => {
+    if ((window as any).Razorpay) return true
+    return new Promise<boolean>((resolve) => {
+      const existing = document.querySelector<HTMLScriptElement>('script[data-legatrixon-razorpay]')
+      if (existing) {
+        existing.addEventListener('load', () => resolve(true), { once: true })
+        existing.addEventListener('error', () => resolve(false), { once: true })
+        return
+      }
+      const script = document.createElement('script')
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.async = true
+      script.dataset.legatrixonRazorpay = 'true'
+      script.onload = () => resolve(true)
+      script.onerror = () => resolve(false)
+      document.body.appendChild(script)
+    })
+  }
+
+  const choosePlan = async (plan: PricingPlan) => {
+    setCheckoutMessage('')
+    if (!isSignedIn) {
+      navigate('/signup', { state: { selectedPlan: plan.id } })
+      return
+    }
+    if (plan.id === currentPlan) return
+    if (plan.id === 'free') {
+      navigate('/dashboard')
+      return
+    }
+
+    setCheckoutPlan(plan.id)
+    try {
+      const token = await getToken()
+      if (!token) throw new Error('Please sign in again to continue.')
+      const sdkReady = await loadRazorpay()
+      if (!sdkReady) throw new Error('Secure checkout could not be loaded. Please check your connection and retry.')
+
+      const orderResponse = await fetch(`${API_BASE_URL}/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ plan_id: plan.id, amount: plan.price }),
+      })
+      const order = await orderResponse.json().catch(() => null)
+      if (!orderResponse.ok) throw new Error(order?.message || 'Unable to start secure checkout.')
+
+      const checkout = new (window as any).Razorpay({
+        key: order.key_id,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'LEGATRIXON',
+        description: `${plan.name} — ${plan.billing}`,
+        order_id: order.order_id,
+        prefill: {},
+        theme: { color: '#b8871d' },
+        handler: async (payment: any) => {
+          try {
+            const verifyResponse = await fetch(`${API_BASE_URL}/payment/verify-payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+              body: JSON.stringify({
+                payment_id: payment.razorpay_payment_id,
+                order_id: payment.razorpay_order_id,
+                signature: payment.razorpay_signature,
+                plan_id: plan.id,
+              }),
+            })
+            const verified = await verifyResponse.json().catch(() => null)
+            if (!verifyResponse.ok) throw new Error(verified?.message || 'Payment verification failed.')
+            setCurrentPlan(plan.id)
+            setCheckoutMessage(`${plan.name} is now your active plan.`)
+          } catch (error: any) {
+            setCheckoutMessage(error?.message || 'Payment verification failed. Please contact support.')
+          } finally {
+            setCheckoutPlan(null)
+          }
+        },
+        modal: { ondismiss: () => setCheckoutPlan(null) },
+      })
+      checkout.open()
+    } catch (error: any) {
+      setCheckoutMessage(error?.message || 'Unable to start checkout.')
+      setCheckoutPlan(null)
+    }
+  }
+
   return (
     <main className="inner-page">
       <section className="inner-hero reveal-up">
         <p className="eyebrow">Pricing</p>
         <h1>Choose The LEGATRIXON Plan That Matches Your Legal Ambition</h1>
-        <p>Built for individual learners, legal professionals, and high-scale institutions.</p>
+        <p>Start free, then choose the level of legal AI assistance that fits your work.</p>
       </section>
 
-      <section className="pricing-grid">
-        {pricingPlans.map((plan) => {
-          const isProMax = plan.name === 'Pro Max Plan';
-          const isPro = plan.name === 'Pro Plan';
-          const isBooster = plan.name === 'API Credit';
+      {checkoutMessage && <div className="pricing-status" role="status">{checkoutMessage}</div>}
 
+      <section className="pricing-grid">
+        {PRICING_PLANS.map((plan) => {
+          const isActive = isSignedIn && !loadingPlan && plan.id === currentPlan
+          const isBusy = checkoutPlan === plan.id
           return (
             <article
-              key={plan.name}
-              className={`glass-card pricing-card ${plan.featured ? 'pricing-featured' : ''}`}
+              key={plan.id}
+              className={`glass-card pricing-card ${plan.featured ? 'pricing-featured' : ''} ${plan.premium ? 'pricing-premium' : ''}`}
             >
               {plan.badge && (
-                <div className={`plan-badge-container ${isProMax ? 'badge-promax' : isPro ? 'badge-pro' : isBooster ? 'badge-booster' : ''}`}>
+                <div className={`plan-badge-container ${plan.featured ? 'badge-pro' : 'badge-promax'}`}>
                   <span className="badge-pill">{plan.badge}</span>
                 </div>
               )}
@@ -2857,42 +2976,38 @@ function PricingPage() {
 
               <div className="price-container">
                 <div className="price-row">
-                  <span className="current-price">{plan.price}</span>
-                  {plan.period && <span className="price-period">{plan.period}</span>}
-                  <span className="strike-price">{plan.originalPrice}</span>
-                  <span className="savings-pill">{plan.savings} Off</span>
+                  <span className="current-price">₹{plan.price}</span>
+                  <span className="price-period">{plan.period}</span>
                 </div>
               </div>
 
               <div className="features-section">
-                <p className="section-subtitle">Features Included</p>
+                <p className="section-subtitle">Features included</p>
                 <ul className="features-list">
                   {plan.features.map((feature) => (
-                    <li
-                      key={feature.name}
-                      className="feature-item has-tooltip"
-                      data-tooltip={feature.tooltip}
-                    >
+                    <li key={feature.name} className="feature-item has-tooltip" data-tooltip={feature.tooltip}>
                       <CheckCircle2 size={15} className="check-icon" />
-                      <span className="feature-text">{feature.name}</span>
+                      <span className="feature-text">
+                        <strong>{feature.name}</strong>
+                        {feature.limit && <small>{feature.limit}</small>}
+                      </span>
                       <HelpCircle size={12} className="tooltip-trigger" />
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {plan.limitations && (
+              {plan.restrictions && (
                 <div className="limitations-section">
-                  <p className="section-subtitle limits-title">Limitations</p>
+                  <p className="section-subtitle limits-title">Limited / paid features</p>
                   <ul className="limitations-list">
-                    {plan.limitations.map((limit) => (
-                      <li
-                        key={limit.name}
-                        className="limit-item has-tooltip"
-                        data-tooltip={limit.tooltip}
-                      >
-                        <X size={15} className="limit-icon" aria-hidden="true" />
-                        <span className="limit-text">{limit.name}</span>
+                    {plan.restrictions.map((feature) => (
+                      <li key={feature.name} className="limit-item has-tooltip" data-tooltip={feature.tooltip}>
+                        <LockKeyhole size={15} className="limit-icon" aria-hidden="true" />
+                        <span className="limit-text">
+                          <strong>{feature.name}</strong>
+                          {feature.limit && <small>{feature.limit}</small>}
+                        </span>
                         <HelpCircle size={12} className="tooltip-trigger" />
                       </li>
                     ))}
@@ -2900,25 +3015,13 @@ function PricingPage() {
                 </div>
               )}
 
-              {plan.highlight && (
-                <div className="plan-highlight-box highlight-promax">
-                  <Sparkles size={14} className="highlight-icon" />
-                  <span>{plan.highlight}</span>
-                </div>
-              )}
-
-              {plan.highlightBox && (
-                <div className="plan-highlight-box highlight-booster">
-                  <CreditCard size={14} className="highlight-icon" />
-                  <span>{plan.highlightBox}</span>
-                </div>
-              )}
-
               <button
                 type="button"
-                className={`btn plan-btn ${plan.featured ? 'btn-primary' : 'btn-outline'}`}
+                className={`btn plan-btn ${plan.featured || plan.premium ? 'btn-primary' : 'btn-outline'} ${isActive ? 'plan-btn-active' : ''}`}
+                disabled={isActive || isBusy || loadingPlan}
+                onClick={() => choosePlan(plan)}
               >
-                {plan.buttonText}
+                {isActive ? 'Current Plan' : isBusy ? 'Opening Checkout…' : plan.cta}
               </button>
             </article>
           )
@@ -4055,8 +4158,8 @@ const EMPTY_SETTINGS_DASHBOARD: SettingsDashboardData = {
     { module: 'Smart Study Forge', primaryLabel: 'Study Kits', primaryValue: 0, secondaryLabel: 'Flashcards', secondaryValue: 0 },
   ],
   achievements: { level: 1, xp: 0, badgeCount: 0, levelProgress: 0, unlocked: [], available: [] },
-  subscription: { planName: 'Basic', status: 'active', renewalDate: null, usagePercentage: 0, aiCreditsUsed: 0, remainingCredits: 100 },
-  creditBalances: [{ moduleKey: 'lexmentor', label: 'LexMentor AI', planKey: 'basic', creditsGranted: 100, creditsUsed: 0, creditsRemaining: 100, resetPeriod: 'monthly', resetAt: null }],
+  subscription: { planName: 'Free', status: 'active', renewalDate: null, usagePercentage: 0, aiCreditsUsed: 0, remainingCredits: 100 },
+  creditBalances: [{ moduleKey: 'lexmentor', label: 'LexMentor AI', planKey: 'free', creditsGranted: 100, creditsUsed: 0, creditsRemaining: 100, resetPeriod: 'lifetime', resetAt: null }],
   security: { clerkConnected: true, activeSessionsAvailable: false, activeSessions: null, deviceHistoryAvailable: false, deviceHistory: [], passwordStatus: null, twoFactorStatus: null },
   analyticsEngine: { totalUsage: 0, weeklyUsage: 0, monthlyUsage: 0, featureAdoption: 0, mostUsedFeature: null, leastUsedFeature: null, learningVelocity: 0, engagementScore: 0 },
   notificationPreferences: { emailNotifications: true, studyReminders: true, quizReminders: true, revisionAlerts: true, weeklyReports: true, deliveryEmail: true, deliveryBrowser: true, deliveryMobile: false, deliveryDigest: false, quietStart: '22:00', quietEnd: '07:00', priority: 'All Notifications' },

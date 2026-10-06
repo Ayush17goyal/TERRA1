@@ -6,6 +6,7 @@ import {
   CheckSquare, Square, Plus, Minus, Settings2, Target, Check, Sliders, Save, ChevronRight, ChevronDown
 } from 'lucide-react'
 import { API_BASE_URL } from '../lib/api'
+import { DemoUsageBadge } from '../components/DemoUsageBadge'
 
 interface Props { apiToken?: string; theme?: 'dark' | 'light' }
 
@@ -310,7 +311,7 @@ export default function MockTestPlatform({ apiToken }: Props) {
     if(!activeAttempt?.answers?.questionEvaluations) return []
     const evals=activeAttempt.answers.questionEvaluations
     if(evalFilter==='correct') return evals.filter(e=>e.isCorrect===true)
-    if(evalFilter==='incorrect') return evals.filter(e=>e.isCorrect===false&&e.result!=='Unanswered')
+    if(evalFilter==='incorrect') return evals.filter(e=>e.isCorrect===false&&e.result!=='Unanswered'&&!e.result?.includes('Optional')&&!e.result?.includes('Not Selected'))
     if(evalFilter==='unanswered') return evals.filter(e=>e.result==='Unanswered')
     if(evalFilter==='subjective') return evals.filter(e=>e.type!=='MCQ'&&e.type!=='True/False')
     return evals
@@ -340,6 +341,7 @@ export default function MockTestPlatform({ apiToken }: Props) {
 
   return (
     <div style={{ minHeight: '100vh', background: bg, color: text, padding: '28px 32px', fontFamily: 'inherit', boxSizing: 'border-box' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}><DemoUsageBadge feature="mock_test" /></div>
       {/* Hidden File Inputs */}
       <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".pdf,.txt,.doc,.docx" style={{ display: 'none' }} />
       <input type="file" ref={sheetInputRef} onChange={handleHandwrittenUpload} accept="image/*,.pdf" style={{ display: 'none' }} />
@@ -354,6 +356,9 @@ export default function MockTestPlatform({ apiToken }: Props) {
         }}>
           {notification.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
           <span>{notification.message}</span>
+          {notification.type === 'error' && /upgrade|limit|trial/i.test(notification.message) && (
+            <a href="/pricing" style={{ color: '#ffffff', fontWeight: 800, textDecoration: 'underline' }}>View Plans</a>
+          )}
         </div>
       )}
 
@@ -1216,9 +1221,15 @@ export default function MockTestPlatform({ apiToken }: Props) {
                   <h2 style={{ margin: 0, fontSize: 21, fontWeight: 800, color: text }}>
                     {activeTest.scoreReport?.examTitle || activeTest.topic}
                   </h2>
-                  <div style={{ display: 'flex', gap: 14, fontSize: 13, color: textSoft, marginTop: 6 }}>
+                  <div style={{ display: 'flex', gap: 14, fontSize: 13, color: textSoft, marginTop: 6, flexWrap: 'wrap' }}>
                     <span>Total Questions: <strong style={{ color: text }}>{activeTest.questions?.length || 0}</strong></span>
-                    <span>Total Marks: <strong style={{ color: gold }}>{activeTest.scoreReport?.totalMarks || 100}</strong></span>
+                    {activeTest.scoreReport?.questionsToAttempt && (
+                      <span>Questions to Attempt: <strong style={{ color: text }}>{activeTest.scoreReport.questionsToAttempt}</strong></span>
+                    )}
+                    <span>Maximum Marks: <strong style={{ color: gold }}>{activeTest.scoreReport?.totalMarks || 100} Marks</strong></span>
+                    {activeTest.scoreReport?.totalPaperMarks && (
+                      <span>Available Paper Marks: <strong style={{ color: textSoft }}>{activeTest.scoreReport.totalPaperMarks} Marks</strong></span>
+                    )}
                     <span>Duration: <strong style={{ color: text }}>{activeTest.scoreReport?.durationMinutes || 45} mins</strong></span>
                     <span>Difficulty: <strong style={{ color: text }}>{activeTest.difficulty}</strong></span>
                   </div>
@@ -1721,8 +1732,8 @@ export default function MockTestPlatform({ apiToken }: Props) {
                         <span style={{ fontSize: 12, color: textSoft, fontWeight: 500 }}>({ev.type})</span>
                         <span style={{
                           fontSize: 11, fontWeight: 800, padding: '3px 10px', borderRadius: 12,
-                          background: ev.isCorrect === true ? 'rgba(16, 185, 129, 0.15)' : ev.isCorrect === false ? 'rgba(239, 68, 68, 0.15)' : 'rgba(139, 92, 246, 0.15)',
-                          color: ev.isCorrect === true ? '#10b981' : ev.isCorrect === false ? '#ef4444' : '#8b5cf6'
+                          background: ev.isCorrect === true ? 'rgba(16, 185, 129, 0.15)' : (ev.result?.includes('Optional') || ev.result?.includes('Not Selected')) ? 'rgba(100, 116, 139, 0.15)' : ev.isCorrect === false ? 'rgba(239, 68, 68, 0.15)' : 'rgba(139, 92, 246, 0.15)',
+                          color: ev.isCorrect === true ? '#10b981' : (ev.result?.includes('Optional') || ev.result?.includes('Not Selected')) ? '#64748b' : ev.isCorrect === false ? '#ef4444' : '#8b5cf6'
                         }}>
                           {ev.result || (ev.isCorrect ? 'Correct' : 'Incorrect')}
                         </span>

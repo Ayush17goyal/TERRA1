@@ -251,46 +251,16 @@ export class ResearchService {
       doc.content = text;
       await this.documents.save(doc);
 
-      // Semantic chunking
-      const chunks: string[] = [];
-      const CHUNK_SIZE = 1000;
-      const CHUNK_OVERLAP = 200;
-      for (let i = 0; i < text.length; i += (CHUNK_SIZE - CHUNK_OVERLAP)) {
-        chunks.push(text.substring(i, i + CHUNK_SIZE));
-        if (i + CHUNK_SIZE >= text.length) break;
-      }
-
-      if (chunks.length > 0) {
-        // Generate BGE-M3 Embeddings
-        const embeddings = await this.bgeM3Provider.generateBatchEmbeddings(chunks);
-        const qdrantClient = this.qdrantService.getClient();
-
-        const points = chunks.map((chunkText, j) => {
-          const pointId = this.generatePointId(doc.id, j);
-          return {
-            id: pointId,
-            vector: embeddings[j],
-            payload: {
-              text: chunkText,
-              source_id: doc.id,
-              query_id: queryId || null,
-              user_id: userId,
-              doc_category: category,
-              chunk_index: j,
-              name,
-              uploaded_at: new Date().toISOString(),
-            },
-          };
-        });
-
-        await qdrantClient.upsert('user_documents', {
-          wait: true,
-          points,
-        });
-      }
-
-      doc.status = 'Ready';
-      await this.documents.save(doc);
+      // Return control as soon as extraction and durable storage complete. Embedding
+      // hundreds of chunks and waiting for Qdrant used to keep this HTTP request open
+      // for many minutes, leaving the browser permanently on "Uploading...".
+      void this.indexResearchDocument(doc, {
+        text,
+        queryId,
+        userId,
+        category,
+        name,
+      });
       return doc;
     } catch (error) {
       this.logger.error(`Error processing document upload: ${error.message}`);
@@ -298,6 +268,75 @@ export class ResearchService {
       doc.content = `Processing failed: ${error.message}`;
       await this.documents.save(doc);
       throw error;
+    }
+  }
+
+  private async indexResearchDocument(
+    doc: ResearchDocument,
+    context: { text: string; queryId?: string; userId: string; category: string; name: string },
+  ) {
+    try {
+      const chunks: string[] = [];
+      const chunkSize = 1800;
+      const chunkOverlap = 250;
+      for (let i = 0; i < context.text.length; i += chunkSize - chunkOverlap) {
+        chunks.push(context.text.substring(i, i + chunkSize));
+        if (i + chunkSize >= context.text.length) break;
+      }
+
+      const qdrantClient = this.qdrantService.getClient();
+      const batchSize = 32;
+      for (let offset = 0; offset < chunks.length; offset += batchSize) {
+        const batch = chunks.slice(offset, offset + batchSize);
+        const embeddings = await this.withTimeout(
+          this.bgeM3Provider.generateBatchEmbeddings(batch),
+          90_000,
+          `Embedding batch ${Math.floor(offset / batchSize) + 1} timed out`,
+        );
+        const points = batch.map((chunkText, batchIndex) => {
+          const chunkIndex = offset + batchIndex;
+          return {
+            id: this.generatePointId(doc.id, chunkIndex),
+            vector: embeddings[batchIndex],
+            payload: {
+              text: chunkText,
+              source_id: doc.id,
+              query_id: context.queryId || null,
+              user_id: context.userId,
+              doc_category: context.category,
+              chunk_index: chunkIndex,
+              name: context.name,
+              uploaded_at: new Date().toISOString(),
+            },
+          };
+        });
+        await this.withTimeout(
+          qdrantClient.upsert('user_documents', { wait: true, points }),
+          60_000,
+          `Vector indexing batch ${Math.floor(offset / batchSize) + 1} timed out`,
+        );
+      }
+
+      doc.status = 'Ready';
+      await this.documents.save(doc);
+    } catch (error: any) {
+      this.logger.error(`Background indexing failed for ${doc.id}: ${error?.message || error}`);
+      doc.status = 'Error';
+      await this.documents.save(doc).catch(() => undefined);
+    }
+  }
+
+  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string): Promise<T> {
+    let timer: NodeJS.Timeout | undefined;
+    try {
+      return await Promise.race([
+        promise,
+        new Promise<T>((_, reject) => {
+          timer = setTimeout(() => reject(new Error(message)), timeoutMs);
+        }),
+      ]);
+    } finally {
+      if (timer) clearTimeout(timer);
     }
   }
 

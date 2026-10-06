@@ -64,7 +64,7 @@ export declare class SettingsService {
     }[]>;
     updateNotificationPreferences(userId: string, payload: Partial<UserNotificationPreference> & any): Promise<UserNotificationPreference>;
     upgradeSubscription(userId: string, planName: string): Promise<{
-        planName: string;
+        planName: import("./subscription-plans").SubscriptionPlanId;
         status: string;
         renewalDate: Date;
         usagePercentage: number;

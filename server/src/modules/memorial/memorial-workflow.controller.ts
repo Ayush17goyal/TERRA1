@@ -1,5 +1,6 @@
-import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ClerkAuthGuard } from '../../guards/clerk-auth.guard';
 import { CitationStyle, MemorialDepth, MemorialSide } from './memorial.types';
 import { MemorialWorkflowService } from './memorial-workflow.service';
 
@@ -20,6 +21,7 @@ interface MemorialWorkflowBody {
 }
 
 @Controller('memorial-workflow')
+@UseGuards(ClerkAuthGuard)
 export class MemorialWorkflowController {
   constructor(private readonly workflow: MemorialWorkflowService) {}
 
@@ -28,8 +30,8 @@ export class MemorialWorkflowController {
     { name: 'file', maxCount: 1 },
     { name: 'references', maxCount: 12 },
   ]))
-  async blueprint(@UploadedFiles() files: { file?: any[]; references?: any[] }, @Body() body: MemorialWorkflowBody) {
-    return this.workflow.extractBlueprint(this.toInput(files?.file?.[0], files?.references || [], body));
+  async blueprint(@Req() req: any, @UploadedFiles() files: { file?: any[]; references?: any[] }, @Body() body: MemorialWorkflowBody) {
+    return this.workflow.extractBlueprint(this.toInput(files?.file?.[0], files?.references || [], body, req.user.id));
   }
 
   @Post('run')
@@ -37,11 +39,11 @@ export class MemorialWorkflowController {
     { name: 'file', maxCount: 1 },
     { name: 'references', maxCount: 12 },
   ]))
-  async run(@UploadedFiles() files: { file?: any[]; references?: any[] }, @Body() body: MemorialWorkflowBody) {
-    return this.workflow.run(this.toInput(files?.file?.[0], files?.references || [], body));
+  async run(@Req() req: any, @UploadedFiles() files: { file?: any[]; references?: any[] }, @Body() body: MemorialWorkflowBody) {
+    return this.workflow.run(this.toInput(files?.file?.[0], files?.references || [], body, req.user.id));
   }
 
-  private toInput(file: any, referenceFiles: any[], body: MemorialWorkflowBody) {
+  private toInput(file: any, referenceFiles: any[], body: MemorialWorkflowBody, authenticatedUserId: string) {
     return {
       file,
       referenceFiles,
@@ -57,7 +59,7 @@ export class MemorialWorkflowController {
       maxWords: this.parseOptionalNumber(body.maxWords),
       qualityThreshold: this.parseOptionalNumber(body.qualityThreshold) || 92,
       allowUnverifiedAuthorities: body.allowUnverifiedAuthorities === true || String(body.allowUnverifiedAuthorities).toLowerCase() === 'true',
-      userId: body.userId,
+      userId: authenticatedUserId,
     };
   }
 

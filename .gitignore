@@ -14,3 +14,7 @@ coverage/
 playwright-report/
 test-results/
 server/.env
+
+# Local test/build caches and generated validation exports
+tmp/
+server/tmp/

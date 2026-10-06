@@ -80,6 +80,7 @@ type AdminTab =
   | 'Support Tickets'
   | 'Contract Settings'
   | 'Masterclass Management'
+  | 'API Safety'
 
 type FounderSecurityEventType =
   | 'ADMIN_LOGIN_ATTEMPT'
@@ -256,6 +257,7 @@ export default function AdminPortal() {
         'Audit Logs',
         'Founder Security Logs',
         'Settings',
+        'API Safety',
         'Clerk Dashboard Access',
         'Feedback Management',
         'Bug Reports',
@@ -323,9 +325,13 @@ export default function AdminPortal() {
           setSecurityQuestion(result.question)
           setStep(2)
           setLoginError('')
-        } else {
-          setIsAuthenticated(true)
+        } else if (result.pendingApproval && result.token) {
+          setApprovalToken(result.token)
+          setIsWaitingForApproval(true)
+          setStep(3)
           setLoginError('')
+        } else {
+          setLoginError('Admin approval flow was not started.')
         }
       } else {
         if (result.locked) {
@@ -788,6 +794,7 @@ export default function AdminPortal() {
     { name: 'Dashboard' as AdminTab, icon: <LayoutDashboard size={16} /> },
     { name: 'Knowledge Base Manager' as AdminTab, icon: <DatabaseZap size={16} /> },
     { name: 'AI Models' as AdminTab, icon: <Cpu size={16} /> },
+    { name: 'API Safety' as AdminTab, icon: <ShieldAlert size={16} /> },
     { name: 'Token & Cache Analytics' as AdminTab, icon: <Activity size={16} /> },
     { name: 'Research Intelligence' as AdminTab, icon: <Brain size={16} /> },
     { name: 'Users' as AdminTab, icon: <UsersIcon size={16} /> },
@@ -959,6 +966,7 @@ export default function AdminPortal() {
         {activeTab === 'Dashboard' && <DashboardView />}
         {activeTab === 'Knowledge Base Manager' && <KBManagerView />}
         {activeTab === 'AI Models' && <ModelsView />}
+        {activeTab === 'API Safety' && <DemoModeAdminView />}
         {activeTab === 'Token & Cache Analytics' && <TokenAndCacheAnalyticsView />}
         {activeTab === 'Research Intelligence' && <ResearchIntelligenceView />}
         {activeTab === 'Users' && <UsersView />}
@@ -984,6 +992,64 @@ export default function AdminPortal() {
 /* ================================================== */
 /* SUB-VIEWS IMPLEMENTATIONS                          */
 /* ================================================== */
+
+function DemoModeAdminView() {
+  const { getToken } = useAuth()
+  const [overview, setOverview] = useState<any>(null)
+  const [limit, setLimit] = useState(4)
+  const [status, setStatus] = useState('Loading API safety settings…')
+  const [saving, setSaving] = useState(false)
+
+  const load = async () => {
+    try {
+      const token = await getToken()
+      if (!token) throw new Error('Sign in with the authorized Clerk admin account to manage Demo Mode.')
+      const response = await fetch(`${API_BASE_URL}/settings/demo-mode/admin-overview`, { headers: { Authorization: `Bearer ${token}` } })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.message || 'Unable to load Demo Mode settings.')
+      setOverview(data)
+      setLimit(Number(data.limitPerFeaturePerDay || 4))
+      setStatus('')
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : 'Unable to load Demo Mode settings.')
+    }
+  }
+
+  useEffect(() => { void load() }, [])
+
+  const save = async (patch: { enabled?: boolean; limitPerFeaturePerDay?: number }) => {
+    setSaving(true)
+    try {
+      const token = await getToken()
+      if (!token) throw new Error('Administrator authentication is required.')
+      const response = await fetch(`${API_BASE_URL}/settings/demo-mode`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(patch),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.message || 'Demo Mode update failed.')
+      setStatus(`Demo Mode is now ${data.enabled ? 'ACTIVE' : 'DISABLED'}.`)
+      await load()
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : 'Demo Mode update failed.')
+    } finally { setSaving(false) }
+  }
+
+  const active = Boolean(overview?.enabled)
+  return <div style={{ display: 'grid', gap: 18 }} className="reveal-up">
+    <div className="glass-card" style={{ padding: 22, background: 'var(--panel)', border: `1px solid ${active ? 'var(--ok)' : 'var(--line)'}`, display: 'grid', gap: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
+        <div><h3 style={{ margin: 0, color: 'var(--gold)', letterSpacing: '.06em' }}>DEMO MODE</h3><p style={{ margin: '6px 0 0', color: 'var(--text-soft)' }}>Demo Mode is currently <strong style={{ color: active ? 'var(--ok)' : 'var(--text)' }}>{active ? 'ACTIVE' : 'DISABLED'}</strong></p></div>
+        <button disabled={saving || !overview} onClick={() => save({ enabled: !active })} className="btn btn-primary" style={{ minWidth: 130, padding: '12px 18px', fontWeight: 900, cursor: saving ? 'wait' : 'pointer', background: active ? '#ef4444' : 'var(--ok)', border: 0, color: '#fff' }}><Power size={16} /> Turn {active ? 'OFF' : 'ON'}</button>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'end', gap: 10, flexWrap: 'wrap' }}><label style={{ display: 'grid', gap: 6, color: 'var(--text-soft)', fontSize: '.8rem' }}>Uses per feature per India calendar day<input type="number" min={1} max={100} value={limit} onChange={(event) => setLimit(Number(event.target.value))} style={{ padding: 10, background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--line)', borderRadius: 8, width: 180 }} /></label><button disabled={saving} onClick={() => save({ limitPerFeaturePerDay: limit })} className="btn btn-outline" style={{ padding: '10px 16px' }}>Save limit</button></div>
+      {status && <p role="status" style={{ margin: 0, color: 'var(--text-soft)' }}>{status}</p>}
+    </div>
+    {overview && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12 }}>{[
+      ['Total users', overview.totalUsers], ['Today’s API uses', overview.todayUsage], ['Active demo users', overview.activeUsers], ['Users at a limit', overview.usersReachingLimits], ['API errors today', overview.apiErrorsToday],
+    ].map(([label, value]) => <div key={String(label)} className="glass-card" style={{ padding: 16, background: 'var(--panel)', border: '1px solid var(--line)' }}><span style={{ color: 'var(--text-soft)', fontSize: '.76rem' }}>{label}</span><strong style={{ display: 'block', fontSize: '1.5rem', marginTop: 6 }}>{value}</strong></div>)}</div>}
+    {overview?.topFeatures?.length > 0 && <div className="glass-card" style={{ padding: 18, background: 'var(--panel)', border: '1px solid var(--line)' }}><h3 style={{ color: 'var(--gold)', marginTop: 0 }}>Top used features today</h3>{overview.topFeatures.map((item: any) => <div key={item.feature} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--line)' }}><span>{item.label}</span><strong>{item.uses}</strong></div>)}</div>}
+  </div>
+}
 
 // 1. Dashboard View
 function DashboardView() {
@@ -5331,5 +5397,3 @@ function ContractSettingsView() {
     </div>
   )
 }
-
-

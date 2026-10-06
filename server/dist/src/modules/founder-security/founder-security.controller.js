@@ -31,15 +31,6 @@ let FounderSecurityController = class FounderSecurityController {
         }
         return 'http://localhost:5173';
     }
-    getRequiredAdminCredential(name, developmentFallback) {
-        const value = process.env[name];
-        if (value)
-            return value;
-        if (process.env.NODE_ENV === 'production') {
-            throw new Error(`${name} must be configured in production.`);
-        }
-        return developmentFallback;
-    }
     async getSettings() {
         return this.founderSecurityService.getSettings();
     }
@@ -70,12 +61,15 @@ let FounderSecurityController = class FounderSecurityController {
     async adminLogin(req, body) {
         const role = String(body.role || '').trim();
         const adminId = String(body.adminId || '').trim();
-        const expectedAdminId = this.getRequiredAdminCredential('ADMIN_PORTAL_ID', 'dev-admin-id');
-        const expectedPassword = this.getRequiredAdminCredential('ADMIN_PORTAL_PASSWORD', 'dev-admin-password');
+        const expectedAdminId = process.env.ADMIN_PORTAL_ID || '';
+        const passwordHash = process.env.ADMIN_PORTAL_PASSWORD_HASH || '';
         const ipAddress = this.getIpAddress(req);
         const userAgent = req.headers['user-agent'] || 'Unknown';
-        if (!role) {
+        if (!['Founder', 'CTO', 'Developer'].includes(role)) {
             return { ok: false, message: 'Role selection is required.' };
+        }
+        if (!expectedAdminId || !passwordHash) {
+            return { ok: false, message: 'Admin login is not configured. Follow the secure admin recovery procedure.' };
         }
         const lockCheck = await this.founderSecurityService.isAccountLocked(adminId, role);
         if (lockCheck.locked) {
@@ -96,27 +90,9 @@ let FounderSecurityController = class FounderSecurityController {
             userAgent,
             metadata: { adminId, role },
         });
-        if (adminId === expectedAdminId && body.password === expectedPassword) {
-            const sessionToken = 'login_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-            this.founderSecurityService.pendingLogins.set(sessionToken, {
-                adminId,
-                role,
-                ipAddress,
-                userAgent,
-                createdAt: new Date(),
-                fails: 0,
-            });
-            const questions = {
-                Founder: 'Name the person I hate the most',
-                CTO: 'Which K-Drama do you like the most?',
-                Developer: 'What is the founding date of LEGATRIXON?',
-            };
-            return {
-                ok: true,
-                step2Required: true,
-                sessionToken,
-                question: questions[role] || 'Please answer the security question.',
-            };
+        if (adminId === expectedAdminId && this.founderSecurityService.verifySecret(body.password, passwordHash)) {
+            const approvalToken = await this.founderSecurityService.initiateLoginApproval(adminId, role, ipAddress, userAgent);
+            return { ok: true, step2Required: false, pendingApproval: true, token: approvalToken };
         }
         await this.founderSecurityService.recordSecurityEvent({
             eventType: 'ADMIN_LOGIN_FAILED',

@@ -281,9 +281,12 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
     }
     resolveCaseMetadata(rawMeta, dossier, facts, parties) {
         const corpus = `${dossier.rawText}\n${facts.map((fact) => fact.text).join('\n')}`;
+        const arbitration = /request for arbitration|arbitral tribunal|investor[- ]state arbitration|ICSID|investment dispute/i.test(corpus);
         const appellate = /high court[^.!?]{0,240}(?:upheld|affirmed)[^.!?]{0,160}(?:conviction|sentence)|aggrieved[^.!?]{0,180}(?:supreme court|special leave|article 136)/i.test(corpus);
-        const directWrit = !appellate && /article\s+32|writ petition[^.!?]{0,120}supreme court/i.test(corpus);
-        const country = /Supreme Court of Indica|Republic of Indica/i.test(corpus) ? 'INDICA' : 'INDIA';
+        const directWrit = !arbitration && !appellate && /article\s+32|writ petition[^.!?]{0,120}supreme court/i.test(corpus);
+        const country = (this.findFirst(corpus, /(?:Supreme Court|Republic|Union) of ([A-Z][A-Za-z]+)/i).match(/of\s+([A-Z][A-Za-z]+)/i)?.[1]
+            || this.findFirst(corpus, /Constitution of ([A-Z][A-Za-z]+)/i).match(/of\s+([A-Z][A-Za-z]+)/i)?.[1]
+            || 'INDIA').toUpperCase();
         const complainant = parties.find((party) => /complainant|victim/i.test(party.role));
         const expresslyAccused = parties.find((party) => /^(?:accused|appellant)$/i.test(String(party.role || '').trim())
             && !/state|republic|union|complainant|victim/i.test(party.name));
@@ -293,35 +296,41 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
             && party.name.toLowerCase() !== String(complainant?.name || '').toLowerCase());
         const state = parties.find((party) => /state|prosecution|authority/i.test(party.role)
             || /state|republic|union/i.test(party.name));
-        const petitionerName = appellate
-            ? (accusedNameFromText || expresslyAccused?.name || looserAppellant?.name || 'THE APPELLANT')
-            : (this.cleanName(String(rawMeta?.petitionerName || '')) || expresslyAccused?.name || looserAppellant?.name || complainant?.name || 'THE PETITIONER');
+        const petitionerName = arbitration
+            ? (this.cleanName(String(rawMeta?.petitionerName || '')) || 'THE CLAIMANT')
+            : appellate
+                ? (accusedNameFromText || expresslyAccused?.name || looserAppellant?.name || 'THE APPELLANT')
+                : (this.cleanName(String(rawMeta?.petitionerName || '')) || expresslyAccused?.name || looserAppellant?.name || complainant?.name || 'THE PETITIONER');
         const respondentName = appellate
-            ? (state?.name || this.cleanName(String(rawMeta?.respondentName || '')) || (country === 'INDICA' ? 'REPUBLIC OF INDICA' : 'STATE'))
-            : (this.cleanName(String(rawMeta?.respondentName || '')) || state?.name || (country === 'INDICA' ? 'REPUBLIC OF INDICA' : 'STATE'));
+            ? (state?.name || this.cleanName(String(rawMeta?.respondentName || '')) || `STATE OF ${country}`)
+            : (this.cleanName(String(rawMeta?.respondentName || '')) || state?.name || `STATE OF ${country}`);
         const competitionName = this.cleanHeading(String(rawMeta?.competitionName || ''))
             || this.findFirst(corpus, /[A-Z][A-Z .&'-]{3,80}(?:INTERNATIONAL\s+)?MOOT COURT COMPETITION\s*\d{4}/i)
             || 'MOOT COURT COMPETITION';
         const caseNumberSource = this.findFirst(corpus, /(?:CRIMINAL|CIVIL|WRIT|SPECIAL LEAVE|SLP)\s+(?:APPEAL|PETITION)?\s*(?:NO\.?|NUMBER)\s*[^\n.]{0,45}/i);
         const caseNumber = this.sanitizeCaseNumber(String(rawMeta?.caseNumber || caseNumberSource || ''), appellate);
-        const jurisdictionProvision = appellate
-            ? 'ARTICLE 136 OF THE CONSTITUTION OF INDIA'
-            : directWrit
-                ? 'ARTICLE 32 OF THE CONSTITUTION OF INDIA'
-                : this.cleanHeading(String(rawMeta?.jurisdictionProvision || rawMeta?.jurisdiction || ''));
-        const jurisdiction = appellate
-            ? `APPELLATE JURISDICTION UNDER ${jurisdictionProvision}`
-            : directWrit
-                ? `WRIT JURISDICTION UNDER ${jurisdictionProvision}`
-                : this.cleanHeading(String(rawMeta?.jurisdiction || 'APPROPRIATE JURISDICTION'));
+        const jurisdictionProvision = arbitration
+            ? (this.cleanHeading(String(rawMeta?.jurisdictionProvision || rawMeta?.jurisdiction || '')) || 'THE APPLICABLE INVESTMENT AGREEMENT AND ARBITRATION RULES')
+            : appellate
+                ? `ARTICLE 136 OF THE CONSTITUTION OF ${country}`
+                : directWrit
+                    ? `ARTICLE 32 OF THE CONSTITUTION OF ${country}`
+                    : this.cleanHeading(String(rawMeta?.jurisdictionProvision || rawMeta?.jurisdiction || ''));
+        const jurisdiction = arbitration
+            ? `ARBITRAL JURISDICTION UNDER ${jurisdictionProvision}`
+            : appellate
+                ? `APPELLATE JURISDICTION UNDER ${jurisdictionProvision}`
+                : directWrit
+                    ? `WRIT JURISDICTION UNDER ${jurisdictionProvision}`
+                    : this.cleanHeading(String(rawMeta?.jurisdiction || 'APPROPRIATE JURISDICTION'));
         return {
             competitionName: competitionName.toUpperCase(),
-            court: `THE HON'BLE SUPREME COURT OF ${country}`,
+            court: this.cleanHeading(String(rawMeta?.court || '')) || (arbitration ? 'BEFORE THE ARBITRAL TRIBUNAL' : `THE HON'BLE SUPREME COURT OF ${country}`),
             jurisdiction,
             jurisdictionProvision,
             caseNumber,
-            proceduralStage: appellate ? 'Criminal appellate proceedings before the Supreme Court' : String(rawMeta?.proceduralStage || ''),
-            petitionerLabel: appellate ? 'PETITIONER / APPELLANT' : String(rawMeta?.petitionerLabel || 'PETITIONER'),
+            proceduralStage: arbitration ? 'Investor-State arbitration proceedings' : appellate ? 'Criminal appellate proceedings before the Supreme Court' : String(rawMeta?.proceduralStage || ''),
+            petitionerLabel: arbitration ? String(rawMeta?.petitionerLabel || 'CLAIMANT') : appellate ? 'PETITIONER / APPELLANT' : String(rawMeta?.petitionerLabel || 'PETITIONER'),
             respondentLabel: String(rawMeta?.respondentLabel || 'RESPONDENT'),
             petitionerName: petitionerName.toUpperCase(),
             respondentName: respondentName.toUpperCase(),
@@ -343,7 +352,7 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
             }
         }
         for (const paragraph of dossier.paragraphs) {
-            if (this.isNonCaseMaterial(paragraph.text) && paragraph.category !== 'law' && paragraph.category !== 'issue')
+            if (['organiser_material', 'cover_or_brochure', 'concept_note'].includes(paragraph.sectionType || ''))
                 continue;
             for (const citation of this.extractLegalCitations(paragraph.text))
                 add(citation, paragraph.text, [paragraph.id]);
@@ -456,14 +465,19 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
     extractLegalCitations(text) {
         const clean = this.cleanSentence(text);
         const patterns = [
-            /Article\s+\d+(?:\([^)]+\))*\s*(?:,|of)?\s*(?:the\s+)?Constitution of (?:India|Indica)/gi,
+            /Article\s+\d+(?:\([^)]+\))*\s*(?:,|of)?\s*(?:the\s+)?Constitution of [A-Z][A-Za-z]+/gi,
+            /Article\s+\d+(?:\([^)]+\))*/gi,
             /Section\s+\d+[A-Za-z]?(?:\([^)]+\))*\s*(?:of\s+the|,)?\s*[A-Z][A-Za-z\s.]+(?:Act|Adhiniyam|Sanhita|Code),?\s*\d{4}/gi,
+            /Article\s+\d+(?:\([^)]+\))*\s+of\s+(?:the\s+)?[A-Z][A-Za-z0-9 .,'’&()-]{3,120}(?:Treaty|Agreement|Convention|Rules|Regulations|Statute|Code)/gi,
+            /[A-Z][A-Za-z0-9 .,'’&()-]{3,120}(?:Treaty|Agreement|Convention|Arbitration Rules|Investment Rules),?\s*(?:19|20)\d{2}/gi,
+            /\b(?:The\s+)?[A-Z][A-Za-z-]*(?:\s+[A-Z][A-Za-z-]*){0,8}\s+(?:Act|Code|Rules|Regulations),?\s*(?:19|20)\d{2}\b/g,
+            /[A-Z][A-Za-z0-9 .,'’&()-]{3,120}(?:Act|Code|Statute|Rules|Regulations),?\s*(?:19|20)\d{2}/gi,
             /Bharatiya Sakshya Adhiniyam,?\s*2023/gi,
             /Bharatiya Nyaya Sanhita,?\s*2023/gi,
             /Bharatiya Nagarik Suraksha Sanhita,?\s*2023/gi,
             /Information Technology Act,?\s*2000/gi,
             /Digital Personal Data Protection Act,?\s*2023/gi,
-            /Constitution of (?:India|Indica)/gi,
+            /Constitution of [A-Z][A-Za-z]+/gi,
         ];
         return Array.from(new Set(patterns.flatMap((pattern) => clean.match(pattern) || []).map((citation) => this.canonicalCitation(citation))));
     }
@@ -471,7 +485,6 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
         return String(citation || '')
             .replace(/\s+/g, ' ')
             .replace(/\s+,/g, ',')
-            .replace(/Constitution of Indica/gi, 'Constitution of India')
             .trim()
             .replace(/[.;:]+$/, '');
     }
@@ -480,18 +493,18 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
             return false;
         if (/accused|complainant|alleged|matrimonial|obtained|misused|violat/i.test(citation))
             return false;
-        return /^(?:Article\s+\d+|Section\s+\d+|Bharatiya\s+|Information Technology Act|Digital Personal Data Protection Act|Constitution of India)/i.test(citation);
+        return /^(?:Article\s+\d+|Section\s+\d+|Bharatiya\s+|Information Technology Act|Digital Personal Data Protection Act|Constitution of [A-Z][A-Za-z]+|[A-Z].*(?:Treaty|Agreement|Convention|Rules|Regulations|Statute|Code))/i.test(citation);
     }
     inferFactKind(text) {
-        if (/trial court|high court|supreme court|appeal|petition|convicted|sentence|judgment/i.test(text))
+        if (/trial court|high court|supreme court|arbitral tribunal|arbitration|appeal|petition|suit|claimant|request for arbitration|convicted|sentence|judgment|interim direction|final hearing/i.test(text))
             return 'procedural';
         if (/forensic|certificate|device|laptop|mobile|storage|browser|electronic evidence|seized|search and seizure/i.test(text))
             return 'evidence';
-        if (/alleged|prosecution alleges|complainant alleged|accused contended|disputed|challenged/i.test(text))
+        if (/alleged|asserted|maintained|contended|protested|claimed|prosecution alleges|complainant alleged|accused contended|disputed|challenged/i.test(text))
             return 'allegation';
-        if (/held|upheld|affirmed|convicted|found/i.test(text))
+        if (/held|upheld|affirmed|convicted|found|ordered|directed|awarded/i.test(text))
             return 'finding';
-        return /aged|student|technician|republic|state/i.test(text) ? 'background' : 'event';
+        return /aged|student|technician|republic|state|country|independence|constitutional|historical|colonial/i.test(text) ? 'background' : 'event';
     }
     inferFactStatus(text) {
         if (/held|upheld|affirmed|convicted|found/i.test(text))
@@ -503,9 +516,9 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
         return 'unclear';
     }
     inferMateriality(text) {
-        return /complainant|accused|threat|fake|morphed|obscene|foreign|server|section 75|certificate|forensic|search|seizure|warrant|trial court|high court|convict|sentence|appeal/i.test(text)
+        return /complainant|accused|claimant|respondent|petitioner|threat|fake|morphed|obscene|foreign|server|section 75|certificate|forensic|search|seizure|warrant|trial court|high court|supreme court|arbitral tribunal|convict|sentence|appeal|original jurisdiction|boundary|demarcat|territorial|river water|water dispute|treaty|agreement|contract|termination|expropriat|investment|article\s+\d+|section\s+\d+/i.test(text)
             ? 'high'
-            : /email|social media|phone|data|privacy|device|intermediary/i.test(text) ? 'medium' : 'low';
+            : /email|social media|phone|data|privacy|device|intermediary|notification|project|licen[cs]e|permit|parliament|government|authority/i.test(text) ? 'medium' : 'low';
     }
     factSortScore(fact) {
         const materiality = fact.materiality === 'high' ? 50 : fact.materiality === 'medium' ? 25 : 0;
@@ -530,7 +543,7 @@ let PropositionIntelligenceService = PropositionIntelligenceService_1 = class Pr
         return /academy|law school|committee|lawctopus|resolvify|partner|university$|college$/i.test(text);
     }
     caseFactScore(text) {
-        return (text.match(/accused|complainant|victim|petitioner|appellant|respondent|lodged|warrant|forensic|seized|search|trial court|high court|convicted|appeal|alleged|discovered|received|created|circulated|registered|investigation|morphed|fake account|threat|harassment|server|device|laptop|mobile|certificate|matrimonial|email|social media/g) || []).length;
+        return (text.match(/accused|complainant|victim|petitioner|appellant|claimant|respondent|state|republic|union|government|authority|company|corporation|lodged|filed|admitted|issued|enacted|notified|entered|terminated|cancelled|warrant|forensic|seized|search|trial court|high court|supreme court|arbitral tribunal|arbitration|convicted|appeal|suit|alleged|asserted|contended|maintained|protested|challenged|disputed|discovered|received|created|circulated|registered|investigation|morphed|fake account|threat|harassment|server|device|laptop|mobile|certificate|matrimonial|email|social media|boundary|border|corridor|demarcat|territorial|river|water project|tribunal|treaty|agreement|contract|investment|expropriat|parliament|constitution|article\s+\d+|section\s+\d+/g) || []).length;
     }
     findNamedRole(corpus, role) {
         const roleBefore = new RegExp(`${role}[^.!?]{0,70}(?:Mr\\.|Ms\\.|Mrs\\.)?\\s*([A-Z][a-z]+\\s+[A-Z][a-z]+)`, 'i').exec(corpus);

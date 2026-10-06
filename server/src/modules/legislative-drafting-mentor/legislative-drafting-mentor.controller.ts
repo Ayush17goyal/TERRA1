@@ -8,7 +8,10 @@ import { ACADEMY_CURRICULUM } from './academy-curriculum';
 @UseGuards(ClerkAuthGuard)
 export class LegislativeDraftingMentorController {
   private readonly logger = new Logger(LegislativeDraftingMentorController.name);
-  constructor(private readonly workflowEngine: DraftingWorkflowEngineService, private readonly professor: AcademyProfessorService) {}
+  constructor(
+    private readonly workflowEngine: DraftingWorkflowEngineService,
+    private readonly professor: AcademyProfessorService,
+  ) {}
 
   @Get('academy/curriculum')
   getAcademyCurriculum() { return ACADEMY_CURRICULUM; }
@@ -31,10 +34,12 @@ export class LegislativeDraftingMentorController {
   }
 
   @Post('academy/lessons/:index/mastery')
-  gradeAcademyMastery(@Req() req: any, @Param('index') index: string, @Body('answer') answer: string) { return this.professor.mastery(req.user.id, Number(index), answer); }
+  async gradeAcademyMastery(@Req() req: any, @Param('index') index: string, @Body('answer') answer: string) {
+    return this.professor.mastery(req.user.id, Number(index), answer);
+  }
 
   @Post('academy/lessons/:index/practice')
-  generatePractice(@Req() req: any, @Param('index') index: string, @Body('prompt') prompt: string, @Body('difficulty') difficulty?: string) {
+  async generatePractice(@Req() req: any, @Param('index') index: string, @Body('prompt') prompt: string, @Body('difficulty') difficulty?: string) {
     return this.professor.generatePractice(req.user.id, Number(index), prompt, difficulty);
   }
   @Get('academy/state')

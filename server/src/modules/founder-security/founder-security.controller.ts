@@ -18,15 +18,6 @@ export class FounderSecurityController {
     return 'http://localhost:5173';
   }
 
-  private getRequiredAdminCredential(name: 'ADMIN_PORTAL_ID' | 'ADMIN_PORTAL_PASSWORD', developmentFallback: string) {
-    const value = process.env[name];
-    if (value) return value;
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error(`${name} must be configured in production.`);
-    }
-    return developmentFallback;
-  }
-
   @Get('settings')
   @UseGuards(ClerkAuthGuard, AdminRoleGuard)
   async getSettings() {
@@ -89,13 +80,17 @@ export class FounderSecurityController {
   ) {
     const role = String(body.role || '').trim();
     const adminId = String(body.adminId || '').trim();
-    const expectedAdminId = this.getRequiredAdminCredential('ADMIN_PORTAL_ID', 'dev-admin-id');
-    const expectedPassword = this.getRequiredAdminCredential('ADMIN_PORTAL_PASSWORD', 'dev-admin-password');
+    const expectedAdminId = process.env.ADMIN_PORTAL_ID || '';
+    const passwordHash = process.env.ADMIN_PORTAL_PASSWORD_HASH || '';
     const ipAddress = this.getIpAddress(req);
     const userAgent = req.headers['user-agent'] || 'Unknown';
 
-    if (!role) {
+    if (!['Founder', 'CTO', 'Developer'].includes(role)) {
       return { ok: false, message: 'Role selection is required.' };
+    }
+
+    if (!expectedAdminId || !passwordHash) {
+      return { ok: false, message: 'Admin login is not configured. Follow the secure admin recovery procedure.' };
     }
 
     // 1. Check account lock status before checking credentials
@@ -122,30 +117,9 @@ export class FounderSecurityController {
     });
 
     // 3. Validate Credentials
-    if (adminId === expectedAdminId && body.password === expectedPassword) {
-      const sessionToken = 'login_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-      
-      this.founderSecurityService.pendingLogins.set(sessionToken, {
-        adminId,
-        role,
-        ipAddress,
-        userAgent,
-        createdAt: new Date(),
-        fails: 0,
-      });
-
-      const questions: Record<string, string> = {
-        Founder: 'Name the person I hate the most',
-        CTO: 'Which K-Drama do you like the most?',
-        Developer: 'What is the founding date of LEGATRIXON?',
-      };
-
-      return {
-        ok: true,
-        step2Required: true,
-        sessionToken,
-        question: questions[role] || 'Please answer the security question.',
-      };
+    if (adminId === expectedAdminId && this.founderSecurityService.verifySecret(body.password, passwordHash)) {
+      const approvalToken = await this.founderSecurityService.initiateLoginApproval(adminId, role, ipAddress, userAgent);
+      return { ok: true, step2Required: false, pendingApproval: true, token: approvalToken };
     }
 
     // 4. Failed credentials log

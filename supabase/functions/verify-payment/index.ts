@@ -7,6 +7,13 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+const PLAN_CREDITS: Record<string, number> = {
+  starter: 2000,
+  pro: 5000,
+  'pro-max': 15000,
+}
+const PLAN_PRICES: Record<string, number> = { starter: 199, pro: 399, 'pro-max': 599 }
+
 // Helper to extract and verify Clerk user ID from JWT
 function getClerkUserId(authHeader: string | null): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
@@ -88,6 +95,12 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+    if (!PLAN_PRICES[plan_id]) {
+      return new Response(JSON.stringify({ error: 'Bad Request: Unknown plan_id' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     // Ensure the authenticated user matches the requested user ID
     if (clerkUserId !== user_id) {
@@ -98,7 +111,7 @@ Deno.serve(async (req) => {
     }
 
     // Retrieve Razorpay credentials
-    const keyId = Deno.env.get('RAZORPAY_KEY_ID') || 'rzp_test_T8FJFRwicSO3TC';
+    const keyId = Deno.env.get('RAZORPAY_KEY_ID');
     const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
 
     if (!keySecret) {
@@ -165,6 +178,12 @@ Deno.serve(async (req) => {
         paymentMethod = payData.method || paymentMethod
         finalAmount = (payData.amount || 0) / 100 // convert paise to INR
         finalCurrency = payData.currency || finalCurrency
+        if (finalAmount !== PLAN_PRICES[plan_id] || finalCurrency !== 'INR') {
+          return new Response(
+            JSON.stringify({ error: 'Bad Request: Payment amount does not match selected plan' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          )
+        }
       } else {
         console.warn('Could not fetch payment details from Razorpay, falling back to database defaults')
       }
@@ -219,7 +238,14 @@ Deno.serve(async (req) => {
     const expiryDate = new Date()
     expiryDate.setDate(startDate.getDate() + 30) // 30 days billing cycle
 
-    if (plan_id === 'API Credit') {
+    if (!PLAN_CREDITS[plan_id]) {
+      return new Response(JSON.stringify({ error: 'Bad Request: Unknown plan_id' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    if (false) {
       // 2. Buy API credits: increment the ai_credits_limit by 5000 (stackable) in user_subscriptions
       const { data: currentSub } = await supabase
         .from('user_subscriptions')
@@ -270,14 +296,7 @@ Deno.serve(async (req) => {
       }
 
       // Update public.user_subscriptions table (used by settings/nestjs backend)
-      let aiCreditsLimit = 1000 // default fallback
-      if (plan_id === 'Basic Plan') {
-        aiCreditsLimit = 2000
-      } else if (plan_id === 'Pro Plan') {
-        aiCreditsLimit = 5000
-      } else if (plan_id === 'Pro Max Plan') {
-        aiCreditsLimit = 15000
-      }
+      const aiCreditsLimit = PLAN_CREDITS[plan_id]
 
       const { error: userSubError } = await supabase
         .from('user_subscriptions')

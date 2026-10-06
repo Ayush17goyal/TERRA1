@@ -1,6 +1,15 @@
 export type MemorialSide = 'petitioner' | 'respondent' | 'both';
 export type MemorialDepth = 'standard' | 'deep' | 'exhaustive';
 export type CitationStyle = 'bluebook' | 'oscola' | 'indian' | 'scc';
+export type MemorialReferenceCategory = 'petitioner_template' | 'respondent_template' | 'drafting_rulebook' | 'completed_petitioner_memorial' | 'completed_respondent_memorial' | 'practice_material' | 'moot_proposition' | 'legal_research' | 'competition_rules' | 'other';
+export interface MemorialReferenceAnalysis {
+    fileName: string;
+    category: MemorialReferenceCategory;
+    authorityLevel: number;
+    pageCount: number;
+    extractedRules: string[];
+    contentUse: 'structure' | 'formatting' | 'example' | 'case_material' | 'other';
+}
 export type DossierParagraphCategory = 'fact' | 'law' | 'procedure' | 'issue' | 'relief' | 'annexure' | 'instruction' | 'concept_note' | 'organiser_material' | 'ambiguous';
 export type DocumentSectionType = 'cover_or_brochure' | 'organiser_material' | 'concept_note' | 'competition_rules' | 'moot_proposition' | 'procedural_history' | 'issues' | 'clarifications' | 'annexure' | 'unknown';
 export interface DossierPage {
@@ -334,6 +343,7 @@ export interface MemorialWorkflowResult {
     issues: IssueMatrixItem[];
     authorities: ResearchAuthority[];
     audit: MemorialWorkflowAudit;
+    references?: MemorialReferenceAnalysis[];
     petitioner?: {
         arguments: ArgumentBlock[];
         sections: MemorialSectionSet;

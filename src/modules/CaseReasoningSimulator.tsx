@@ -1,6 +1,7 @@
 import { API_BASE_URL } from '../lib/api'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from '@clerk/clerk-react'
+import { DemoUsageBadge } from '../components/DemoUsageBadge'
 import {
   AlertTriangle,
   Award,
@@ -1567,6 +1568,7 @@ If the student asks why the AI reached a conclusion, explains an argument, asks 
 
   return (
     <div className={`crs-container crs-${theme || 'dark'}`}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}><DemoUsageBadge feature="case_law_reasoning" /></div>
       
       {/* 3-Stage Progress Path */}
       <div className="crs-progress-path">
@@ -1602,6 +1604,7 @@ If the student asks why the AI reached a conclusion, explains an argument, asks 
         <div className={`crs-message ${error ? 'error' : 'success'}`}>
           {error ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
           <span>{error || notice}</span>
+          {error && /upgrade|limit|sample/i.test(error) && <a href="/pricing">View Plans</a>}
           <button type="button" className="crs-message-close" onClick={() => { setError(''); setNotice(''); }}>×</button>
         </div>
       )}

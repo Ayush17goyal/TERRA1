@@ -168,9 +168,66 @@ export declare class LearningWorkspaceService implements OnModuleInit {
     private generateQueryVector;
     private generateDeterministicVector;
     private formatRetrievedChunksForPrompt;
+    resolveMockBlueprint(body: any): {
+        sections: {
+            id?: string;
+            name: string;
+            questionsGenerated: number;
+            questionsToAttempt: number;
+            marksPerQuestion: number;
+            questionTypes: string[];
+            isCompulsory: boolean;
+            instruction: string;
+        }[];
+        totalQuestionsGenerated: number;
+        totalQuestionsToAttempt: number;
+        maximumObtainableMarks: number;
+        totalPaperMarks: number;
+    };
+    createQuestionSlots(blueprint: any, negativeMarkingRate?: number): any[];
+    synthesizeSlotQuestion(slot: any, chunks: any[], topic: string, difficulty: string): {
+        type: string;
+        topic: string;
+        question: string;
+        options: string[];
+        correct: number;
+        correctAnswer: string;
+        explanation: string;
+        legalRef: string;
+        modelAnswer?: undefined;
+    } | {
+        type: any;
+        topic: string;
+        question: string;
+        modelAnswer: string;
+        explanation: string;
+        legalRef: string;
+        options?: undefined;
+        correct?: undefined;
+        correctAnswer?: undefined;
+    };
+    fulfillQuestionSlots(rawQuestions: any[], slots: any[], chunks: any[], topic: string, difficulty: string, negativeMarkingRate?: number): any[];
     private normalizeQuestionPaper;
     private defaultMarksForQuestion;
-    private localQuestionPaper;
+    localQuestionPaper(topic: string, difficulty: string, blueprintOrType: any, chunks: any[], paperType?: string, negativeMarkingRate?: number): {
+        examTitle: string;
+        subjectTopic: string;
+        totalMarks: any;
+        totalPaperMarks: any;
+        durationMinutes: number;
+        negativeMarkingRate: number;
+        questions: any[];
+        scoreReport: {
+            totalMarks: any;
+            totalPaperMarks: any;
+            totalQuestions: any;
+            questionsToAttempt: any;
+            durationMinutes: number;
+            sections: any;
+            instructions: any[];
+        };
+        weakAreas: any[];
+    };
     private citationsFromRetrievedChunks;
     private localDetailedAnswer;
     private collectSourceText;

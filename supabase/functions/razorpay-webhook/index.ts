@@ -7,6 +7,12 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+const PLAN_CREDITS: Record<string, number> = {
+  starter: 2000,
+  pro: 5000,
+  'pro-max': 15000,
+}
+
 // Verify webhook signature
 async function verifyWebhookSignature(rawBody: string, signature: string, secret: string): Promise<boolean> {
   try {
@@ -138,7 +144,15 @@ Deno.serve(async (req) => {
       const expiryDate = new Date()
       expiryDate.setDate(startDate.getDate() + 30)
 
-      if (planId === 'API Credit') {
+      if (!PLAN_CREDITS[planId]) {
+        console.warn(`Webhook received unknown plan ${planId}; subscription was not changed.`)
+        return new Response(JSON.stringify({ error: 'Unknown plan_id' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      if (false) {
         const { data: currentSub } = await supabase
           .from('user_subscriptions')
           .select('ai_credits_limit')
@@ -177,14 +191,7 @@ Deno.serve(async (req) => {
           }, { onConflict: 'user_id' })
 
         // Update settings subscription credits
-        let aiCreditsLimit = 1000
-        if (planId === 'Basic Plan') {
-          aiCreditsLimit = 2000
-        } else if (planId === 'Pro Plan') {
-          aiCreditsLimit = 5000
-        } else if (planId === 'Pro Max Plan') {
-          aiCreditsLimit = 15000
-        }
+        const aiCreditsLimit = PLAN_CREDITS[planId]
 
         await supabase
           .from('user_subscriptions')

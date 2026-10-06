@@ -27,6 +27,7 @@ const notification_service_1 = require("../exam/notification.service");
 const supabase_service_1 = require("./supabase.service");
 const student_verification_entities_1 = require("../student-verification/student-verification.entities");
 const credit_service_1 = require("./credit.service");
+const subscription_plans_1 = require("./subscription-plans");
 const settings_entities_1 = require("./settings.entities");
 const MODULES = [
     'LexMentor AI',
@@ -435,28 +436,24 @@ let SettingsService = SettingsService_1 = class SettingsService {
         return this.notificationRepo.save(local);
     }
     async upgradeSubscription(userId, planName) {
+        const requestedPlan = (0, subscription_plans_1.normalizeSubscriptionPlan)(planName);
+        if (requestedPlan !== 'free') {
+            throw new common_1.BadRequestException('Paid plans must be activated through verified checkout.');
+        }
         const sub = await this.resolveSubscription(userId);
-        sub.planName = planName;
+        sub.planName = requestedPlan;
         sub.status = 'active';
-        sub.renewalDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-        if (planName === 'Juris') {
-            sub.aiCreditsLimit = 5000;
-        }
-        else if (planName === 'LexMaster') {
-            sub.aiCreditsLimit = 15000;
-        }
-        else {
-            sub.aiCreditsLimit = 1000;
-        }
+        sub.renewalDate = null;
+        sub.aiCreditsLimit = subscription_plans_1.SUBSCRIPTION_PLANS.free.aiCredits;
         sub.aiCreditsUsed = 0;
         const saved = await this.subscriptionRepo.save(sub);
         await this.log({
             userId,
             module: 'Settings',
             action: 'Upgraded Subscription Plan',
-            metadata: { planName }
+            metadata: { planName: requestedPlan }
         });
-        await this.notificationService.createNotification(userId, 'Subscription Upgraded', `Thank you for upgrading to the ${planName} plan! Your limit is now ${sub.aiCreditsLimit} AI credits.`);
+        await this.notificationService.createNotification(userId, 'Subscription Upgraded', `Your ${subscription_plans_1.SUBSCRIPTION_PLANS.free.name} plan is active with ${sub.aiCreditsLimit} AI credits.`);
         this.dashboardCache.delete(userId);
         return this.formatSubscription(saved);
     }
@@ -885,10 +882,10 @@ let SettingsService = SettingsService_1 = class SettingsService {
         if (!subscription) {
             subscription = this.subscriptionRepo.create({
                 userId,
-                planName: 'Scholar',
+                planName: 'free',
                 status: 'active',
-                renewalDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                aiCreditsLimit: 1000,
+                renewalDate: null,
+                aiCreditsLimit: subscription_plans_1.SUBSCRIPTION_PLANS.free.aiCredits,
                 aiCreditsUsed: 0,
             });
             subscription = await this.subscriptionRepo.save(subscription);
@@ -1126,10 +1123,15 @@ let SettingsService = SettingsService_1 = class SettingsService {
                 remainingCredits: 0,
             };
         }
-        const remainingCredits = Math.max(0, Number(subscription.aiCreditsLimit || 0) - Number(subscription.aiCreditsUsed || 0));
+        const normalizedPlan = (0, subscription_plans_1.normalizeSubscriptionPlan)(subscription.planName);
+        const expired = normalizedPlan !== 'free' && Boolean(subscription.renewalDate) && new Date(subscription.renewalDate).getTime() < Date.now();
+        const effectivePlan = subscription.status === 'active' && !expired ? normalizedPlan : 'free';
+        const remainingCredits = effectivePlan === 'free' && normalizedPlan !== 'free'
+            ? subscription_plans_1.SUBSCRIPTION_PLANS.free.aiCredits
+            : Math.max(0, Number(subscription.aiCreditsLimit || 0) - Number(subscription.aiCreditsUsed || 0));
         return {
-            planName: subscription.planName,
-            status: subscription.status,
+            planName: effectivePlan,
+            status: effectivePlan === 'free' ? 'active' : subscription.status,
             renewalDate: subscription.renewalDate,
             usagePercentage: subscription.aiCreditsLimit ? Math.round((subscription.aiCreditsUsed / subscription.aiCreditsLimit) * 100) : 0,
             aiCreditsUsed: subscription.aiCreditsUsed,

@@ -18,13 +18,20 @@ interface MemorialWorkflowBody {
 export declare class MemorialWorkflowController {
     private readonly workflow;
     constructor(workflow: MemorialWorkflowService);
-    blueprint(file: any, body: MemorialWorkflowBody): Promise<{
+    blueprint(req: any, files: {
+        file?: any[];
+        references?: any[];
+    }, body: MemorialWorkflowBody): Promise<{
         dossier: import("./memorial.types").CaseDossier;
         blueprint: import("./memorial.types").PropositionBlueprint;
         graph: import("./memorial.types").CaseGraph;
+        references: import("./memorial.types").MemorialReferenceAnalysis[];
         audit: import("./memorial.types").MemorialWorkflowAudit;
     }>;
-    run(file: any, body: MemorialWorkflowBody): Promise<import("./memorial.types").MemorialWorkflowResult>;
+    run(req: any, files: {
+        file?: any[];
+        references?: any[];
+    }, body: MemorialWorkflowBody): Promise<import("./memorial.types").MemorialWorkflowResult>;
     private toInput;
     private parseStringArray;
     private parseOptionalNumber;

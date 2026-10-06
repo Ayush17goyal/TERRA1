@@ -43,6 +43,7 @@ export declare class FounderSecurityService {
         locked?: boolean;
         message?: string;
     }>;
+    verifySecret(candidate: string, encodedHash: string): boolean;
     initiateLoginApproval(adminId: string, role: string, ipAddress: string, userAgent: string): Promise<string>;
     getLoginApprovalStatus(token: string): {
         adminId: string;

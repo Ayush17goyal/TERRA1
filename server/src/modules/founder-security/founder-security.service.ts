@@ -4,6 +4,7 @@ import { Repository, DataSource } from 'typeorm';
 import * as net from 'net';
 import * as tls from 'tls';
 import * as os from 'os';
+import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import {
   FOUNDER_DEFAULT_EMAIL,
   FOUNDER_SECURITY_EVENTS,
@@ -158,19 +159,10 @@ export class FounderSecurityService {
       return { ok: false, locked: true, message: 'This account has been locked due to multiple security failures. Please try again after 48 hours.' };
     }
 
-    // Role questions and answers
-    const questions: Record<string, { question: string; answer: string }> = {
-      Founder: { question: 'Name the person I hate the most', answer: 'Ayush kashyap' },
-      CTO: { question: 'Which K-Drama do you like the most?', answer: 'twinkling watermelon' },
-      Developer: { question: 'What is the founding date of LEGATRIXON?', answer: '20feb2026' },
-    };
-
-    const qConfig = questions[role];
-    if (!qConfig) {
-      return { ok: false, message: 'Invalid role configuration.' };
-    }
-
-    const isCorrect = String(answer || '').trim().toLowerCase() === qConfig.answer.toLowerCase();
+    const question = process.env.ADMIN_SECURITY_QUESTION || 'Configured administrator security challenge';
+    const answerHash = process.env.ADMIN_SECURITY_ANSWER_HASH || '';
+    if (!answerHash) return { ok: false, message: 'Security challenge is not configured. Use the password and email approval recovery flow.' };
+    const isCorrect = this.verifySecret(answer, answerHash);
 
     if (isCorrect) {
       // Clear session from pending logins since they logged in successfully or progressed
@@ -184,12 +176,12 @@ export class FounderSecurityService {
       await this.recordSecurityEvent({
         eventType: 'ADMIN_LOGIN_FAILED',
         title: 'Failed Security Question Answer',
-        message: `Incorrect security question answer provided for ID ${adminId} (${role}). Question: "${qConfig.question}". Answer attempt: "${answer}".`,
+        message: `Incorrect security question answer provided for ID ${adminId} (${role}).`,
         actorId: adminId,
         actorEmail: 'admin-console@legatrixon.local',
         ipAddress,
         userAgent,
-        metadata: { adminId, role, failedSecurityQuestion: true, question: qConfig.question, answerAttempt: answer },
+        metadata: { adminId, role, failedSecurityQuestion: true },
       });
 
       const failCount = await this.getFailedSecurityQuestionCount(adminId, role);
@@ -238,6 +230,18 @@ export class FounderSecurityService {
     }
   }
 
+  verifySecret(candidate: string, encodedHash: string): boolean {
+    try {
+      const [algorithm, salt, expectedHex] = String(encodedHash).split('$');
+      if (algorithm !== 'scrypt' || !salt || !expectedHex) return false;
+      const actual = scryptSync(String(candidate || ''), salt, expectedHex.length / 2);
+      const expected = Buffer.from(expectedHex, 'hex');
+      return actual.length === expected.length && timingSafeEqual(actual, expected);
+    } catch {
+      return false;
+    }
+  }
+
 
   async initiateLoginApproval(
     adminId: string,
@@ -245,7 +249,7 @@ export class FounderSecurityService {
     ipAddress: string,
     userAgent: string,
   ): Promise<string> {
-    const token = 'apv_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+    const token = `apv_${randomBytes(32).toString('base64url')}`;
     this.loginApprovals.set(token, {
       adminId,
       role,
@@ -254,16 +258,6 @@ export class FounderSecurityService {
       userAgent,
       createdAt: new Date(),
     });
-
-    // Always log approve/reject URLs so local dev never requires email
-    const backendOrigin = process.env.PUBLIC_BACKEND_URL || `http://localhost:${process.env.PORT || 4000}`;
-    const approveUrl = `${backendOrigin}/api/v1/founder-security/login-approve?token=${token}`;
-    const rejectUrl  = `${backendOrigin}/api/v1/founder-security/login-reject?token=${token}`;
-    this.logger.log(`\n\n========== ADMIN LOGIN APPROVAL ==========`);
-    this.logger.log(`Admin: ${adminId} (${role})`);
-    this.logger.log(`APPROVE → ${approveUrl}`);
-    this.logger.log(`REJECT  → ${rejectUrl}`);
-    this.logger.log(`==========================================\n`);
 
     // Fire and forget email dispatch in background
     this.sendApprovalEmail(token, adminId, role, ipAddress, userAgent).catch((err) => {
@@ -459,7 +453,7 @@ export class FounderSecurityService {
     }
 
     // 3. Answer is correct — generate approval token and send email
-    const token = 'apv_clerk_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+    const token = `apv_clerk_${randomBytes(32).toString('base64url')}`;
     this.clerkApprovals.set(token, {
       adminId,
       role,
@@ -499,7 +493,7 @@ export class FounderSecurityService {
     if (!attempt || attempt.status !== 'pending') return false;
 
     attempt.status = 'approved';
-    const sessionToken = 'clerk_session_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+    const sessionToken = `clerk_session_${randomBytes(32).toString('base64url')}`;
     attempt.sessionToken = sessionToken;
     this.clerkSessions.set(sessionToken, { expiresAt: Date.now() + 15 * 60 * 1000 });
 

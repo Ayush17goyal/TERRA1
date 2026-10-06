@@ -1,7 +1,64 @@
 import { SettingsService } from './settings.service';
+import { FeatureEntitlementService } from './feature-entitlement.service';
+import { DemoFeature } from './subscription-plans';
 export declare class SettingsController {
     private readonly settings;
-    constructor(settings: SettingsService);
+    private readonly entitlements;
+    constructor(settings: SettingsService, entitlements: FeatureEntitlementService);
+    getDemoMode(): Promise<import("./feature-entitlement.service").DemoModeConfig>;
+    getDemoUsage(req: any, feature: DemoFeature): Promise<{
+        feature: DemoFeature;
+        label: string;
+        mode: string;
+        used: number;
+        limit: number;
+        remaining: number;
+        reset: string;
+        timezone: string;
+        plan?: undefined;
+    } | {
+        feature: DemoFeature;
+        label: string;
+        mode: string;
+        plan: import("./subscription-plans").SubscriptionPlanId;
+        used: number;
+        limit: any;
+        remaining: any;
+        reset?: undefined;
+        timezone?: undefined;
+    } | {
+        feature: DemoFeature;
+        label: string;
+        mode: string;
+        plan: import("./subscription-plans").SubscriptionPlanId;
+        used: number;
+        limit: number;
+        remaining: number;
+        reset: import("./subscription-plans").ResetPeriod;
+        timezone?: undefined;
+    }>;
+    getDemoAdminOverview(): Promise<{
+        date: string;
+        totalUsers: number;
+        todayUsage: number;
+        activeUsers: number;
+        usersReachingLimits: number;
+        apiErrorsToday: number;
+        topFeatures: {
+            feature: string;
+            label: string;
+            uses: number;
+        }[];
+        enabled: boolean;
+        limitPerFeaturePerDay: number;
+        timezone: string;
+        updatedAt?: Date;
+        updatedBy?: string | null;
+    }>;
+    updateDemoMode(req: any, body: {
+        enabled?: boolean;
+        limitPerFeaturePerDay?: number;
+    }): Promise<import("./feature-entitlement.service").DemoModeConfig>;
     dashboard(req: any): Promise<any>;
     logActivity(req: any, body: {
         module: string;
@@ -41,7 +98,7 @@ export declare class SettingsController {
     upgradeSubscription(req: any, body: {
         planName: string;
     }): Promise<{
-        planName: string;
+        planName: import("./subscription-plans").SubscriptionPlanId;
         status: string;
         renewalDate: Date;
         usagePercentage: number;

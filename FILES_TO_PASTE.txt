@@ -1,0 +1,14 @@
+Paste into LEGATRIXON-3 using these exact relative paths:
+
+NEW:
+  src\modules\moot-court\memorialFixes.css
+
+REPLACE:
+  src\modules\moot-court\memorialCommandCenter.ts
+  src\modules\moot-court\memorialExport.ts
+  server\src\modules\memorial\issue-engine.service.ts
+  server\src\modules\memorial\memorial-compiler.service.ts
+
+Do NOT replace App.tsx.
+Do NOT replace index.css.
+Do NOT change package.json.

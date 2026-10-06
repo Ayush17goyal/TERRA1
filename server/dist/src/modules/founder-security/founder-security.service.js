@@ -20,6 +20,7 @@ const typeorm_2 = require("typeorm");
 const net = require("net");
 const tls = require("tls");
 const os = require("os");
+const crypto_1 = require("crypto");
 const founder_security_entities_1 = require("./founder-security.entities");
 let FounderSecurityService = FounderSecurityService_1 = class FounderSecurityService {
     constructor(settingsRepo, eventRepo, lockRepo, dataSource) {
@@ -99,16 +100,11 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
             this.pendingLogins.delete(sessionToken);
             return { ok: false, locked: true, message: 'This account has been locked due to multiple security failures. Please try again after 48 hours.' };
         }
-        const questions = {
-            Founder: { question: 'Name the person I hate the most', answer: 'Ayush kashyap' },
-            CTO: { question: 'Which K-Drama do you like the most?', answer: 'twinkling watermelon' },
-            Developer: { question: 'What is the founding date of LEGATRIXON?', answer: '20feb2026' },
-        };
-        const qConfig = questions[role];
-        if (!qConfig) {
-            return { ok: false, message: 'Invalid role configuration.' };
-        }
-        const isCorrect = String(answer || '').trim().toLowerCase() === qConfig.answer.toLowerCase();
+        const question = process.env.ADMIN_SECURITY_QUESTION || 'Configured administrator security challenge';
+        const answerHash = process.env.ADMIN_SECURITY_ANSWER_HASH || '';
+        if (!answerHash)
+            return { ok: false, message: 'Security challenge is not configured. Use the password and email approval recovery flow.' };
+        const isCorrect = this.verifySecret(answer, answerHash);
         if (isCorrect) {
             this.pendingLogins.delete(sessionToken);
             const approvalToken = await this.initiateLoginApproval(adminId, role, ipAddress, userAgent);
@@ -118,12 +114,12 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
             await this.recordSecurityEvent({
                 eventType: 'ADMIN_LOGIN_FAILED',
                 title: 'Failed Security Question Answer',
-                message: `Incorrect security question answer provided for ID ${adminId} (${role}). Question: "${qConfig.question}". Answer attempt: "${answer}".`,
+                message: `Incorrect security question answer provided for ID ${adminId} (${role}).`,
                 actorId: adminId,
                 actorEmail: 'admin-console@legatrixon.local',
                 ipAddress,
                 userAgent,
-                metadata: { adminId, role, failedSecurityQuestion: true, question: qConfig.question, answerAttempt: answer },
+                metadata: { adminId, role, failedSecurityQuestion: true },
             });
             const failCount = await this.getFailedSecurityQuestionCount(adminId, role);
             const remaining = Math.max(0, 3 - failCount);
@@ -162,8 +158,21 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
             };
         }
     }
+    verifySecret(candidate, encodedHash) {
+        try {
+            const [algorithm, salt, expectedHex] = String(encodedHash).split('$');
+            if (algorithm !== 'scrypt' || !salt || !expectedHex)
+                return false;
+            const actual = (0, crypto_1.scryptSync)(String(candidate || ''), salt, expectedHex.length / 2);
+            const expected = Buffer.from(expectedHex, 'hex');
+            return actual.length === expected.length && (0, crypto_1.timingSafeEqual)(actual, expected);
+        }
+        catch {
+            return false;
+        }
+    }
     async initiateLoginApproval(adminId, role, ipAddress, userAgent) {
-        const token = 'apv_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+        const token = `apv_${(0, crypto_1.randomBytes)(32).toString('base64url')}`;
         this.loginApprovals.set(token, {
             adminId,
             role,
@@ -172,14 +181,6 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
             userAgent,
             createdAt: new Date(),
         });
-        const backendOrigin = process.env.PUBLIC_BACKEND_URL || `http://localhost:${process.env.PORT || 4000}`;
-        const approveUrl = `${backendOrigin}/api/v1/founder-security/login-approve?token=${token}`;
-        const rejectUrl = `${backendOrigin}/api/v1/founder-security/login-reject?token=${token}`;
-        this.logger.log(`\n\n========== ADMIN LOGIN APPROVAL ==========`);
-        this.logger.log(`Admin: ${adminId} (${role})`);
-        this.logger.log(`APPROVE → ${approveUrl}`);
-        this.logger.log(`REJECT  → ${rejectUrl}`);
-        this.logger.log(`==========================================\n`);
         this.sendApprovalEmail(token, adminId, role, ipAddress, userAgent).catch((err) => {
             this.logger.error(`[FOUNDER SECURITY] Failed to send approval email: ${err.message}`);
         });
@@ -338,7 +339,7 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
             });
             return { ok: false, message: 'Incorrect security answer.' };
         }
-        const token = 'apv_clerk_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+        const token = `apv_clerk_${(0, crypto_1.randomBytes)(32).toString('base64url')}`;
         this.clerkApprovals.set(token, {
             adminId,
             role,
@@ -373,7 +374,7 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
         if (!attempt || attempt.status !== 'pending')
             return false;
         attempt.status = 'approved';
-        const sessionToken = 'clerk_session_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+        const sessionToken = `clerk_session_${(0, crypto_1.randomBytes)(32).toString('base64url')}`;
         attempt.sessionToken = sessionToken;
         this.clerkSessions.set(sessionToken, { expiresAt: Date.now() + 15 * 60 * 1000 });
         const role = attempt.role;

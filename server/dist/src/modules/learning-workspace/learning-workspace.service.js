@@ -630,12 +630,11 @@ Do not include markdown wraps (like \`\`\`json) or other text. Return raw JSON.
         return this.sourceRepo.save(source);
     }
     async generateMockTest(userId, body) {
-        const topic = String(body.topic || body.customPrompt || '').trim();
-        if (!topic)
-            throw new common_1.BadRequestException('Topic or custom paper description is required.');
-        const sourceIds = Array.isArray(body.sourceIds) ? body.sourceIds : [];
-        if (!sourceIds.length)
-            throw new common_1.BadRequestException('Select at least one indexed uploaded source.');
+        const topic = String(body.topic || 'General Law').trim();
+        const sourceIds = Array.isArray(body.sourceIds) ? body.sourceIds.filter(Boolean) : [];
+        if (!sourceIds.length) {
+            throw new common_1.BadRequestException('Please select at least one study source for mock test generation.');
+        }
         const geminiKey = process.env.GEMINI_API_KEY;
         const openaiKey = process.env.OPENAI_API_KEY;
         const deepseekKey = process.env.DEEPSEEK_API_KEY;
@@ -664,17 +663,18 @@ Do not include markdown wraps (like \`\`\`json) or other text. Return raw JSON.
         }
         const insufficientForMockTest = totalWords < 800 || sources.some((source) => source.metadata?.insufficientForMockTest);
         const customPrompt = String(body.customPrompt || body.prompt || '').trim();
-        const countMatch = customPrompt.match(/(?:generate|create|\b)(\d+)\s*(?:questions?|mcqs?|items?)/i);
-        const questionCount = Number(countMatch ? countMatch[1] : (body.questionCount || 10));
+        const blueprint = this.resolveMockBlueprint(body);
+        const questionCount = blueprint.totalQuestionsGenerated;
+        let negativeMarkingRate = body.negativeMarkingRate !== undefined
+            ? Number(body.negativeMarkingRate)
+            : (/negative\s*marking/i.test(customPrompt) ? 0.25 : 0);
+        const questionSlots = this.createQuestionSlots(blueprint, negativeMarkingRate);
         const durationMatch = customPrompt.match(/(\d+)\s*(?:hours?|hrs?|minutes?|mins?)/i);
         let durationMinutes = Number(body.durationMinutes || 0);
         if (!durationMinutes && durationMatch) {
             const num = parseInt(durationMatch[1], 10);
             durationMinutes = /hour|hr/i.test(durationMatch[0]) ? num * 60 : num;
         }
-        let negativeMarkingRate = body.negativeMarkingRate !== undefined
-            ? Number(body.negativeMarkingRate)
-            : (/negative\s*marking/i.test(customPrompt) ? 0.25 : 0);
         let difficulty = body.difficulty || 'Intermediate';
         if (/difficult|hard|expert/i.test(customPrompt))
             difficulty = 'Hard';
@@ -702,23 +702,14 @@ Do not include markdown wraps (like \`\`\`json) or other text. Return raw JSON.
                 durationMinutes = Math.max(45, Math.round(questionCount * 3));
         }
         const cacheKey = this.mockRequestCacheKey({
-            kind: 'mock-paper-v3-grounded',
+            kind: 'mock-paper-blueprint-v4',
             userId,
             topic,
             difficulty,
-            questionType,
-            questionCount,
-            paperType,
-            mode,
+            blueprint,
             sourceIds: [...sourceIds].sort(),
-            isJudiciaryMode,
-            judiciaryState,
-            examType,
-            examPattern,
-            customPrompt,
             durationMinutes,
             negativeMarkingRate,
-            referenceStructure: body.referenceStructure || null,
         });
         const cached = await this.findCachedMockTest(userId, cacheKey);
         if (cached) {
@@ -742,90 +733,117 @@ Do not include markdown wraps (like \`\`\`json) or other text. Return raw JSON.
             explanationsGenerated: true,
             retrievalQueryHash: crypto.createHash('sha256').update(query).digest('hex'),
         };
+        const sectionDescriptions = blueprint.sections.map((sec, i) => `
+[SECTION ${sec.name}]
+- Required Questions to Generate: EXACTLY ${sec.questionsGenerated} questions
+- Permitted Question Types: ${sec.questionTypes.join(', ')}
+- Marks per Question: ${sec.marksPerQuestion}
+- Attempt Requirement: ${sec.instruction}
+- Compulsory: ${sec.isCompulsory ? 'YES' : 'NO'}
+`).join('\n');
         const schemaDescription = `{
       "examTitle": "Professional Legal Mock Assessment",
       "subjectTopic": "${topic}",
-      "totalMarks": 100,
+      "totalMarks": ${blueprint.maximumObtainableMarks},
+      "totalPaperMarks": ${blueprint.totalPaperMarks},
       "durationMinutes": ${durationMinutes},
       "negativeMarkingRate": ${negativeMarkingRate},
-      "instructions": ["Answer all questions.", "Support legal responses with relevant Bare Act provisions, principles, and judicial precedents."],
+      "instructions": ["Answer questions strictly per section rules.", "Support legal responses with relevant Bare Act provisions and precedents."],
       "questions": [
         {
           "id": "q1",
-          "type": "MCQ | Short Answer | Long Answer | Case Based | True/False",
+          "sectionName": "Section A",
+          "type": "Descriptive | Long Answer | Case Based | MCQ | Short Answer",
           "topic": "Subtopic or Legal Doctrine",
           "question": "Question text...",
           "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
           "correct": 1,
           "correctAnswer": "B. Option 2",
-          "marks": 2,
-          "negativeMarks": 0.5,
+          "marks": 5,
+          "negativeMarks": 0,
           "difficulty": "Easy | Medium | Hard",
           "legalRef": "Bare Act Section or Landmark Case reference",
           "explanation": "Detailed rationale explaining why the answer is correct and citing governing legal authority",
-          "modelAnswer": "For short/long answers, detailed model response",
+          "modelAnswer": "Comprehensive model response with IRAC analysis",
           "citations": [{ "sourceName": "Source Title", "section": "Section/Article", "page": "Page 1", "supportingText": "Supporting excerpt" }]
         }
-      ],
-      "scoreReport": { "totalMarks": 100, "durationMinutes": ${durationMinutes}, "scoringRule": "Automated objective grading with negative marking and rubric-based subjective grading." },
-      "weakAreas": []
+      ]
     }`;
         const aiPrompt = `Generate a high-quality, professional, grounded LEGATRIXON legal mock test paper strictly from the supplied study material.
+
+MANDATORY EXAMINATION BLUEPRINT CONTRACT (STRICT STRUCTURAL COMPLIANCE REQUIRED):
+You MUST generate EXACTLY ${blueprint.totalQuestionsGenerated} questions matching the section distribution below.
+Do NOT omit, combine, or add questions. Every section MUST have its exact question count.
+
+Total Questions Required: ${blueprint.totalQuestionsGenerated}
+Sections Breakdown:
+${sectionDescriptions}
 
 PAPER SPECIFICATIONS:
 - Subject/Topic: ${topic}
 - Prompt / User Instructions: ${customPrompt || 'Create a balanced mock test grounded in the uploaded materials.'}
-- Target Question Count: ${questionCount}
 - Difficulty: ${difficulty}
 - Duration: ${durationMinutes} minutes
 - Negative Marking Rate: ${negativeMarkingRate}
-- Requested Question Types: ${questionType} (MCQs, Short Answer, Long Answer, Case Based, etc.)
-${body.referenceStructure ? `- Follow Reference Exam Structure: ${JSON.stringify(body.referenceStructure)}` : ''}
 
 RULES FOR QUESTION GENERATION:
 1. Ground every question strictly in the provided study material. Do not invent fictitious provisions, citations, or case names.
-2. For MCQs:
+2. For each question, ensure the 'sectionName' strictly matches the corresponding Section (e.g. "Section A", "Section B", "Section C").
+3. For each question, ensure the 'marks' field matches the section's marks per question.
+4. For MCQs:
    - Provide exactly 4 distinct, plausible options starting with "A. ", "B. ", "C. ", "D. ".
    - Ensure ONE unequivocally correct option.
-   - Provide 'correct' as the 0-indexed number (0 for A, 1 for B, 2 for C, 3 for D).
+   - Provide 'correct' as 0-indexed number (0 for A, 1 for B, 2 for C, 3 for D).
    - Provide 'correctAnswer' as the full option text.
-   - Provide 'marks' (e.g., 1 or 2 marks) and 'negativeMarks' (e.g. 0.25 or 0.5 marks).
-   - Provide 'explanation' detailing why the correct option is right and the others are wrong, citing relevant sections/cases.
-3. For Short & Long Answer Questions:
-   - Formulate clear, analytical legal questions.
-   - Provide a detailed 'modelAnswer' and 'explanation' outlining the key legal points, statutory provisions, and reasoning.
-   - Assign appropriate marks (e.g., 5, 10, 15, or 20 marks).
-4. For Case-Based Questions:
-   - Provide a realistic legal scenario followed by an application-based question.
-5. Prefer Indian legal framework (Constitution of India, BNS/IPC, BNSS/CrPC, BSA/IEA, Contract Act, CPC, etc.) when present in the material.
+   - Provide 'explanation' citing governing legal authorities.
+5. For Descriptive / Long / Case Based questions:
+   - Formulate clear, rigorous legal questions and hypothetical problem questions.
+   - Provide a detailed 'modelAnswer' and 'explanation' citing relevant statutory sections and case laws.
+6. Prefer Indian legal framework (Constitution of India, BNS/IPC, BNSS/CrPC, BSA/IEA, Contract Act, CPC, etc.) when present in the material.
 
 Return ONLY valid JSON matching this schema: ${schemaDescription}`;
         const generated = await this.generateLlmJson(aiPrompt, retrievedText, schemaDescription).catch((error) => {
-            this.logger.warn(`Mock paper AI generation failed: ${error.message || error}. Using grounded fallback.`);
-            return this.localQuestionPaper(topic, difficulty, questionType, questionCount, retrievedChunks, paperType);
+            this.logger.warn(`Mock paper AI generation failed: ${error.message || error}. Using grounded blueprint fallback.`);
+            return this.localQuestionPaper(topic, difficulty, blueprint, retrievedChunks, paperType, negativeMarkingRate);
         });
-        const normalizedQuestions = this.normalizeQuestionPaper(generated.questions || [], questionCount, retrievedChunks, difficulty, questionType);
-        const totalMarks = normalizedQuestions.reduce((sum, q) => sum + Number(q.marks || 0), 0);
+        const rawQuestions = Array.isArray(generated?.questions) ? generated.questions : [];
+        const fulfilledQuestions = this.fulfillQuestionSlots(rawQuestions, questionSlots, retrievedChunks, topic, difficulty, negativeMarkingRate);
         const entity = this.mockRepo.create({
             userId,
             topic,
             difficulty,
             questionType: isJudiciaryMode ? `${examType} - ${examPattern}` : questionType,
-            questionCount: normalizedQuestions.length,
+            questionCount: fulfilledQuestions.length,
             sourceIds,
-            questions: normalizedQuestions,
+            questions: fulfilledQuestions,
             scoreReport: {
                 ...(generated.scoreReport || {}),
                 examTitle: generated.examTitle || (isJudiciaryMode ? `${judiciaryState} ${examType} Mock Assessment` : `${topic} Mock Test`),
                 subjectTopic: generated.subjectTopic || topic,
-                totalMarks,
+                totalMarks: blueprint.maximumObtainableMarks,
+                totalPaperMarks: blueprint.totalPaperMarks,
+                totalQuestions: blueprint.totalQuestionsGenerated,
+                questionsToAttempt: blueprint.totalQuestionsToAttempt,
                 durationMinutes,
                 negativeMarkingRate,
-                instructions: generated.instructions || [
-                    'Answer all questions carefully.',
-                    'For MCQs, negative marking applies as indicated.',
+                instructions: [
+                    `Total Questions: ${blueprint.totalQuestionsGenerated}. Questions to Attempt: ${blueprint.totalQuestionsToAttempt}.`,
+                    `Maximum Obtainable Marks: ${blueprint.maximumObtainableMarks}.`,
+                    ...blueprint.sections.map((s) => `${s.name}: ${s.instruction}`),
                     'Support subjective answers with relevant statutory provisions, principles, and authorities from the uploaded material.',
                 ],
+                sections: blueprint.sections.map((s) => ({
+                    name: s.name,
+                    questionsGenerated: s.questionsGenerated,
+                    questionsToAttempt: s.questionsToAttempt,
+                    marksPerQuestion: s.marksPerQuestion,
+                    obtainableMarks: s.questionsToAttempt * s.marksPerQuestion,
+                    paperMarks: s.questionsGenerated * s.marksPerQuestion,
+                    questionTypes: s.questionTypes,
+                    isCompulsory: s.isCompulsory,
+                    instruction: s.instruction,
+                })),
+                scoringRule: `Choice-based grading: Maximum obtainable score is ${blueprint.maximumObtainableMarks} marks based on required section attempts.`,
                 insufficientForMockTest,
                 extractionWarning: insufficientForMockTest
                     ? 'Selected material is short or marked as limited extraction. The paper was generated from available indexed chunks; verify coverage before final use.'
@@ -979,71 +997,91 @@ Return ONLY valid JSON matching this schema: ${schemaDescription}`;
         if (!test)
             throw new common_1.BadRequestException('Mock test not found.');
         const questions = test.questions || [];
+        const reportSections = test.scoreReport?.sections || [];
+        const sectionGroups = new Map();
+        if (reportSections.length > 0) {
+            for (const sec of reportSections) {
+                sectionGroups.set(sec.name, []);
+            }
+            for (const q of questions) {
+                const secName = q.sectionName || (reportSections[0] ? reportSections[0].name : 'Section A');
+                if (!sectionGroups.has(secName)) {
+                    sectionGroups.set(secName, []);
+                }
+                sectionGroups.get(secName).push(q);
+            }
+        }
+        else {
+            sectionGroups.set('All Questions', questions);
+        }
         let positiveMarks = 0;
         let negativeMarks = 0;
         let descriptiveScore = 0;
         let correctCount = 0;
         let incorrectCount = 0;
         let unansweredCount = 0;
+        let optionalCount = 0;
         const topicStats = {};
         const questionEvaluations = [];
         const weakAreas = [];
         const strongAreas = [];
-        for (let index = 0; index < questions.length; index++) {
-            const question = questions[index];
-            const qId = String(question.id || `q${index + 1}`);
-            const marks = Number(question.marks || 5);
-            const qType = String(question.type || '').toLowerCase();
-            const topic = String(question.topic || test.topic || 'General Law');
-            if (!topicStats[topic]) {
-                topicStats[topic] = { totalMarks: 0, score: 0, questions: 0, correct: 0, attempted: 0 };
-            }
-            topicStats[topic].totalMarks += marks;
-            topicStats[topic].questions += 1;
-            const userAnsRaw = answers?.[qId] ?? answers?.[question.id] ?? '';
-            const userAns = typeof userAnsRaw === 'object' ? JSON.stringify(userAnsRaw) : String(userAnsRaw || '').trim();
-            const isObjective = Boolean(question.options && question.options.length > 0 ||
-                qType.includes('mcq') ||
-                qType.includes('multiple') ||
-                qType.includes('true/false') ||
-                qType.includes('objective'));
-            if (isObjective) {
-                let expected = String(question.correctAnswer ?? question.answerKey ?? question.answer ?? '').trim();
-                if (typeof question.correct === 'number' && question.options && question.options[question.correct]) {
-                    expected = String(question.options[question.correct]);
-                }
-                if (!userAns) {
-                    unansweredCount++;
-                    questionEvaluations.push({
-                        questionId: qId,
-                        questionNumber: index + 1,
-                        questionText: question.question || question.questionText || '',
-                        type: question.type || 'MCQ',
-                        topic,
-                        marks,
-                        awardedMarks: 0,
-                        isCorrect: null,
-                        result: 'Unanswered',
-                        userAnswer: '',
-                        correctAnswer: expected,
-                        explanation: question.explanation || '',
-                        legalRef: question.legalRef || (question.citations?.[0]?.sourceName) || '',
-                    });
-                    weakAreas.push(topic);
+        for (const [secName, secQuestions] of sectionGroups.entries()) {
+            const secMeta = reportSections.find((s) => s.name === secName) || {
+                questionsGenerated: secQuestions.length,
+                questionsToAttempt: secQuestions.length,
+                marksPerQuestion: secQuestions[0]?.marks || 5,
+                isCompulsory: true,
+            };
+            const allowedAttempts = secMeta.questionsToAttempt || secQuestions.length;
+            const isCompulsory = Boolean(secMeta.isCompulsory);
+            const attemptedInSec = [];
+            const unattemptedInSec = [];
+            for (let idx = 0; idx < secQuestions.length; idx++) {
+                const q = secQuestions[idx];
+                const globalIndex = questions.indexOf(q);
+                const qId = String(q.id || `q${globalIndex + 1}`);
+                const userAnsRaw = answers?.[qId] ?? answers?.[q.id] ?? '';
+                const userAns = typeof userAnsRaw === 'object' ? JSON.stringify(userAnsRaw) : String(userAnsRaw || '').trim();
+                if (userAns) {
+                    attemptedInSec.push({ q, index: globalIndex, userAns });
                 }
                 else {
-                    topicStats[topic].attempted += 1;
-                    const isMatch = this.checkObjectiveMatch(userAns, expected, question.options);
+                    unattemptedInSec.push({ q, index: globalIndex });
+                }
+            }
+            const evaluatedAttempted = [];
+            for (const item of attemptedInSec) {
+                const { q, index, userAns } = item;
+                const qId = String(q.id || `q${index + 1}`);
+                const marks = Number(q.marks || secMeta.marksPerQuestion || 5);
+                const qType = String(q.type || '').toLowerCase();
+                const topic = String(q.topic || test.topic || 'General Law');
+                if (!topicStats[topic]) {
+                    topicStats[topic] = { totalMarks: 0, score: 0, questions: 0, correct: 0, attempted: 0 };
+                }
+                topicStats[topic].totalMarks += marks;
+                topicStats[topic].questions += 1;
+                topicStats[topic].attempted += 1;
+                const isObjective = Boolean((q.options && q.options.length > 0) ||
+                    qType.includes('mcq') ||
+                    qType.includes('multiple') ||
+                    qType.includes('true/false') ||
+                    qType.includes('objective'));
+                if (isObjective) {
+                    let expected = String(q.correctAnswer ?? q.answerKey ?? q.answer ?? '').trim();
+                    if (typeof q.correct === 'number' && q.options && q.options[q.correct]) {
+                        expected = String(q.options[q.correct]);
+                    }
+                    const isMatch = this.checkObjectiveMatch(userAns, expected, q.options);
                     if (isMatch) {
-                        positiveMarks += marks;
                         correctCount++;
                         topicStats[topic].score += marks;
                         topicStats[topic].correct += 1;
-                        questionEvaluations.push({
+                        evaluatedAttempted.push({
                             questionId: qId,
                             questionNumber: index + 1,
-                            questionText: question.question || question.questionText || '',
-                            type: question.type || 'MCQ',
+                            questionText: q.question || q.questionText || '',
+                            type: q.type || 'MCQ',
                             topic,
                             marks,
                             awardedMarks: marks,
@@ -1051,23 +1089,23 @@ Return ONLY valid JSON matching this schema: ${schemaDescription}`;
                             result: 'Correct',
                             userAnswer: userAns,
                             correctAnswer: expected,
-                            explanation: question.explanation || '',
-                            legalRef: question.legalRef || (question.citations?.[0]?.sourceName) || '',
+                            explanation: q.explanation || '',
+                            legalRef: q.legalRef || (q.citations?.[0]?.sourceName) || '',
+                            earnedPoints: marks,
                         });
                     }
                     else {
-                        const negRate = question.negativeMarks !== undefined
-                            ? Number(question.negativeMarks)
+                        const negRate = q.negativeMarks !== undefined
+                            ? Number(q.negativeMarks)
                             : (negativeMarkingRate !== undefined ? Number(negativeMarkingRate) * marks : 0.25 * marks);
                         const penalty = Math.max(0, negRate);
-                        negativeMarks += penalty;
                         incorrectCount++;
                         weakAreas.push(topic);
-                        questionEvaluations.push({
+                        evaluatedAttempted.push({
                             questionId: qId,
                             questionNumber: index + 1,
-                            questionText: question.question || question.questionText || '',
-                            type: question.type || 'MCQ',
+                            questionText: q.question || q.questionText || '',
+                            type: q.type || 'MCQ',
                             topic,
                             marks,
                             awardedMarks: -penalty,
@@ -1075,40 +1113,14 @@ Return ONLY valid JSON matching this schema: ${schemaDescription}`;
                             result: 'Incorrect',
                             userAnswer: userAns,
                             correctAnswer: expected,
-                            explanation: question.explanation || '',
-                            legalRef: question.legalRef || (question.citations?.[0]?.sourceName) || '',
+                            explanation: q.explanation || '',
+                            legalRef: q.legalRef || (q.citations?.[0]?.sourceName) || '',
+                            earnedPoints: -penalty,
                         });
                     }
                 }
-            }
-            else {
-                if (!userAns) {
-                    unansweredCount++;
-                    weakAreas.push(topic);
-                    questionEvaluations.push({
-                        questionId: qId,
-                        questionNumber: index + 1,
-                        questionText: question.question || question.questionText || '',
-                        type: question.type || 'Descriptive',
-                        topic,
-                        marks,
-                        awardedMarks: 0,
-                        isCorrect: false,
-                        result: 'Unanswered',
-                        userAnswer: '',
-                        correctAnswer: question.modelAnswer || question.explanation || 'Detailed legal answer citing relevant provisions, cases, and analysis.',
-                        explanation: question.explanation || 'No answer submitted for this question.',
-                        legalRef: question.legalRef || (question.citations?.[0]?.sourceName) || '',
-                        rubricBreakdown: { legalAccuracy: 0, issueIdentification: 0, reasoningAnalysis: 0, useOfAuthorities: 0, structureClarity: 0 },
-                        keyStrengths: [],
-                        missingPoints: ['Answer was left unattempted.'],
-                        suggestedImprovement: 'Provide a structured answer covering relevant statutory provisions, key principles, and judicial authorities.',
-                    });
-                }
                 else {
-                    topicStats[topic].attempted += 1;
-                    const subjectiveEval = await this.evaluateSubjectiveAnswer(question, userAns, marks, test.sourceIds || []);
-                    descriptiveScore += subjectiveEval.awardedMarks;
+                    const subjectiveEval = await this.evaluateSubjectiveAnswer(q, userAns, marks, test.sourceIds || []);
                     topicStats[topic].score += subjectiveEval.awardedMarks;
                     if (subjectiveEval.awardedMarks >= marks * 0.6) {
                         correctCount++;
@@ -1119,32 +1131,104 @@ Return ONLY valid JSON matching this schema: ${schemaDescription}`;
                         incorrectCount++;
                         weakAreas.push(topic);
                     }
-                    questionEvaluations.push({
+                    evaluatedAttempted.push({
                         questionId: qId,
                         questionNumber: index + 1,
-                        questionText: question.question || question.questionText || '',
-                        type: question.type || 'Descriptive',
+                        questionText: q.question || q.questionText || '',
+                        type: q.type || 'Descriptive',
                         topic,
                         marks,
                         awardedMarks: subjectiveEval.awardedMarks,
                         isCorrect: subjectiveEval.awardedMarks >= marks * 0.5,
                         result: subjectiveEval.awardedMarks >= marks * 0.6 ? 'Satisfactory' : 'Needs Improvement',
                         userAnswer: userAns,
-                        correctAnswer: question.modelAnswer || subjectiveEval.modelAnswer || question.explanation || '',
-                        explanation: subjectiveEval.feedback || question.explanation || '',
-                        legalRef: question.legalRef || (question.citations?.[0]?.sourceName) || '',
+                        correctAnswer: q.modelAnswer || subjectiveEval.modelAnswer || q.explanation || '',
+                        explanation: subjectiveEval.feedback || q.explanation || '',
+                        legalRef: q.legalRef || (q.citations?.[0]?.sourceName) || '',
                         rubricBreakdown: subjectiveEval.rubricBreakdown,
                         keyStrengths: subjectiveEval.keyStrengths,
                         missingPoints: subjectiveEval.missingPoints,
                         suggestedImprovement: subjectiveEval.suggestedImprovement,
-                        modelAnswer: question.modelAnswer || subjectiveEval.modelAnswer || '',
+                        modelAnswer: q.modelAnswer || subjectiveEval.modelAnswer || '',
+                        earnedPoints: subjectiveEval.awardedMarks,
+                    });
+                }
+            }
+            evaluatedAttempted.sort((a, b) => b.earnedPoints - a.earnedPoints);
+            const countingAttempts = evaluatedAttempted.slice(0, allowedAttempts);
+            for (const ev of countingAttempts) {
+                if (ev.awardedMarks > 0) {
+                    if (ev.type === 'MCQ' || ev.type === 'True/False') {
+                        positiveMarks += ev.awardedMarks;
+                    }
+                    else {
+                        descriptiveScore += ev.awardedMarks;
+                    }
+                }
+                else if (ev.awardedMarks < 0) {
+                    negativeMarks += Math.abs(ev.awardedMarks);
+                }
+            }
+            questionEvaluations.push(...evaluatedAttempted);
+            const attemptedCountInSec = attemptedInSec.length;
+            const shortfall = Math.max(0, allowedAttempts - attemptedCountInSec);
+            for (let uIdx = 0; uIdx < unattemptedInSec.length; uIdx++) {
+                const { q, index } = unattemptedInSec[uIdx];
+                const qId = String(q.id || `q${index + 1}`);
+                const marks = Number(q.marks || secMeta.marksPerQuestion || 5);
+                const topic = String(q.topic || test.topic || 'General Law');
+                if (isCompulsory || uIdx < shortfall) {
+                    unansweredCount++;
+                    weakAreas.push(topic);
+                    questionEvaluations.push({
+                        questionId: qId,
+                        questionNumber: index + 1,
+                        questionText: q.question || q.questionText || '',
+                        type: q.type || 'Descriptive',
+                        topic,
+                        marks,
+                        awardedMarks: 0,
+                        isCorrect: false,
+                        result: 'Unanswered',
+                        userAnswer: '',
+                        correctAnswer: q.correctAnswer || q.modelAnswer || q.explanation || '',
+                        explanation: isCompulsory ? 'Compulsory question was left unanswered.' : 'Required question was left unattempted under section rules.',
+                        legalRef: q.legalRef || (q.citations?.[0]?.sourceName) || '',
+                        rubricBreakdown: { legalAccuracy: 0, issueIdentification: 0, reasoningAnalysis: 0, useOfAuthorities: 0, structureClarity: 0 },
+                        keyStrengths: [],
+                        missingPoints: ['Answer was left unattempted.'],
+                        suggestedImprovement: 'Attempt required questions within section to maximize score.',
+                    });
+                }
+                else {
+                    optionalCount++;
+                    questionEvaluations.push({
+                        questionId: qId,
+                        questionNumber: index + 1,
+                        questionText: q.question || q.questionText || '',
+                        type: q.type || 'Descriptive',
+                        topic,
+                        marks,
+                        awardedMarks: 0,
+                        isCorrect: null,
+                        result: 'Optional / Not Selected',
+                        userAnswer: '',
+                        correctAnswer: q.correctAnswer || q.modelAnswer || q.explanation || '',
+                        explanation: `Optional question not selected under section choice rules (Attempt any ${allowedAttempts} out of ${secQuestions.length}).`,
+                        legalRef: q.legalRef || (q.citations?.[0]?.sourceName) || '',
+                        keyStrengths: [],
+                        missingPoints: [],
                     });
                 }
             }
         }
-        const totalPossibleMarks = questions.reduce((sum, q) => sum + Number(q.marks || 5), 0);
+        questionEvaluations.sort((a, b) => a.questionNumber - b.questionNumber);
+        const totalPossibleMarks = test.scoreReport?.totalMarks ||
+            (reportSections.length > 0
+                ? reportSections.reduce((sum, s) => sum + (s.questionsToAttempt * s.marksPerQuestion), 0)
+                : questions.reduce((sum, q) => sum + Number(q.marks || 5), 0));
         const finalScore = Math.max(0, Math.round((positiveMarks - negativeMarks + descriptiveScore) * 10) / 10);
-        const percentage = totalPossibleMarks > 0 ? Math.round((finalScore / totalPossibleMarks) * 100) : 0;
+        const percentage = totalPossibleMarks > 0 ? Math.min(100, Math.round((finalScore / totalPossibleMarks) * 100)) : 0;
         const attemptedCount = correctCount + incorrectCount;
         const accuracy = attemptedCount > 0 ? Math.round((correctCount / attemptedCount) * 100) : 0;
         const topicBreakdown = Object.keys(topicStats).map((topicName) => {
@@ -1181,21 +1265,22 @@ Return ONLY valid JSON matching this schema: ${schemaDescription}`;
                     descriptiveScore,
                     finalScore,
                     totalPossibleMarks,
+                    totalPaperMarks: test.scoreReport?.totalPaperMarks || totalPossibleMarks,
                     percentage,
                     accuracy,
                     correct: correctCount,
                     incorrect: incorrectCount,
                     unanswered: unansweredCount,
+                    optionalUnselected: optionalCount,
                     totalQuestions: questions.length,
+                    questionsToAttempt: test.scoreReport?.questionsToAttempt || questions.length,
                 },
                 topicBreakdown,
-                strongAreas: Array.from(new Set(strongAreas)).slice(0, 5),
-                weakAreas: Array.from(new Set(weakAreas)).slice(0, 5),
+                strongAreas: Array.from(new Set(strongAreas)),
+                weakAreas: Array.from(new Set(weakAreas)),
             },
-            weakAreas: Array.from(new Set(weakAreas)).slice(0, 10),
         }));
-        await this.log(userId, 'mock_test_submitted', { mockTestId: id, score: finalScore, percentage, timeTaken });
-        await this.notificationService.createNotification(userId, `Mock Test Completed: ${test.topic}`, `You completed the mock test on "${test.topic}" with a score of ${finalScore}/${totalPossibleMarks} (${percentage}%).`);
+        await this.log(userId, 'mock_test_submitted', { mockTestId: id, attemptId: attempt.id, score: finalScore, total: totalPossibleMarks, percentage });
         return attempt;
     }
     async generateMindMap(userId, body) {
@@ -3382,6 +3467,209 @@ Return ONLY valid JSON matching this schema: ${schemaDescription}`;
             ].join('\n');
         }).join('\n\n');
     }
+    resolveMockBlueprint(body) {
+        let rawSections = [];
+        if (Array.isArray(body.sections) && body.sections.length > 0) {
+            rawSections = body.sections;
+        }
+        else if (body.structureMode === 'reference' && Array.isArray(body.referenceStructure?.sections) && body.referenceStructure.sections.length > 0) {
+            rawSections = body.referenceStructure.sections;
+        }
+        if (!rawSections || rawSections.length === 0) {
+            if (body.questionCount && !body.sections && body.structureMode !== 'default') {
+                const count = Math.max(1, Number(body.questionCount));
+                const qTypes = body.questionType ? [body.questionType] : ['Descriptive'];
+                rawSections = [{
+                        id: 'secA',
+                        name: 'Section A',
+                        questionsGenerated: count,
+                        questionsToAttempt: count,
+                        marksPerQuestion: 5,
+                        questionTypes: qTypes,
+                        isCompulsory: true,
+                    }];
+            }
+            else {
+                rawSections = [
+                    { id: 'secA', name: 'Section A', questionsGenerated: 5, questionsToAttempt: 4, marksPerQuestion: 5, questionTypes: ['Descriptive'], isCompulsory: false },
+                    { id: 'secB', name: 'Section B', questionsGenerated: 3, questionsToAttempt: 2, marksPerQuestion: 10, questionTypes: ['Long Answer'], isCompulsory: false },
+                    { id: 'secC', name: 'Section C', questionsGenerated: 1, questionsToAttempt: 1, marksPerQuestion: 15, questionTypes: ['Case Based'], isCompulsory: true },
+                ];
+            }
+        }
+        const sections = rawSections.map((sec, idx) => {
+            const name = String(sec.name || `Section ${String.fromCharCode(65 + idx)}`).trim();
+            const questionsGenerated = Math.max(1, Number(sec.questionsGenerated ?? sec.generate ?? sec.questionCount ?? sec.count ?? 5));
+            const questionsToAttempt = Math.max(1, Math.min(questionsGenerated, Number(sec.questionsToAttempt ?? sec.attempt ?? sec.toAttempt ?? questionsGenerated)));
+            const marksPerQuestion = Math.max(1, Number(sec.marksPerQuestion ?? sec.marks ?? sec.marksPerQ ?? 5));
+            let questionTypes = [];
+            if (Array.isArray(sec.questionTypes) && sec.questionTypes.length > 0) {
+                questionTypes = sec.questionTypes.map((t) => String(t).trim()).filter(Boolean);
+            }
+            else if (sec.questionType) {
+                questionTypes = [String(sec.questionType).trim()];
+            }
+            if (questionTypes.length === 0) {
+                questionTypes = ['Descriptive'];
+            }
+            const isCompulsory = Boolean(sec.isCompulsory ?? sec.compulsory ?? false);
+            let instruction = '';
+            if (isCompulsory) {
+                instruction = `Compulsory. Answer all ${questionsGenerated} question${questionsGenerated > 1 ? 's' : ''}. Each question carries ${marksPerQuestion} marks.`;
+            }
+            else if (questionsToAttempt < questionsGenerated) {
+                instruction = `Attempt any ${questionsToAttempt} out of ${questionsGenerated} questions. Each question carries ${marksPerQuestion} marks.`;
+            }
+            else {
+                instruction = `Answer all ${questionsGenerated} questions. Each question carries ${marksPerQuestion} marks.`;
+            }
+            return {
+                id: sec.id || `sec-${idx}`,
+                name,
+                questionsGenerated,
+                questionsToAttempt,
+                marksPerQuestion,
+                questionTypes,
+                isCompulsory,
+                instruction,
+            };
+        });
+        const totalQuestionsGenerated = sections.reduce((sum, s) => sum + s.questionsGenerated, 0);
+        const totalQuestionsToAttempt = sections.reduce((sum, s) => sum + s.questionsToAttempt, 0);
+        const maximumObtainableMarks = sections.reduce((sum, s) => sum + (s.questionsToAttempt * s.marksPerQuestion), 0);
+        const totalPaperMarks = sections.reduce((sum, s) => sum + (s.questionsGenerated * s.marksPerQuestion), 0);
+        return {
+            sections,
+            totalQuestionsGenerated,
+            totalQuestionsToAttempt,
+            maximumObtainableMarks,
+            totalPaperMarks,
+        };
+    }
+    createQuestionSlots(blueprint, negativeMarkingRate) {
+        const slots = [];
+        let qNum = 1;
+        for (let secIdx = 0; secIdx < blueprint.sections.length; secIdx++) {
+            const sec = blueprint.sections[secIdx];
+            for (let i = 0; i < sec.questionsGenerated; i++) {
+                slots.push({
+                    globalIndex: slots.length,
+                    questionNumber: qNum,
+                    sectionIndex: secIdx,
+                    sectionId: sec.id || `sec-${secIdx}`,
+                    sectionName: sec.name,
+                    marks: sec.marksPerQuestion,
+                    negativeMarks: negativeMarkingRate !== undefined ? Math.round(sec.marksPerQuestion * negativeMarkingRate * 100) / 100 : 0.5,
+                    questionTypes: sec.questionTypes,
+                    isCompulsory: sec.isCompulsory,
+                    instruction: sec.instruction,
+                });
+                qNum++;
+            }
+        }
+        return slots;
+    }
+    synthesizeSlotQuestion(slot, chunks, topic, difficulty) {
+        const safeChunks = chunks && chunks.length > 0 ? chunks : [{ id: 'local', payload: { text: topic, name: 'Grounded Legal Study Material' } }];
+        const chunk = safeChunks[slot.globalIndex % safeChunks.length];
+        const text = String(chunk.payload?.text || chunk.payload?.chunk_text || topic).replace(/\s+/g, ' ').trim();
+        const concept = this.extractTopic(text, topic || 'Governing Legal Concept');
+        const isObjective = slot.questionTypes.some((t) => /mcq|multiple|objective|true\/false/i.test(t));
+        if (isObjective) {
+            return {
+                type: 'MCQ',
+                topic: concept,
+                question: `In relation to ${concept} under the governing statutory provisions, which of the following statements represents the accurate legal position?`,
+                options: [
+                    `A. It operates as an absolute rule with no exceptions or judicial discretion.`,
+                    `B. It is subject to statutory conditions, procedural safeguards, and judicial precedent as reflected in the study material.`,
+                    `C. It applies exclusively in civil litigation and has no bearing on public law.`,
+                    `D. It has been rendered obsolete by subsequent legislative enactments without saving clauses.`
+                ],
+                correct: 1,
+                correctAnswer: `B. It is subject to statutory conditions, procedural safeguards, and judicial precedent as reflected in the study material.`,
+                explanation: `Option B accurately reflects the legal position: under settled jurisprudence, ${concept} is applied subject to statutory preconditions and safeguards.`,
+                legalRef: `${chunk.payload?.name || 'Study Material'} • ${concept}`,
+            };
+        }
+        const templates = [
+            (c) => `Examine the constitutional and statutory framework governing ${c}. In your answer, analyze the essential elements, statutory provisions, landmark judicial precedents, and exceptions qualifying its application.`,
+            (c) => `Critically assess the legal doctrine of ${c} with reference to relevant statutory provisions and case law. Discuss how Indian courts have balanced competing interests in applying this principle.`,
+            (c) => `Analyze the following scenario involving ${c}: A party seeks legal relief alleging violation of procedural fairness and statutory mandates. Detail the legal issues, governing rules, and formulate a reasoned judicial conclusion.`,
+            (c) => `Provide a detailed legal analysis of ${c}. Discuss its scope, standard of review, key tests laid down by the Supreme Court, and its contemporary significance in Indian jurisprudence.`
+        ];
+        const template = templates[slot.globalIndex % templates.length];
+        return {
+            type: slot.questionTypes[0] || 'Descriptive',
+            topic: concept,
+            question: template(concept),
+            modelAnswer: `Model Analysis on ${concept}:\n1. Issues: Determining the applicability and legal standards under governing provisions.\n2. Rules: Statutory requirements and constitutional principles.\n3. Analysis: Applying the tests laid down in landmark decisions to the factual matrix.\n4. Conclusion: Structured summary confirming rights and obligations.`,
+            explanation: `Grounded in statutory provisions and principles of ${concept}.`,
+            legalRef: `${chunk.payload?.name || 'Study Material'} • ${concept}`,
+        };
+    }
+    fulfillQuestionSlots(rawQuestions, slots, chunks, topic, difficulty, negativeMarkingRate) {
+        const fulfilled = [];
+        const unusedRaw = [...(rawQuestions || [])];
+        for (const slot of slots) {
+            let matchIdx = unusedRaw.findIndex((q) => String(q.sectionName || '').trim().toLowerCase() === slot.sectionName.toLowerCase());
+            if (matchIdx === -1) {
+                matchIdx = unusedRaw.findIndex((q) => {
+                    const qType = String(q.type || '').toLowerCase();
+                    return slot.questionTypes.some((st) => qType.includes(st.toLowerCase()) || st.toLowerCase().includes(qType));
+                });
+            }
+            if (matchIdx === -1 && unusedRaw.length > 0) {
+                matchIdx = 0;
+            }
+            let baseQuestion = null;
+            if (matchIdx !== -1) {
+                baseQuestion = unusedRaw.splice(matchIdx, 1)[0];
+            }
+            else {
+                baseQuestion = this.synthesizeSlotQuestion(slot, chunks, topic, difficulty);
+            }
+            const qTypeRaw = String(baseQuestion.type || slot.questionTypes[0] || 'Descriptive');
+            const isMcq = slot.questionTypes.some((t) => /mcq|multiple|objective|true\/false/i.test(t)) ||
+                /mcq|multiple|objective|true\/false/i.test(qTypeRaw) ||
+                (Array.isArray(baseQuestion.options) && baseQuestion.options.length >= 2);
+            const citations = baseQuestion.citations?.length
+                ? baseQuestion.citations
+                : this.citationsFromRetrievedChunks([chunks[slot.globalIndex % Math.max(1, chunks.length)]].filter(Boolean));
+            let finalType = slot.questionTypes[0];
+            if (isMcq && slot.questionTypes.some((t) => /mcq/i.test(t))) {
+                finalType = 'MCQ';
+            }
+            else if (slot.questionTypes.includes(qTypeRaw)) {
+                finalType = qTypeRaw;
+            }
+            const qItem = {
+                id: `q${slot.questionNumber}`,
+                sectionId: slot.sectionId,
+                sectionName: slot.sectionName,
+                questionNumber: slot.questionNumber,
+                type: finalType,
+                topic: String(baseQuestion.topic || topic || 'Legal Reasoning').trim(),
+                question: String(baseQuestion.question || baseQuestion.questionText || `Question under ${slot.sectionName}`).trim(),
+                marks: slot.marks,
+                negativeMarks: isMcq ? (negativeMarkingRate !== undefined ? Math.round(slot.marks * negativeMarkingRate * 100) / 100 : 0.5) : 0,
+                difficulty: String(baseQuestion.difficulty || difficulty),
+                options: isMcq && Array.isArray(baseQuestion.options) && baseQuestion.options.length >= 2 ? baseQuestion.options.map((opt) => String(opt).trim()) : undefined,
+                correct: isMcq ? (typeof baseQuestion.correct === 'number' ? baseQuestion.correct : 0) : undefined,
+                correctAnswer: isMcq ? (baseQuestion.correctAnswer || (baseQuestion.options ? baseQuestion.options[0] : '')) : undefined,
+                legalRef: String(baseQuestion.legalRef || (citations?.[0]?.sourceName ? `${citations[0].sourceName} ${citations[0].section || ''}` : '')).trim(),
+                explanation: String(baseQuestion.explanation || baseQuestion.rationale || '').trim(),
+                modelAnswer: String(baseQuestion.modelAnswer || baseQuestion.expectedAnswer || baseQuestion.explanation || '').trim(),
+                expectedAnswerLength: isMcq ? 'Select single option' : (slot.marks >= 10 ? '1,500-2,500 words' : '500-1,000 words'),
+                modelAnswerRequested: true,
+                citations,
+                isCompulsorySection: slot.isCompulsory,
+                sectionInstruction: slot.instruction,
+            };
+            fulfilled.push(qItem);
+        }
+        return fulfilled;
+    }
     normalizeQuestionPaper(questions, count, chunks, difficulty, questionType) {
         if (!questions || questions.length === 0) {
             throw new common_1.BadRequestException(`AI provider is not configured correctly. Please check API key settings.`);
@@ -3465,73 +3753,35 @@ Return ONLY valid JSON matching this schema: ${schemaDescription}`;
         const marksOptions = [5, 10, 15];
         return marksOptions[index % marksOptions.length];
     }
-    localQuestionPaper(topic, difficulty, questionType, count, chunks, paperType) {
-        const safeChunks = chunks.length ? chunks : [{ id: 'local', payload: { text: topic, name: 'Uploaded Study Material', page_number: 1, paragraph_index: 1 } }];
-        const isObjective = /mcq|objective|clat|prelims|multiple/i.test(`${questionType} ${paperType}`);
-        if (isObjective) {
-            const questions = Array.from({ length: count }, (_, index) => {
-                const chunk = safeChunks[index % safeChunks.length];
-                const text = String(chunk.payload?.text || chunk.payload?.chunk_text || topic).replace(/\s+/g, ' ').trim();
-                const concept = this.extractTopic(text, topic || 'Legal Concept');
-                return {
-                    id: `q${index + 1}`,
-                    type: 'MCQ',
-                    topic: concept,
-                    question: `In the context of ${concept} under the governing statutory provisions, which of the following statements represents the correct legal position?`,
-                    options: [
-                        `A. It operates as an absolute rule with no exceptions or limitations recognized under law.`,
-                        `B. It is subject to statutory conditions, procedural safeguards, and judicial precedent as reflected in the study material.`,
-                        `C. It applies exclusively in civil litigation and has no bearing on public law or criminal proceedings.`,
-                        `D. It has been rendered obsolete by subsequent legislative enactments without saving clauses.`
-                    ],
-                    correct: 1,
-                    correctAnswer: `B. It is subject to statutory conditions, procedural safeguards, and judicial precedent as reflected in the study material.`,
-                    marks: 2,
-                    negativeMarks: 0.5,
-                    difficulty,
-                    legalRef: `${chunk.payload?.name || 'Study Material'} • ${concept}`,
-                    explanation: `Option B is correct because under settled principles of law, ${concept} is applied subject to statutory conditions, safeguards, and judicial doctrine. Options A, C, and D state incorrect or overly rigid positions.`,
-                    expectedAnswerLength: 'Select single option',
-                    modelAnswerRequested: true,
-                    citations: this.citationsFromRetrievedChunks([chunk]),
-                };
-            });
-            return {
-                examTitle: `${topic} Mock Assessment`,
-                subjectTopic: topic,
-                totalMarks: questions.reduce((sum, q) => sum + q.marks, 0),
-                durationMinutes: Math.max(30, Math.round(count * 1.5)),
-                negativeMarkingRate: 0.25,
-                questions,
-                scoreReport: { totalMarks: questions.reduce((sum, q) => sum + q.marks, 0), durationMinutes: Math.max(30, Math.round(count * 1.5)) },
-                weakAreas: []
-            };
-        }
-        const questionTemplates = [
-            (concept) => `Discuss in detail the concept of ${concept} as reflected in the uploaded study material. In your answer, examine its meaning and definition, the relevant statutory provisions and constitutional articles, the essential legal ingredients, the governing doctrines, the judicial interpretation given to it by the courts, any exceptions or limitations that qualify its application, and conclude with a critical evaluation of its effectiveness and fairness in the current legal framework.`,
-            (concept) => `Critically examine the legal framework governing ${concept} with reference to the uploaded study material. Trace its historical development and statutory evolution, identify the key provisions that regulate it, analyse the essential conditions that must be satisfied for its application, discuss the leading judicial pronouncements that have shaped its interpretation, and assess whether the existing legal regime adequately balances the competing interests at stake.`,
-            (concept) => `Write a detailed essay on ${concept} drawing exclusively from the uploaded study materials. Your answer must cover the doctrinal meaning of the concept, its place within the broader legal system, the statutory or constitutional provisions governing it, the tests or ingredients applied by courts, the role of judicial discretion in its application, exceptions and defences available, and a reasoned conclusion on its contemporary legal significance.`,
-            (concept) => `Explain the nature, scope, and significance of ${concept} as contained in the uploaded study material. Analyse the statutory provisions applicable, examine the essential requirements and their legal consequences, discuss the manner in which courts have interpreted and applied these requirements, identify any procedural safeguards or limitations, and evaluate the practical challenges in the enforcement of the law relating to this concept.`,
-            (concept) => `Examine the doctrine of ${concept} in light of the uploaded study material. Your answer should include a clear statement of the legal principle, an explanation of its statutory and constitutional basis, an analysis of its essential elements, a discussion of the conditions under which it applies and the conditions under which it does not, the approach of the judiciary in balancing this doctrine against other competing legal interests, and a critical assessment of its present state and desirable reforms if any.`,
-        ];
-        const questions = Array.from({ length: count }, (_, index) => {
-            const chunk = safeChunks[index % safeChunks.length];
-            const text = String(chunk.payload?.text || chunk.payload?.chunk_text || topic).replace(/\s+/g, ' ').trim();
-            const concept = this.extractTopic(text, topic || 'this concept');
-            const template = questionTemplates[index % questionTemplates.length];
-            return {
-                id: `q${index + 1}`,
-                type: paperType || questionType,
-                topic: concept,
-                question: template(concept),
-                marks: this.defaultMarksForQuestion(questionType || paperType, index),
-                difficulty,
-                expectedAnswerLength: 'Expected length: 1,800-2,500 words (approximately 3-4 written pages)',
-                modelAnswerRequested: true,
-                citations: this.citationsFromRetrievedChunks([chunk]),
-            };
-        });
-        return { questions, scoreReport: { totalMarks: questions.reduce((sum, q) => sum + q.marks, 0) }, weakAreas: [] };
+    localQuestionPaper(topic, difficulty, blueprintOrType, chunks, paperType, negativeMarkingRate) {
+        const blueprint = (blueprintOrType && typeof blueprintOrType === 'object' && Array.isArray(blueprintOrType.sections))
+            ? blueprintOrType
+            : this.resolveMockBlueprint({ topic, questionType: blueprintOrType, questionCount: 9 });
+        const slots = this.createQuestionSlots(blueprint, negativeMarkingRate);
+        const questions = this.fulfillQuestionSlots([], slots, chunks, topic, difficulty, negativeMarkingRate);
+        return {
+            examTitle: `${topic} Mock Assessment`,
+            subjectTopic: topic,
+            totalMarks: blueprint.maximumObtainableMarks,
+            totalPaperMarks: blueprint.totalPaperMarks,
+            durationMinutes: 45,
+            negativeMarkingRate: negativeMarkingRate ?? 0,
+            questions,
+            scoreReport: {
+                totalMarks: blueprint.maximumObtainableMarks,
+                totalPaperMarks: blueprint.totalPaperMarks,
+                totalQuestions: blueprint.totalQuestionsGenerated,
+                questionsToAttempt: blueprint.totalQuestionsToAttempt,
+                durationMinutes: 45,
+                sections: blueprint.sections,
+                instructions: [
+                    `Total Questions: ${blueprint.totalQuestionsGenerated}. Student must attempt: ${blueprint.totalQuestionsToAttempt}.`,
+                    `Maximum Obtainable Marks: ${blueprint.maximumObtainableMarks}.`,
+                    ...blueprint.sections.map((s) => `${s.name}: ${s.instruction}`),
+                ],
+            },
+            weakAreas: [],
+        };
     }
     citationsFromRetrievedChunks(chunks) {
         return chunks.map((chunk, index) => {

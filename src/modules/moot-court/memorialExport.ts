@@ -74,9 +74,11 @@ export interface MemorialExportData {
 }
 
 const A4 = { width: 11906, height: 16838 }
-const PAGE_MARGIN = 1440
-const BODY_SIZE = 24
-const FOOTNOTE_SIZE = 20
+const PAGE_MARGIN = 1440 // 1 inch in twips
+const BODY_SIZE = 24 // 12 pt in half-points
+const FOOTNOTE_SIZE = 20 // 10 pt
+
+const clean = (value?: string) => String(value || '').replace(/\s+/g, ' ').trim()
 
 const roman = (value: number) => {
   const values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
@@ -92,7 +94,21 @@ const roman = (value: number) => {
   return output || 'i'
 }
 
-const clean = (value?: string) => String(value || '').replace(/\s+/g, ' ').trim()
+const isArbitration = (model: MemorialRenderModel) => /arbitrat|ICSID|claimant|investment/i.test(
+  `${model.metadata.court} ${model.metadata.jurisdictionLine} ${model.metadata.petitionerLabel}`,
+)
+
+const activeSideLabel = (model: MemorialRenderModel) => clean(
+  model.metadata.side === 'petitioner'
+    ? model.metadata.petitionerLabel || 'PETITIONER'
+    : model.metadata.respondentLabel || 'RESPONDENT',
+).toUpperCase()
+
+const submissionTitle = (model: MemorialRenderModel) => {
+  const label = activeSideLabel(model)
+  if (isArbitration(model) && model.metadata.side === 'respondent') return `COUNTER-MEMORIAL ON BEHALF OF THE ${label}`
+  return `MEMORIAL ON BEHALF OF THE ${label}`
+}
 
 const pageBorder = (color = '444444') => ({
   pageBorderTop: { style: BorderStyle.SINGLE, size: 6, color },
@@ -108,9 +124,19 @@ const docxPage = (formatType?: (typeof NumberFormat)[keyof typeof NumberFormat],
   borders: pageBorder(color),
 })
 
-const bodyParagraph = (text: string, options: { bold?: boolean; italic?: boolean; centered?: boolean; size?: number; footnotes?: number[]; color?: string } = {}) => new Paragraph({
+const bodyParagraph = (
+  text: string,
+  options: { bold?: boolean; italic?: boolean; centered?: boolean; size?: number; footnotes?: number[]; color?: string } = {},
+) => new Paragraph({
   children: [
-    new TextRun({ text: clean(text), font: 'Times New Roman', size: options.size || BODY_SIZE, bold: options.bold, italics: options.italic, color: options.color }),
+    new TextRun({
+      text: clean(text),
+      font: 'Times New Roman',
+      size: options.size || BODY_SIZE,
+      bold: options.bold,
+      italics: options.italic,
+      color: options.color,
+    }),
     ...(options.footnotes || []).map((id) => new FootnoteReferenceRun(id)),
   ],
   alignment: options.centered ? AlignmentType.CENTER : AlignmentType.JUSTIFIED,
@@ -127,13 +153,22 @@ const heading = (text: string, level = HeadingLevel.HEADING_1) => new Paragraph(
 const pageBreak = () => new Paragraph({ children: [new PageBreak()] })
 
 const numberedFooter = () => new Footer({
-  children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], font: 'Times New Roman', size: 20 })] })],
+  children: [new Paragraph({
+    alignment: AlignmentType.CENTER,
+    children: [new TextRun({ children: [PageNumber.CURRENT], font: 'Times New Roman', size: 20 })],
+  })],
 })
 
+/**
+ * Build a genuine OOXML .docx document.
+ * Cover page is unnumbered; preliminary pages use lower Roman numerals;
+ * Arguments Advanced onward starts again at Arabic 1.
+ */
 export function buildMemorialDocx(data: MemorialExportData): Document {
   const { model } = data
-  const side = model.metadata.side === 'petitioner' ? 'PETITIONER' : 'RESPONDENT'
-  const color = model.metadata.side === 'petitioner' ? '1B3A6B' : 'A11D23'
+  const sideColor = model.metadata.side === 'petitioner' ? '1B3A6B' : 'A11D23'
+  const label = activeSideLabel(model)
+  const title = submissionTitle(model)
   const authorities = new Map(model.authorities.map((authority) => [authority.id, authority]))
   const footnotes: Record<string, { children: Paragraph[] }> = {}
   let footnoteId = 1
@@ -143,7 +178,7 @@ export function buildMemorialDocx(data: MemorialExportData): Document {
     bodyParagraph(model.metadata.competitionName || 'MOOT COURT COMPETITION', { bold: true, centered: true, size: 28 }),
     bodyParagraph('BEFORE', { centered: true }),
     bodyParagraph(model.metadata.court, { bold: true, centered: true, size: 28 }),
-    bodyParagraph(model.metadata.caseNumber, { centered: true }),
+    ...(model.metadata.caseNumber ? [bodyParagraph(model.metadata.caseNumber, { centered: true })] : []),
     bodyParagraph(model.metadata.jurisdictionLine, { bold: true, centered: true }),
     bodyParagraph('IN THE MATTER OF:', { bold: true, centered: true }),
     bodyParagraph(`${model.metadata.petitionerName} ... ${model.metadata.petitionerLabel}`, { bold: true, centered: true }),
@@ -151,16 +186,19 @@ export function buildMemorialDocx(data: MemorialExportData): Document {
     bodyParagraph(`${model.metadata.respondentName} ... ${model.metadata.respondentLabel}`, { bold: true, centered: true }),
     new Table({
       width: { size: 100, type: WidthType.PERCENTAGE },
-      rows: [new TableRow({ children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill: color, color: 'auto' },
-        children: [bodyParagraph(`MEMORIAL ON BEHALF OF THE ${side}`, { bold: true, centered: true, size: 28, color: 'FFFFFF' })],
-      })] })],
+      rows: [new TableRow({
+        children: [new TableCell({
+          shading: { type: ShadingType.CLEAR, fill: sideColor, color: 'auto' },
+          children: [bodyParagraph(title, { bold: true, centered: true, size: 28, color: 'FFFFFF' })],
+        })],
+      })],
     }),
-    bodyParagraph(`COUNSEL APPEARING ON BEHALF OF THE ${side}`, { centered: true }),
+    bodyParagraph(`COUNSEL APPEARING ON BEHALF OF THE ${label}`, { centered: true }),
   ]
 
   const preliminary: Array<Paragraph | TableOfContents | Table> = [
     bodyParagraph('TABLE OF CONTENTS', { bold: true, centered: true, size: 28 }),
+    // Word/LibreOffice updates this field from the final headings/pages.
     new TableOfContents('Contents', { hyperlink: true, headingStyleRange: '1-3' }),
     pageBreak(),
     heading('LIST OF ABBREVIATIONS'),
@@ -182,44 +220,87 @@ export function buildMemorialDocx(data: MemorialExportData): Document {
     ...model.issues.map((issue) => bodyParagraph(`${issue.label}: ${issue.text}`, { bold: true })),
     pageBreak(),
     heading('SUMMARY OF ARGUMENTS'),
-    ...model.summaries.flatMap((summary) => [bodyParagraph(summary.heading, { bold: true }), ...summary.paragraphs.map((text) => bodyParagraph(text))]),
+    ...model.summaries.flatMap((summary) => [
+      bodyParagraph(summary.heading, { bold: true }),
+      ...summary.paragraphs.map((text) => bodyParagraph(text)),
+    ]),
   ]
 
   const argumentsChildren: Paragraph[] = [heading('ARGUMENTS ADVANCED')]
   model.arguments.forEach((argument) => {
-    argumentsChildren.push(bodyParagraph(argument.heading, { bold: true }), bodyParagraph(argument.thesis), bodyParagraph(argument.roadmap))
+    argumentsChildren.push(
+      bodyParagraph(argument.heading, { bold: true }),
+      bodyParagraph(argument.thesis),
+      bodyParagraph(argument.roadmap),
+    )
+
     argument.subArguments.forEach((subArgument) => {
       const ids = subArgument.authorityIds
         .map((authorityId) => authorities.get(authorityId))
         .filter(Boolean)
         .map((authority) => {
           const id = footnoteId++
-          footnotes[String(id)] = { children: [bodyParagraph(`${authority!.citation}${authority!.pinpoint ? `, ${authority!.pinpoint}` : ''}`, { size: FOOTNOTE_SIZE })] }
+          footnotes[String(id)] = {
+            children: [bodyParagraph(
+              `${authority!.citation}${authority!.pinpoint ? `, ${authority!.pinpoint}` : ''}`,
+              { size: FOOTNOTE_SIZE },
+            )],
+          }
           return id
         })
+
       argumentsChildren.push(bodyParagraph(`${subArgument.label} ${subArgument.heading}`, { bold: true }))
-      subArgument.paragraphs.forEach((text, index) => argumentsChildren.push(bodyParagraph(text, { footnotes: index === 0 ? ids : [] })))
+      subArgument.paragraphs.forEach((text, index) => {
+        argumentsChildren.push(bodyParagraph(text, { footnotes: index === 0 ? ids : [] }))
+      })
     })
+
     argument.concludingParagraphs.forEach((text) => argumentsChildren.push(bodyParagraph(text)))
   })
-  argumentsChildren.push(pageBreak(), heading('PRAYER FOR RELIEF'), ...model.prayerParagraphs.map((text) => bodyParagraph(text)))
+
+  argumentsChildren.push(
+    pageBreak(),
+    heading('PRAYER FOR RELIEF'),
+    ...model.prayerParagraphs.map((text) => bodyParagraph(text)),
+  )
 
   return new Document({
-    title: `Memorial on behalf of the ${side}`,
+    title,
     creator: 'LEGATRIXON Memorial Architect',
     features: { updateFields: true },
     footnotes,
     styles: {
-      default: { document: { run: { font: 'Times New Roman', size: BODY_SIZE }, paragraph: { spacing: { line: 360 } } } },
+      default: {
+        document: {
+          run: { font: 'Times New Roman', size: BODY_SIZE },
+          paragraph: { spacing: { line: 360 } },
+        },
+      },
       paragraphStyles: [
-        { id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Times New Roman', size: 28, bold: true }, paragraph: { alignment: AlignmentType.CENTER, spacing: { before: 120, after: 240 } } },
-        { id: 'Heading2', name: 'Heading 2', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Times New Roman', size: 24, bold: true }, paragraph: { spacing: { before: 120, after: 120 } } },
+        {
+          id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true,
+          run: { font: 'Times New Roman', size: 28, bold: true },
+          paragraph: { alignment: AlignmentType.CENTER, spacing: { before: 120, after: 240 } },
+        },
+        {
+          id: 'Heading2', name: 'Heading 2', basedOn: 'Normal', next: 'Normal', quickFormat: true,
+          run: { font: 'Times New Roman', size: 24, bold: true },
+          paragraph: { spacing: { before: 120, after: 120 } },
+        },
       ],
     },
     sections: [
-      { properties: { page: docxPage(undefined, undefined, color) }, children: coverChildren },
-      { properties: { type: SectionType.NEXT_PAGE, page: docxPage(NumberFormat.LOWER_ROMAN, 1) }, footers: { default: numberedFooter() }, children: preliminary },
-      { properties: { type: SectionType.NEXT_PAGE, page: docxPage(NumberFormat.DECIMAL, 1) }, footers: { default: numberedFooter() }, children: argumentsChildren },
+      { properties: { page: docxPage(undefined, undefined, sideColor) }, children: coverChildren },
+      {
+        properties: { type: SectionType.NEXT_PAGE, page: docxPage(NumberFormat.LOWER_ROMAN, 1) },
+        footers: { default: numberedFooter() },
+        children: preliminary,
+      },
+      {
+        properties: { type: SectionType.NEXT_PAGE, page: docxPage(NumberFormat.DECIMAL, 1) },
+        footers: { default: numberedFooter() },
+        children: argumentsChildren,
+      },
     ],
   })
 }
@@ -230,15 +311,21 @@ export async function memorialDocxBlob(data: MemorialExportData): Promise<Blob> 
 
 type PdfMode = 'preliminary' | 'substantive'
 
+/**
+ * Build a real A4 PDF using the same render model as DOCX.
+ * The table of contents is filled only after all section page starts are known.
+ */
 export function buildMemorialPdf(data: MemorialExportData): jsPDF {
   const { model } = data
   const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true })
   const blue = [27, 58, 107] as const
   const red = [161, 29, 35] as const
   const sideColor = model.metadata.side === 'petitioner' ? blue : red
-  const side = model.metadata.side === 'petitioner' ? 'PETITIONER' : 'RESPONDENT'
+  const label = activeSideLabel(model)
+  const title = submissionTitle(model)
   const authorityMap = new Map(model.authorities.map((authority) => [authority.id, authority]))
 
+  // Cover: no visible page number.
   doc.setFillColor(...sideColor)
   doc.rect(0, 0, 210, 297, 'F')
   doc.setDrawColor(255, 255, 255)
@@ -248,37 +335,42 @@ export function buildMemorialPdf(data: MemorialExportData): jsPDF {
   doc.setFont('times', 'bold')
   doc.setFontSize(11)
   doc.text(`TEAM CODE: ${model.metadata.teamCode || '______'}`, 188, 20, { align: 'right' })
-  const center = (text: string, y: number, size = 12, bold = false, width = 165) => {
+
+  const center = (text: string, yPos: number, size = 12, bold = false, width = 165) => {
+    if (!clean(text)) return
     doc.setFont('times', bold ? 'bold' : 'normal')
     doc.setFontSize(size)
-    doc.text(doc.splitTextToSize(clean(text), width), 105, y, { align: 'center', lineHeightFactor: 1.25 })
+    doc.text(doc.splitTextToSize(clean(text), width), 105, yPos, { align: 'center', lineHeightFactor: 1.25 })
   }
+
   center(model.metadata.competitionName || 'MOOT COURT COMPETITION', 45, 14, true)
   center('BEFORE', 61, 11)
   center(model.metadata.court, 70, 14, true)
-  center(model.metadata.caseNumber, 83, 11)
-  center(model.metadata.jurisdictionLine, 91, 11, true)
+  if (model.metadata.caseNumber) center(model.metadata.caseNumber, 83, 11)
+  center(model.metadata.jurisdictionLine, 92, 11, true)
   center('IN THE MATTER OF:', 108, 12, true)
   center(`${model.metadata.petitionerName} ... ${model.metadata.petitionerLabel}`, 121, 12, true)
   center('VERSUS', 139, 11)
   center(`${model.metadata.respondentName} ... ${model.metadata.respondentLabel}`, 151, 12, true)
+
   doc.setFillColor(255, 255, 255)
   doc.rect(20, 194, 170, 18, 'F')
   doc.setTextColor(...sideColor)
-  center(`MEMORIAL ON BEHALF OF THE ${side}`, 205, 13, true)
+  center(title, 205, 12.5, true)
   doc.setTextColor(255, 255, 255)
-  center(`COUNSEL APPEARING ON BEHALF OF THE ${side}`, 272, 10, true)
+  center(`COUNSEL APPEARING ON BEHALF OF THE ${label}`, 272, 10, true)
 
   let preliminaryPage = 0
   let substantivePage = 0
   let mode: PdfMode = 'preliminary'
   let y = 25.4
-  const tocPageCount = Math.max(1, Math.ceil((9 + model.arguments.reduce((sum, argument) => sum + 1 + argument.subArguments.length, 0)) / 25))
-  const tocPages: number[] = []
   const pageLabels = new Map<number, string>()
   const starts = new Map<string, string>()
+  const tocEntriesCount = 8 + model.arguments.reduce((sum, argument) => sum + 1 + argument.subArguments.length, 0)
+  const tocPageCount = Math.max(1, Math.ceil(tocEntriesCount / 23))
+  const tocPages: number[] = []
 
-  const shell = (page: number, label: string) => {
+  const shell = (page: number, pageLabel: string) => {
     doc.setPage(page)
     doc.setDrawColor(70, 70, 70)
     doc.setLineWidth(0.25)
@@ -286,18 +378,18 @@ export function buildMemorialPdf(data: MemorialExportData): jsPDF {
     doc.setFont('times', 'normal')
     doc.setFontSize(10)
     doc.setTextColor(0, 0, 0)
-    doc.text(label, 105, 278, { align: 'center' })
-    pageLabels.set(page, label)
+    doc.text(pageLabel, 105, 278, { align: 'center' })
+    pageLabels.set(page, pageLabel)
   }
 
   const newPage = (nextMode: PdfMode = mode) => {
     mode = nextMode
     doc.addPage()
-    const label = mode === 'preliminary' ? roman(++preliminaryPage) : String(++substantivePage)
+    const pageLabel = mode === 'preliminary' ? roman(++preliminaryPage) : String(++substantivePage)
     const page = doc.getNumberOfPages()
-    shell(page, label)
+    shell(page, pageLabel)
     y = 25.4
-    return { page, label }
+    return { page, label: pageLabel }
   }
 
   const ensureSpace = (height: number) => {
@@ -310,25 +402,38 @@ export function buildMemorialPdf(data: MemorialExportData): jsPDF {
     doc.setFont('times', 'bold')
     doc.setFontSize(size)
     doc.setTextColor(0, 0, 0)
-    doc.text(lines, centered ? 105 : 25.4, y, { align: centered ? 'center' : 'left', lineHeightFactor: 1.25 })
+    doc.text(lines, centered ? 105 : 25.4, y, {
+      align: centered ? 'center' : 'left',
+      lineHeightFactor: 1.25,
+    })
     y += lines.length * 6.5 + 5
   }
 
-  const writeParagraph = (text: string, options: { bold?: boolean; size?: number; indent?: number } = {}) => {
+  const writeParagraph = (
+    text: string,
+    options: { bold?: boolean; size?: number; indent?: number; prefix?: string } = {},
+  ) => {
+    const value = `${options.prefix || ''}${clean(text)}`
+    if (!value) return
     const size = options.size || 12
     const lineHeight = size <= 10 ? 4.6 : 6.1
     const x = 25.4 + (options.indent || 0)
     const width = 159.2 - (options.indent || 0)
-    const lines = doc.splitTextToSize(clean(text), width)
+    const lines = doc.splitTextToSize(value, width)
     let offset = 0
+
     while (offset < lines.length) {
+      if (y > 260) newPage(mode)
       const availableLines = Math.max(1, Math.floor((264 - y) / lineHeight))
-      if (availableLines < 1) newPage(mode)
       const chunk = lines.slice(offset, offset + availableLines)
       doc.setFont('times', options.bold ? 'bold' : 'normal')
       doc.setFontSize(size)
       doc.setTextColor(0, 0, 0)
-      doc.text(chunk, x, y, { align: options.bold ? 'left' : 'justify', maxWidth: width, lineHeightFactor: size <= 10 ? 1.05 : 1.35 })
+      doc.text(chunk, x, y, {
+        align: options.bold ? 'left' : 'justify',
+        maxWidth: width,
+        lineHeightFactor: size <= 10 ? 1.05 : 1.35,
+      })
       y += chunk.length * lineHeight
       offset += chunk.length
       if (offset < lines.length) newPage(mode)
@@ -336,48 +441,68 @@ export function buildMemorialPdf(data: MemorialExportData): jsPDF {
     y += options.bold ? 3 : 2
   }
 
-  for (let index = 0; index < tocPageCount; index++) tocPages.push(newPage('preliminary').page)
+  // Reserve TOC pages first. They are populated only after the whole document is laid out.
+  for (let index = 0; index < tocPageCount; index += 1) tocPages.push(newPage('preliminary').page)
 
-  const beginSection = (key: string, title: string, nextMode: PdfMode = 'preliminary') => {
+  const beginSection = (key: string, sectionTitle: string, nextMode: PdfMode = 'preliminary') => {
     const page = newPage(nextMode)
     starts.set(key, page.label)
-    writeHeading(title)
+    writeHeading(sectionTitle)
   }
 
   beginSection('abbreviations', 'LIST OF ABBREVIATIONS')
   model.abbreviations.forEach((row) => writeParagraph(`${row.abbreviation}    ${row.fullForm}`))
+
   beginSection('authorities', 'INDEX OF AUTHORITIES')
   model.authorityGroups.forEach((group) => {
     writeHeading(group.title, 12, false)
     group.entries.forEach((entry, index) => writeParagraph(`${index + 1}. ${entry.citation}${entry.pinpoint ? `, ${entry.pinpoint}` : ''}`))
   })
+
   beginSection('jurisdiction', 'STATEMENT OF JURISDICTION')
   model.jurisdictionParagraphs.forEach((text) => writeParagraph(text))
+
   beginSection('facts', 'STATEMENT OF FACTS')
   model.factParagraphs.forEach((text, index) => writeParagraph(`${index + 1}. ${text}`))
+
   beginSection('issues', 'ISSUES FOR CONSIDERATION')
   model.issues.forEach((issue) => writeParagraph(`${issue.label}: ${issue.text}`, { bold: true }))
+
   beginSection('summary', 'SUMMARY OF ARGUMENTS')
   model.summaries.forEach((summary) => {
     writeParagraph(summary.heading, { bold: true })
     summary.paragraphs.forEach((text) => writeParagraph(text))
   })
+
   beginSection('arguments', 'ARGUMENTS ADVANCED', 'substantive')
+  let pdfFootnoteNumber = 1
   model.arguments.forEach((argument) => {
     starts.set(`issue:${argument.issueId}`, pageLabels.get(doc.getNumberOfPages()) || String(substantivePage))
     writeParagraph(argument.heading, { bold: true })
     writeParagraph(argument.thesis)
     writeParagraph(argument.roadmap)
+
     argument.subArguments.forEach((subArgument) => {
       starts.set(`sub:${subArgument.label}`, pageLabels.get(doc.getNumberOfPages()) || String(substantivePage))
       writeParagraph(`${subArgument.label} ${subArgument.heading}`, { bold: true })
       subArgument.paragraphs.forEach((text) => writeParagraph(text))
-      subArgument.authorityIds.map((id) => authorityMap.get(id)).filter(Boolean).forEach((authority, index) => {
-        writeParagraph(`${index + 1}. ${authority!.citation}${authority!.pinpoint ? `, ${authority!.pinpoint}` : ''}`, { size: 10, indent: 5 })
-      })
+
+      // PDF citations are rendered as compact, numbered footnote-style notes directly
+      // after the proposition they support so they are never dropped during export.
+      subArgument.authorityIds
+        .map((id) => authorityMap.get(id))
+        .filter(Boolean)
+        .forEach((authority) => {
+          writeParagraph(
+            `${pdfFootnoteNumber++}. ${authority!.citation}${authority!.pinpoint ? `, ${authority!.pinpoint}` : ''}`,
+            { size: 10, indent: 5 },
+          )
+        })
     })
+
     argument.concludingParagraphs.forEach((text) => writeParagraph(text))
   })
+
   beginSection('prayer', 'PRAYER FOR RELIEF', 'substantive')
   model.prayerParagraphs.forEach((text) => writeParagraph(text))
 
@@ -391,7 +516,10 @@ export function buildMemorialPdf(data: MemorialExportData): jsPDF {
     ['ARGUMENTS ADVANCED', starts.get('arguments')],
     ...model.arguments.flatMap((argument) => [
       [argument.heading, starts.get(`issue:${argument.issueId}`)],
-      ...argument.subArguments.map((subArgument) => [`${subArgument.label} ${subArgument.heading}`, starts.get(`sub:${subArgument.label}`)]),
+      ...argument.subArguments.map((subArgument) => [
+        `${subArgument.label} ${subArgument.heading}`,
+        starts.get(`sub:${subArgument.label}`),
+      ]),
     ]),
     ['PRAYER FOR RELIEF', starts.get('prayer')],
   ] as Array<[string, string | undefined]>
@@ -400,9 +528,9 @@ export function buildMemorialPdf(data: MemorialExportData): jsPDF {
     doc.setPage(page)
     y = 25.4
     writeHeading(tocIndex === 0 ? 'TABLE OF CONTENTS' : 'TABLE OF CONTENTS (CONTINUED)')
-    tocEntries.slice(tocIndex * 25, (tocIndex + 1) * 25).forEach(([title, label]) => {
-      const abbreviated = clean(title).slice(0, 92)
-      writeParagraph(`${abbreviated} ${'.'.repeat(Math.max(3, 96 - abbreviated.length))} ${label || ''}`, { size: 10 })
+    tocEntries.slice(tocIndex * 23, (tocIndex + 1) * 23).forEach(([entryTitle, pageLabel]) => {
+      const abbreviated = clean(entryTitle).slice(0, 88)
+      writeParagraph(`${abbreviated} ${'.'.repeat(Math.max(3, 92 - abbreviated.length))} ${pageLabel || ''}`, { size: 10 })
     })
   })
 
@@ -410,7 +538,10 @@ export function buildMemorialPdf(data: MemorialExportData): jsPDF {
   return doc
 }
 
-export async function mergeMemorialPdfs(petitioner: MemorialExportData, respondent: MemorialExportData): Promise<Uint8Array> {
+export async function mergeMemorialPdfs(
+  petitioner: MemorialExportData,
+  respondent: MemorialExportData,
+): Promise<Uint8Array> {
   const output = await PDFDocument.create()
   for (const data of [petitioner, respondent]) {
     const source = await PDFDocument.load(buildMemorialPdf(data).output('arraybuffer'))

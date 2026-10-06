@@ -122,9 +122,10 @@ let AuthorityEngineService = AuthorityEngineService_1 = class AuthorityEngineSer
         for (const issue of issues) {
             const ranking = rankings.find((r) => String(r.issueId) === issue.id);
             const rows = Array.isArray(ranking?.authorities) ? ranking.authorities : [];
+            const eligibleIds = new Set(this.rankForIssue(issue, candidates, options).map((candidate) => candidate.candidateId));
             rows.slice(0, 12).forEach((row) => {
                 const candidate = candidateById.get(String(row.candidateId));
-                if (!candidate)
+                if (!candidate || !eligibleIds.has(candidate.candidateId))
                     return;
                 if (!candidate.verified && !options.allowUnverifiedAuthorities)
                     return;
@@ -158,14 +159,18 @@ let AuthorityEngineService = AuthorityEngineService_1 = class AuthorityEngineSer
         const family = this.issueFamily(issue.issue);
         return candidates
             .filter((candidate) => (candidate.verified || options.allowUnverifiedAuthorities) && this.isValidAuthorityCitation(candidate.citation))
-            .map((candidate) => ({
-            candidate,
-            score: this.overlap(queryTokens, candidate.keywords)
-                + this.familyCompatibility(family, candidate)
-                + (candidate.verified ? 2 : 0)
-                + candidate.confidence / 100,
-        }))
-            .filter((item) => item.score > 2.4)
+            .map((candidate) => {
+            const overlap = this.overlap(queryTokens, candidate.keywords);
+            const compatibility = this.familyCompatibility(family, candidate);
+            return {
+                candidate, overlap, compatibility,
+                score: overlap
+                    + compatibility
+                    + (candidate.verified ? 2 : 0)
+                    + candidate.confidence / 100,
+            };
+        })
+            .filter((item) => item.score > 2.4 && (item.overlap > 0 || item.compatibility > 0))
             .sort((a, b) => b.score - a.score)
             .map((item) => item.candidate);
     }
@@ -207,16 +212,16 @@ let AuthorityEngineService = AuthorityEngineService_1 = class AuthorityEngineSer
             return false;
         if (/accused|complainant|alleged|matrimonial|obtained|misused|violating|personal data obtained/i.test(clean))
             return false;
-        return /(?:\bv\.?\s+|\(\d{4}\)|AIR\s+\d{4}|SCC|SCR|Article\s+\d+|Section\s+\d+|Act,?\s+\d{4}|Adhiniyam,?\s+\d{4}|Sanhita,?\s+\d{4}|Constitution of India|Mutual Legal Assistance)/i.test(clean);
+        return /(?:\bv\.?\s+|\(\d{4}\)|AIR\s+\d{4}|SCC|SCR|Article\s+\d+|Section\s+\d+|Act,?\s+\d{4}|Adhiniyam,?\s+\d{4}|Sanhita,?\s+\d{4}|Constitution of [A-Z][A-Za-z]+|Treaty|Agreement|Convention|Rules?|Regulations?|Mutual Legal Assistance)/i.test(clean);
     }
     issueFamily(issue) {
-        if (/ELECTRONIC|EVIDENCE|SAKSHYA|CERTIFICATE|FORENSIC/i.test(issue))
+        if (/(?:ELECTRONIC|DIGITAL).{0,40}EVIDENCE|SAKSHYA|FORENSIC|COMPUTER OUTPUT/i.test(issue))
             return 'evidence';
-        if (/JURISDICTION|FOREIGN|SERVER|INTERMEDIAR|EXTRATERRITORIAL/i.test(issue))
+        if (/FOREIGN[- ]HOSTED|FOREIGN SERVER|SERVER|INTERMEDIAR|EXTRATERRITORIAL|SECTION 75|CROSS[- ]BORDER CYBER/i.test(issue))
             return 'jurisdiction';
         if (/SEARCH|SEIZURE|PRIVACY|ARTICLE 21|DEVICE|DATA MINIM/i.test(issue))
             return 'privacy';
-        if (/CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE/i.test(issue))
+        if (/\b(?:CONVICTION|SENTENCE|PUNISHMENT|PROPORTIONATE)\b/i.test(issue))
             return 'sentence';
         return 'general';
     }
@@ -227,7 +232,7 @@ let AuthorityEngineService = AuthorityEngineService_1 = class AuthorityEngineSer
             jurisdiction: /jurisdiction|extraterritorial|territorial nexus|section 75|foreign|server|article 245|comity|legal assistance/,
             privacy: /privacy|article 21|search|seizure|surveillance|data|minimisation|proportionality|due process/,
             sentence: /article 136|appeal|conviction|sentence|punishment|proportionality|concurrent findings|special leave|proof beyond/,
-            general: /./,
+            general: /$a/,
         };
         return tests[family]?.test(text) ? 3 : -3;
     }

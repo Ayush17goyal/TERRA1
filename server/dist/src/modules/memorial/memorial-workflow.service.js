@@ -12,6 +12,7 @@ var MemorialWorkflowService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemorialWorkflowService = void 0;
 const common_1 = require("@nestjs/common");
+const crypto_1 = require("crypto");
 const proposition_preservation_service_1 = require("./proposition-preservation.service");
 const proposition_intelligence_service_1 = require("./proposition-intelligence.service");
 const case_graph_service_1 = require("./case-graph.service");
@@ -31,14 +32,17 @@ let MemorialWorkflowService = MemorialWorkflowService_1 = class MemorialWorkflow
         this.compiler = compiler;
         this.judge = judge;
         this.logger = new common_1.Logger(MemorialWorkflowService_1.name);
+        this.referenceCache = new Map();
     }
     async run(input) {
-        const options = this.normalizeOptions(input);
+        let options = this.normalizeOptions(input);
         const audit = {
             version: '3.0.0-reference-format',
             stages: [],
             warnings: [],
         };
+        const references = await this.stage(audit, '0 — Reference classification and authority ordering', async () => this.analyzeReferences(input.referenceFiles || []), (value) => `${value.length} reference document(s) classified without using sample facts as proposition facts.`);
+        options = this.applyReferenceRules(options, references);
         const document = await this.stage(audit, '0A — Full document preservation', async () => {
             const extracted = await this.preservation.extractDocument(input.file, input.propositionText);
             if (!extracted.rawText || extracted.rawText.trim().length < 500) {
@@ -70,19 +74,23 @@ let MemorialWorkflowService = MemorialWorkflowService_1 = class MemorialWorkflow
             issues,
             authorities,
             audit,
+            references,
         };
         const sides = options.side === 'both' || !options.side
             ? ['petitioner', 'respondent']
             : [options.side];
-        for (const side of sides) {
-            const sideResult = await this.generateSide(side, dossier, blueprint, graph, issues, authorities, options, audit);
-            result[side] = sideResult;
-        }
+        const sideResults = await Promise.all(sides.map(async (side) => ({
+            side,
+            value: await this.generateSide(side, dossier, blueprint, graph, issues, authorities, options, audit),
+        })));
+        sideResults.forEach(({ side, value }) => { result[side] = value; });
         return result;
     }
     async extractBlueprint(input) {
-        const options = this.normalizeOptions(input);
+        let options = this.normalizeOptions(input);
         const audit = { version: '3.0.0-reference-format', stages: [], warnings: [] };
+        const references = await this.stage(audit, '0 — Reference classification and authority ordering', async () => this.analyzeReferences(input.referenceFiles || []), (value) => `${value.length} reference document(s) classified.`);
+        options = this.applyReferenceRules(options, references);
         const document = await this.stage(audit, '0A — Full document preservation', async () => {
             const extracted = await this.preservation.extractDocument(input.file, input.propositionText);
             if (!extracted.rawText || extracted.rawText.trim().length < 500) {
@@ -96,7 +104,109 @@ let MemorialWorkflowService = MemorialWorkflowService_1 = class MemorialWorkflow
             audit.warnings.push(propositionResult.warning);
         this.assertBlueprintIsUsable(propositionResult.blueprint);
         const graph = this.graphService.build(dossier, propositionResult.blueprint);
-        return { dossier, blueprint: propositionResult.blueprint, graph, audit };
+        return { dossier, blueprint: propositionResult.blueprint, graph, references, audit };
+    }
+    async analyzeReferences(files) {
+        const analyses = await Promise.all(files.slice(0, 12).map((file) => {
+            const buffer = Buffer.isBuffer(file?.buffer) ? file.buffer : Buffer.from(file?.buffer || '');
+            const cacheKey = (0, crypto_1.createHash)('sha256').update(buffer).digest('hex');
+            const cached = this.referenceCache.get(cacheKey);
+            if (cached)
+                return cached;
+            const pending = this.analyzeReference(file).catch((error) => {
+                this.referenceCache.delete(cacheKey);
+                throw error;
+            });
+            this.referenceCache.set(cacheKey, pending);
+            return pending;
+        }));
+        return analyses.sort((a, b) => a.authorityLevel - b.authorityLevel);
+    }
+    async analyzeReference(file) {
+        const extracted = await this.preservation.extractDocument(file);
+        const fileName = String(file?.originalname || 'reference document');
+        const haystack = `${fileName}\n${extracted.rawText.slice(0, 60000)}`.toLowerCase();
+        let category = 'other';
+        let authorityLevel = 7;
+        let contentUse = 'other';
+        if (/competition rules|specific instructions|brochure|schedule|scoring criteria|penal deductions/i.test(haystack) && !/master guide|drafting rulebook/i.test(haystack)) {
+            category = 'competition_rules';
+            authorityLevel = 2;
+            contentUse = 'formatting';
+        }
+        else if (/template/i.test(fileName) && /petitioner|appellant/i.test(haystack)) {
+            category = 'petitioner_template';
+            authorityLevel = 3;
+            contentUse = 'structure';
+        }
+        else if (/template/i.test(fileName) && /respondent|defendant/i.test(haystack)) {
+            category = 'respondent_template';
+            authorityLevel = 3;
+            contentUse = 'structure';
+        }
+        else if (/rulebook|drafting master guide|formatting rules|technical formatting|handbook/i.test(haystack)) {
+            category = 'drafting_rulebook';
+            authorityLevel = 4;
+            contentUse = 'formatting';
+        }
+        else if (/completed|winning/i.test(fileName) && /memorial on behalf of the petitioner|memorial for the petitioner/i.test(haystack)) {
+            category = 'completed_petitioner_memorial';
+            authorityLevel = 5;
+            contentUse = 'example';
+        }
+        else if (/completed|winning/i.test(fileName) && /memorial on behalf of the respondent|memorial for the respondent/i.test(haystack)) {
+            category = 'completed_respondent_memorial';
+            authorityLevel = 5;
+            contentUse = 'example';
+        }
+        else if (/memorial on behalf of the petitioner|memorial for the petitioner/i.test(haystack)) {
+            category = 'completed_petitioner_memorial';
+            authorityLevel = 5;
+            contentUse = 'example';
+        }
+        else if (/memorial on behalf of the respondent|memorial for the respondent/i.test(haystack)) {
+            category = 'completed_respondent_memorial';
+            authorityLevel = 5;
+            contentUse = 'example';
+        }
+        else if (/practice|sample|mock/i.test(fileName) || /practice memorial|sample memorial/i.test(haystack)) {
+            category = 'practice_material';
+            authorityLevel = 6;
+            contentUse = 'example';
+        }
+        else if (/moot proposition|compromis|statement of facts|issues raised/i.test(haystack)) {
+            category = 'moot_proposition';
+            authorityLevel = 2;
+            contentUse = 'case_material';
+        }
+        else if (/citation|case law|legal research|authorit|compilation/i.test(haystack)) {
+            category = 'legal_research';
+            authorityLevel = 6;
+            contentUse = 'case_material';
+        }
+        const rules = [
+            /blue cover|blue background/i.test(haystack) ? 'Petitioner/Appellant cover must have a solid blue full-page background.' : '',
+            /red cover|red background/i.test(haystack) ? 'Respondent/Defendant cover must have a solid red full-page background.' : '',
+            /times new roman/i.test(haystack) ? 'Use Times New Roman throughout.' : '',
+            /10\s*(?:points?|pt).*footnote|footnote[^\n]{0,50}10\s*(?:points?|pt)/i.test(haystack) ? 'Use 10 pt footnotes with single line spacing.' : '',
+            /12\s*(?:points?|pt).*body|body[^\n]{0,50}12\s*(?:points?|pt)/i.test(haystack) ? 'Use 12 pt body text with 1.5 line spacing.' : '',
+            /1\.5\s*(?:line )?spacing/i.test(haystack) ? 'Use 1.5 line spacing for body text, fully justified.' : '',
+            /1\s*inch|2\.54\s*cm/i.test(haystack) ? 'Maintain 1-inch (2.54 cm) margins on all 4 sides.' : '',
+            /page border|box border/i.test(haystack) ? 'Apply single box border (0.5 pt - 1 pt) on all pages.' : '',
+            /roman[^\n]{0,100}prelim|prelim[^\n]{0,100}roman/i.test(haystack) ? 'Use lowercase Roman numerals for preliminary pages (i, ii, iii...).' : '',
+            /arabic[^\n]{0,100}arguments|arguments[^\n]{0,100}arabic/i.test(haystack) ? 'Begin Arabic pagination (1, 2...) at Arguments Advanced.' : '',
+            /anonym/i.test(haystack) ? 'Preserve 100% anonymity: identify participants only by assigned team code.' : '',
+        ].filter(Boolean);
+        return { fileName, category, authorityLevel, pageCount: extracted.pages.length, extractedRules: rules, contentUse };
+    }
+    applyReferenceRules(options, references) {
+        const authoritativeRules = references
+            .filter((reference) => reference.authorityLevel <= 4)
+            .flatMap((reference) => reference.extractedRules.map((rule) => `[${reference.category}] ${rule}`));
+        return {
+            ...options,
+            competitionRulesText: [options.competitionRulesText, ...authoritativeRules].filter(Boolean).join('\n'),
+        };
     }
     async generateSide(side, dossier, blueprint, graph, issues, authorities, options, audit) {
         const argumentResult = await this.stage(audit, `5 — ${this.title(side)} argument architecture and drafting`, async () => this.argumentEngine.build(side, issues, authorities, graph, options), (value) => `${value.arguments.length} issue blocks and approximately ${value.arguments.reduce((sum, item) => sum + item.wordCount, 0)} argument words drafted.`, (value) => !value.usedAi ? value.warning : undefined);

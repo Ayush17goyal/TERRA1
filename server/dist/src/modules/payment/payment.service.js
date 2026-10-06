@@ -19,13 +19,8 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const payment_entity_1 = require("./payment.entity");
 const settings_entities_1 = require("../settings/settings.entities");
+const subscription_plans_1 = require("../settings/subscription-plans");
 const crypto = require("crypto");
-const PLAN_CREDITS = {
-    'Basic Plan': 2000,
-    'Pro Plan': 5000,
-    'Pro Max Plan': 15000,
-    'API Credit': 5000,
-};
 let PaymentService = PaymentService_1 = class PaymentService {
     constructor(paymentRepo, subscriptionRepo) {
         this.paymentRepo = paymentRepo;
@@ -44,10 +39,12 @@ let PaymentService = PaymentService_1 = class PaymentService {
         if (!this.razorpayKeyId || !this.razorpayKeySecret) {
             throw new common_1.InternalServerErrorException('Razorpay credentials not configured on server');
         }
-        if (!amount || amount <= 0) {
-            throw new common_1.BadRequestException('Invalid amount');
-        }
-        const amountInPaise = amount * 100;
+        const plan = (0, subscription_plans_1.getPaidPlan)(planId);
+        if (!plan)
+            throw new common_1.BadRequestException('Unknown or non-payable plan');
+        if (Number(amount) !== plan.price)
+            throw new common_1.BadRequestException('Plan price does not match the current catalogue');
+        const amountInPaise = plan.price * 100;
         const receipt = `rcpt_${userId.slice(-8)}_${Date.now()}`;
         const auth = Buffer.from(`${this.razorpayKeyId}:${this.razorpayKeySecret}`).toString('base64');
         const response = await fetch('https://api.razorpay.com/v1/orders', {
@@ -61,7 +58,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
                 currency: 'INR',
                 receipt,
                 notes: {
-                    plan_id: planId,
+                    plan_id: plan.id,
                     user_id: userId,
                     platform: 'LEGATRIXON',
                 },
@@ -76,8 +73,8 @@ let PaymentService = PaymentService_1 = class PaymentService {
         const payment = this.paymentRepo.create({
             userId,
             razorpayOrderId: order.id,
-            planId,
-            amount,
+            planId: plan.id,
+            amount: plan.price,
             currency: 'INR',
             status: 'created',
         });
@@ -93,6 +90,15 @@ let PaymentService = PaymentService_1 = class PaymentService {
         if (!this.razorpayKeySecret) {
             throw new common_1.InternalServerErrorException('Razorpay secret not configured');
         }
+        const plan = (0, subscription_plans_1.getPaidPlan)(planId);
+        if (!plan)
+            throw new common_1.BadRequestException('Unknown or non-payable plan');
+        const existingPayment = await this.paymentRepo.findOne({ where: { razorpayOrderId: orderId } });
+        if (!existingPayment || existingPayment.userId !== userId || existingPayment.planId !== plan.id) {
+            throw new common_1.BadRequestException('Payment order does not match this user and plan');
+        }
+        if (existingPayment.status === 'captured')
+            throw new common_1.BadRequestException('Payment order has already been processed');
         const expectedSignature = crypto
             .createHmac('sha256', this.razorpayKeySecret)
             .update(`${orderId}|${paymentId}`)
@@ -112,11 +118,16 @@ let PaymentService = PaymentService_1 = class PaymentService {
             method = rzpData.method || 'unknown';
             rzpAmount = rzpData.amount || 0;
             if (rzpData.status !== 'captured' && rzpData.status !== 'authorized') {
-                this.logger.warn(`Payment ${paymentId} status is ${rzpData.status}, not captured`);
+                throw new common_1.BadRequestException(`Payment is not captured (status: ${rzpData.status})`);
+            }
+            if (rzpData.order_id !== orderId || Number(rzpData.amount) !== plan.price * 100 || rzpData.currency !== 'INR') {
+                throw new common_1.BadRequestException('Payment amount or order does not match the selected plan');
             }
         }
+        else {
+            throw new common_1.BadRequestException('Unable to confirm payment with Razorpay');
+        }
         const invoiceNumber = `LGTX-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-        const existingPayment = await this.paymentRepo.findOne({ where: { razorpayOrderId: orderId } });
         if (existingPayment) {
             existingPayment.razorpayPaymentId = paymentId;
             existingPayment.razorpaySignature = signature;
@@ -125,22 +136,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
             existingPayment.invoiceNumber = invoiceNumber;
             await this.paymentRepo.save(existingPayment);
         }
-        else {
-            const payment = this.paymentRepo.create({
-                userId,
-                razorpayOrderId: orderId,
-                razorpayPaymentId: paymentId,
-                razorpaySignature: signature,
-                planId,
-                amount: rzpAmount / 100,
-                currency: 'INR',
-                status: 'captured',
-                method,
-                invoiceNumber,
-            });
-            await this.paymentRepo.save(payment);
-        }
-        await this.activateSubscription(userId, planId);
+        await this.activateSubscription(userId, plan.id);
         return {
             success: true,
             invoice_number: invoiceNumber,
@@ -149,29 +145,25 @@ let PaymentService = PaymentService_1 = class PaymentService {
         };
     }
     async activateSubscription(userId, planId) {
-        const credits = PLAN_CREDITS[planId] || 0;
-        const isBooster = planId === 'API Credit';
+        const plan = (0, subscription_plans_1.getPaidPlan)(planId);
+        if (!plan)
+            throw new common_1.BadRequestException('Unknown subscription plan');
         let sub = await this.subscriptionRepo.findOne({ where: { userId } });
         if (sub) {
-            if (isBooster) {
-                sub.aiCreditsLimit = (sub.aiCreditsLimit || 0) + credits;
-            }
-            else {
-                sub.planName = planId;
-                sub.status = 'active';
-                sub.aiCreditsUsed = 0;
-                sub.aiCreditsLimit = credits;
-                sub.renewalDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-            }
+            sub.planName = plan.id;
+            sub.status = 'active';
+            sub.aiCreditsUsed = 0;
+            sub.aiCreditsLimit = plan.aiCredits;
+            sub.renewalDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
             await this.subscriptionRepo.save(sub);
         }
         else {
             const newSub = this.subscriptionRepo.create({
                 userId,
-                planName: isBooster ? 'API Credit' : planId,
+                planName: plan.id,
                 status: 'active',
                 aiCreditsUsed: 0,
-                aiCreditsLimit: credits,
+                aiCreditsLimit: plan.aiCredits,
                 renewalDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             });
             await this.subscriptionRepo.save(newSub);

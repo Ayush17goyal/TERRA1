@@ -186,6 +186,10 @@ export default function LearningPlatformPage({ onOpenBareActAi, apiToken = '' }:
   }catch(error){
    console.error('[academy-evaluation] failed',{lessonId:s.current,error});
    setEvaluationError(error instanceof Error?error.message:'AI evaluation request failed.');
+   if(error instanceof Error&&/upgrade|limit|paid feature/i.test(error.message)){
+    setS(prev=>{const pendingEvaluations={...(prev.pendingEvaluations||{})};delete pendingEvaluations[s.current];const next={...prev,pendingEvaluations};localStorage.setItem(KEY,JSON.stringify(next));return next});
+    return;
+   }
    const fallback:Review={scores:[0,0,0,0,0],overallScore:0,feedback:'Your answer has been safely saved. The AI reviewer is temporarily unavailable.',why:localIssues.length?`Local checks: ${localIssues.join(' ')}`:'Local checks passed. Your Parliamentary Counsel Review will be generated automatically.',passed:false,verdict:'partial',correctParts:[],mistakes:localIssues,weakConcepts:[lesson.title],xpAward:0,needsRevision:true,version:prior.length+1,createdAt,pendingEvaluation:true,localValidation:localIssues};
    const pendingEvaluations={...(s.pendingEvaluations||{}),[s.current]:{...queued,retryCount:1,nextRetryAt:new Date(Date.now()+30000).toISOString()}},revisionQueue={...(s.revisionQueue||{}),[s.current]:{lessonId:s.current,module:lesson.module,mistakes:localIssues,weakConcepts:[lesson.title],aiFeedback:'AI review pending',date:createdAt,numberOfAttempts:attempts[s.current],score:0}},completedBefore=Boolean(s.reviews[s.current]);
    save({...s,answers:{...s.answers,[s.current]:answerText},reviews:{...s.reviews,[s.current]:fallback},pendingReviews:{...s.pendingReviews,[s.current]:fallback},reviewHistory:{...s.reviewHistory,[s.current]:[...prior,fallback]},attempts,pendingEvaluations,revisionQueue,lessonStates:{...s.lessonStates,[s.current]:'UNLOCK_NEXT',...(s.current<total-1?{[s.current+1]:'NOT_STARTED'}:{})},xp:s.xp+(completedBefore?0:0)});setReview(fallback);
@@ -451,6 +455,12 @@ Rules you MUST follow:
         {reviewNotice && (
           <div className="review-ready" role="status">
             {reviewNotice}
+          </div>
+        )}
+        {evaluationError && (
+          <div className="review-ready review-limit" role="alert">
+            <span>{evaluationError}</span>
+            {/upgrade|limit|paid feature/i.test(evaluationError) && <a href="/pricing">View Plans</a>}
           </div>
         )}
         

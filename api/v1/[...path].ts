@@ -28,6 +28,25 @@ function getRoute(req: any) {
   const pathname = rawUrl.split('?')[0] || '';
   return pathname.replace(/^\/api\/v1\/?/, '').replace(/^\/+|\/+$/g, '');
 }
+
+function isPaidCompatRoute(method: string, route: string) {
+  if (!['POST', 'GET'].includes(method)) return false;
+  return [
+    /^chat\/(message|guidebot\/(message|stt|tts)|search)$/,
+    /^legal-intelligence\/(case|research|authority|bare-act|drafting)/,
+    /^drafting-mentor\/academy\//,
+    /^research\/(generate|judgment-intelligence|legal-brief|bare-act|challenge)$/,
+    /^judgments\/[^/]+\/(analyze|explain|evaluate-verdict|revision-notes|moot-court-kit|alternative-reasoning|mastery)$/,
+    /^exam\/(mock-paper|study-library|assistant|doubt-solve|lexmentor\/strategy)/,
+    /^learning-workspace\/(sources\/(text|upload|bulk-upload|[^/]+\/reprocess)|mock-tests\/(generate|analyze-structure|[^/]+\/handwritten-ocr)|mind-maps\/generate|study-kits\/generate|revision-plan\/generate)/,
+    /^notebook\/(upload|bulk-upload|url-ingest|chat|documents\/[^/]+\/(reprocess|extraction|intelligence|study-forge\/generate))/,
+    /^draft-analyzer\/[^/]+\/(extract|review|analyze)$/,
+    /^document-engine\/upload$/,
+    /^contracts\/(review|[^/]+\/clauses)$/,
+    /^exam-engine\/(mock-tests|model-answers|question-bank|question-planning)/,
+    /^memorial-workflow\/(blueprint|run)$/,
+  ].some((pattern) => pattern.test(route));
+}
 function compactId(prefix: string) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -612,6 +631,13 @@ export default async function handler(req: any, res: any) {
   }
 
   const route = getRoute(req);
+
+  // Production AI traffic must go through the NestJS entitlement interceptor.
+  // Keeping the compatibility implementation enabled would create a second,
+  // unmetered path to paid providers.
+  if ((globalThis as any).process?.env?.NODE_ENV === 'production' && isPaidCompatRoute(req.method, route)) {
+    return json(res, 503, { code: 'PROTECTED_API_REQUIRES_BACKEND', message: 'This feature must use the configured LEGATRIXON API service.' });
+  }
 
   if (route === 'health') {
     return json(res, 200, { status: 'healthy', timestamp: new Date().toISOString() });
@@ -1993,5 +2019,4 @@ If a fact or authority cannot be verified from your legal knowledge, say so expr
     message: `Production API route not implemented: ${req.method} /api/v1/${route}`,
   });
 }
-
 
