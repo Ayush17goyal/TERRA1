@@ -9,6 +9,7 @@ const booleanString = zod_1.z
     .optional()
     .transform((value) => value === 'true');
 const optionalUrl = zod_1.z.string().url().optional().or(zod_1.z.literal('').transform(() => undefined));
+const optionalScryptHash = zod_1.z.string().regex(/^scrypt\$[0-9a-f]+\$[0-9a-f]+$/i).optional().or(zod_1.z.literal('').transform(() => undefined));
 const csv = zod_1.z.string().optional().transform((value) => (value || '').split(',').map((item) => item.trim()).filter(Boolean));
 exports.EnvironmentSchema = zod_1.z.object({
     NODE_ENV: zod_1.z.enum(['development', 'test', 'staging', 'production']).default('development'),
@@ -38,7 +39,8 @@ exports.EnvironmentSchema = zod_1.z.object({
     ADMIN_EMAILS: csv,
     FOUNDER_EMAILS: csv,
     ADMIN_PORTAL_ID: zod_1.z.string().optional(),
-    ADMIN_PORTAL_PASSWORD_HASH: zod_1.z.string().regex(/^scrypt\$[0-9a-f]+\$[0-9a-f]+$/i).optional(),
+    ADMIN_PORTAL_PASSWORD_HASH: optionalScryptHash,
+    ADMIN_PORTAL_SESSION_SECRET: zod_1.z.string().min(32).optional(),
     DEMO_LIMIT_PER_FEATURE_PER_DAY: zod_1.z.coerce.number().int().min(1).max(100).default(4),
     ALLOW_DEV_AUTH_BYPASS: booleanString,
     LOG_LEVEL: zod_1.z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
@@ -77,6 +79,8 @@ exports.EnvironmentSchema = zod_1.z.object({
         ctx.addIssue({ code: zod_1.z.ZodIssueCode.custom, path: ['ADMIN_PORTAL_ID'], message: 'Production requires ADMIN_PORTAL_ID.' });
     if (production && !env.ADMIN_PORTAL_PASSWORD_HASH)
         ctx.addIssue({ code: zod_1.z.ZodIssueCode.custom, path: ['ADMIN_PORTAL_PASSWORD_HASH'], message: 'Production requires a scrypt ADMIN_PORTAL_PASSWORD_HASH.' });
+    if (production && !env.ADMIN_PORTAL_SESSION_SECRET)
+        ctx.addIssue({ code: zod_1.z.ZodIssueCode.custom, path: ['ADMIN_PORTAL_SESSION_SECRET'], message: 'Production requires an independent ADMIN_PORTAL_SESSION_SECRET of at least 32 characters.' });
     if (production && env.ALLOW_DEV_AUTH_BYPASS)
         ctx.addIssue({ code: zod_1.z.ZodIssueCode.custom, path: ['ALLOW_DEV_AUTH_BYPASS'], message: 'Dev auth bypass cannot be enabled in production.' });
     if (production && env.VIRUS_SCAN_MODE !== 'required')

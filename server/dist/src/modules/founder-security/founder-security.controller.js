@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const clerk_auth_guard_1 = require("../../guards/clerk-auth.guard");
 const admin_role_guard_1 = require("../../guards/admin-role.guard");
 const founder_security_service_1 = require("./founder-security.service");
+const admin_portal_guard_1 = require("../../guards/admin-portal.guard");
 let FounderSecurityController = class FounderSecurityController {
     constructor(founderSecurityService) {
         this.founderSecurityService = founderSecurityService;
@@ -234,7 +235,18 @@ let FounderSecurityController = class FounderSecurityController {
         if (!attempt) {
             return { status: 'invalid' };
         }
-        return { status: attempt.status };
+        return {
+            status: attempt.status,
+            ...(attempt.status === 'approved' && attempt.sessionToken ? { sessionToken: attempt.sessionToken } : {}),
+        };
+    }
+    async getAdminSession(req) {
+        return {
+            authenticated: true,
+            adminId: req.user?.id,
+            role: req.user?.role,
+            provider: req.user?.authProvider,
+        };
     }
     async requestClerkAccess(req, body) {
         const role = String(body.role || '').trim();
@@ -472,6 +484,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], FounderSecurityController.prototype, "loginStatus", null);
+__decorate([
+    (0, common_1.Get)('admin-session'),
+    (0, common_1.UseGuards)(admin_portal_guard_1.AdminPortalGuard),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], FounderSecurityController.prototype, "getAdminSession", null);
 __decorate([
     (0, common_1.Post)('clerk-access/request'),
     __param(0, (0, common_1.Req)()),

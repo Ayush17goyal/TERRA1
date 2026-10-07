@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { API_BASE_URL } from '../lib/api'
+import { adminAuthHeaders } from '../lib/admin-auth'
 import {
   BookOpen,
   Check,
@@ -115,7 +116,7 @@ export default function MasterclassManagement() {
   const [createdLive, setCreatedLive] = useState<any>(null)
 
   const authHeaders = useCallback(async () => {
-    return { 'Content-Type': 'application/json' }
+    return adminAuthHeaders(true)
   }, [])
 
   // ── Fetch helpers ─────────────────────────────────────────────────────────

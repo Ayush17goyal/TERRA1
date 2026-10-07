@@ -17,6 +17,11 @@ export class SettingsController {
     return this.entitlements.getDemoConfig();
   }
 
+  @Get('feature-access/legal-research-command-center')
+  getLegalResearchCommandCenterAccess(@Req() req: any) {
+    return this.entitlements.getLegalResearchCommandCenterAccess(req.user);
+  }
+
   @Get('demo-usage')
   async getDemoUsage(@Req() req: any, @Query('feature') feature: DemoFeature) {
     if (!DEMO_FEATURES.has(feature)) throw new BadRequestException('Unknown feature.');

@@ -18,6 +18,11 @@ export type DemoModeConfig = {
     updatedAt?: Date;
     updatedBy?: string | null;
 };
+export type CommandCenterAccessDecision = {
+    feature: 'LEGAL_RESEARCH_COMMAND_CENTER';
+    allowed: boolean;
+    source: 'explicit_entitlement' | 'locked';
+};
 export declare class FeatureEntitlementService {
     private readonly subscriptions;
     private readonly counters;
@@ -27,6 +32,8 @@ export declare class FeatureEntitlementService {
     private readonly dataSource;
     private readonly logger;
     constructor(subscriptions: Repository<UserSubscription>, counters: Repository<FeatureUsageCounter>, demoSettings: Repository<DemoModeSetting>, audits: Repository<DemoModeAuditLog>, errors: Repository<ApiUsageError>, dataSource: DataSource);
+    getLegalResearchCommandCenterAccess(user: any): CommandCenterAccessDecision;
+    hasLegalResearchCommandCenterOverride(user: any): boolean;
     getDemoConfig(): Promise<DemoModeConfig>;
     updateDemoConfig(adminId: string, input: {
         enabled?: boolean;
@@ -63,7 +70,7 @@ export declare class FeatureEntitlementService {
         reset: import("./subscription-plans").ResetPeriod;
         timezone?: undefined;
     }>;
-    reserve(userId: string, feature: DemoFeature): Promise<FeatureReservation>;
+    reserve(userId: string, feature: DemoFeature, user?: any): Promise<FeatureReservation>;
     refund(reservation: FeatureReservation | null): Promise<void>;
     recordApiError(userId: string | null, feature: DemoFeature, error: any): Promise<void>;
     getAdminOverview(): Promise<{

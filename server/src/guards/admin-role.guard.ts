@@ -6,7 +6,7 @@ export class AdminRoleGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user || {};
     const email = String(user.email || '').toLowerCase();
-    const role = String(user.role || '').toLowerCase();
+    const role = String(user.trustedRole || '').toLowerCase();
     const allowedEmails = this.allowedAdminEmails();
 
     if (

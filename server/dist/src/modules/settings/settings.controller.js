@@ -27,6 +27,9 @@ let SettingsController = class SettingsController {
     async getDemoMode() {
         return this.entitlements.getDemoConfig();
     }
+    getLegalResearchCommandCenterAccess(req) {
+        return this.entitlements.getLegalResearchCommandCenterAccess(req.user);
+    }
     async getDemoUsage(req, feature) {
         if (!DEMO_FEATURES.has(feature))
             throw new common_1.BadRequestException('Unknown feature.');
@@ -129,6 +132,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], SettingsController.prototype, "getDemoMode", null);
+__decorate([
+    (0, common_1.Get)('feature-access/legal-research-command-center'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], SettingsController.prototype, "getLegalResearchCommandCenterAccess", null);
 __decorate([
     (0, common_1.Get)('demo-usage'),
     __param(0, (0, common_1.Req)()),

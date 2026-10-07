@@ -39,6 +39,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase-client'
 import { renderAvatar } from '../lib/avatars'
+import { ADMIN_PORTAL_SESSION_KEY, adminAuthHeaders, storedAdminPortalSession } from '../lib/admin-auth'
 import {
   ResponsiveContainer,
   AreaChart,
@@ -130,10 +131,7 @@ async function notifyFounderSecurity(eventType: FounderSecurityEventType, metada
   try {
     await fetch(`${API_BASE_URL}/founder-security/events`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer mock_token',
-      },
+      headers: await adminAuthHeaders(true),
       body: JSON.stringify({
         eventType,
         actorEmail: metadata.actorEmail || 'admin-console@legatrixon.local',
@@ -233,6 +231,21 @@ export default function AdminPortal() {
   const [activeTab, setActiveTab] = useState<AdminTab>('Dashboard')
 
   useEffect(() => {
+    const restoreSession = async () => {
+      const token = storedAdminPortalSession()
+      if (!token) return
+      try {
+        const response = await fetch(`${API_BASE_URL}/founder-security/admin-session`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (response.ok) setIsAuthenticated(true)
+        else window.sessionStorage.removeItem(ADMIN_PORTAL_SESSION_KEY)
+      } catch {
+        // Leave the login screen available when the backend cannot validate.
+      }
+    }
+    void restoreSession()
+
     notifyFounderSecurity('FOUNDER_PORTAL_ACCESS_ATTEMPT', {
       reason: isAuthenticated ? 'Admin portal accessed (authenticated session)' : 'Admin portal accessed (unauthenticated login screen)'
     })
@@ -281,7 +294,15 @@ export default function AdminPortal() {
         const data = await res.json()
         
         if (data.status === 'approved') {
+          if (!data.sessionToken) {
+            clearInterval(timer)
+            setIsWaitingForApproval(false)
+            setLoginError('Approval completed without a verifiable admin session. Please restart the login flow.')
+            setStep(1)
+            return
+          }
           clearInterval(timer)
+          window.sessionStorage.setItem(ADMIN_PORTAL_SESSION_KEY, data.sessionToken)
           setIsWaitingForApproval(false)
           setIsAuthenticated(true)
           setLoginError('')
@@ -313,7 +334,6 @@ export default function AdminPortal() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer mock_token',
         },
         body: JSON.stringify({ role, adminId, password }),
       })
@@ -354,7 +374,6 @@ export default function AdminPortal() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer mock_token',
         },
         body: JSON.stringify({ sessionToken, answer: securityAnswer }),
       })
@@ -386,6 +405,7 @@ export default function AdminPortal() {
   }
 
   const handleLogout = () => {
+    window.sessionStorage.removeItem(ADMIN_PORTAL_SESSION_KEY)
     setIsAuthenticated(false)
     setAdminId('')
     setPassword('')
@@ -1234,14 +1254,12 @@ function ModelsView() {
     testBeforeActivate: true,
   })
 
-  const authHeaders = { 'Content-Type': 'application/json', Authorization: 'Bearer mock_token' }
-
   const loadProviders = async () => {
     setLoading(true)
     setStatus('')
     try {
       const response = await fetch(`${API_BASE_URL}/admin/providers`, {
-        headers: { Authorization: 'Bearer mock_token' },
+        headers: await adminAuthHeaders(),
       })
       if (!response.ok) throw new Error(await response.text())
       setData(await response.json())
@@ -1265,7 +1283,7 @@ function ModelsView() {
     try {
       const response = await fetch(`${API_BASE_URL}/admin/providers/keys`, {
         method: 'POST',
-        headers: authHeaders,
+        headers: await adminAuthHeaders(true),
         body: JSON.stringify(form),
       })
       if (!response.ok) throw new Error(await response.text())
@@ -1282,7 +1300,7 @@ function ModelsView() {
     try {
       const response = await fetch(`${API_BASE_URL}/admin/providers${path}`, {
         method: 'POST',
-        headers: authHeaders,
+        headers: await adminAuthHeaders(true),
       })
       if (!response.ok) throw new Error(await response.text())
       setStatus(success)
@@ -1451,14 +1469,10 @@ function TokenAndCacheAnalyticsView() {
     try {
       const [tokenRes, cacheRes] = await Promise.all([
         fetch(`${API_BASE_URL}/chat/token-analytics`, {
-          headers: {
-            'Authorization': 'Bearer mock_token'
-          }
+          headers: await adminAuthHeaders()
         }),
         fetch(`${API_BASE_URL}/chat/cache-analytics`, {
-          headers: {
-            'Authorization': 'Bearer mock_token'
-          }
+          headers: await adminAuthHeaders()
         })
       ])
 
@@ -2499,7 +2513,7 @@ function AnalyticsView() {
         supabase.from('exports').select('*').order('downloaded_at', { ascending: false }),
         supabase.from('users').select('*'),
         fetch(`${API_BASE_URL}/founder-security/admin-analytics`, {
-          headers: { 'Authorization': 'Bearer mock_token' }
+          headers: await adminAuthHeaders()
         }).catch(err => {
           console.error('Failed to fetch platform metrics:', err)
           return null
@@ -2988,7 +3002,7 @@ function AuditLogsView() {
   const fetchEvents = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/founder-security/events`, {
-        headers: { 'Authorization': 'Bearer mock_token' },
+        headers: await adminAuthHeaders(),
       })
       if (!response.ok) throw new Error(await response.text())
       const data = await response.json()
@@ -3237,7 +3251,7 @@ function FounderSecuritySettingsView() {
     setFeedbacksError('')
     try {
       const response = await fetch(`${API_BASE_URL}/settings/feedback/admin`, {
-        headers: { Authorization: 'Bearer mock_token' },
+        headers: await adminAuthHeaders(),
       })
       if (!response.ok) throw new Error(await response.text())
       const data = await response.json()
@@ -3260,8 +3274,7 @@ function FounderSecuritySettingsView() {
       const response = await fetch(`${API_BASE_URL}/settings/feedback/${feedbackId}/status`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer mock_token',
+          ...(await adminAuthHeaders(true)),
         },
         body: JSON.stringify({ status: nextStatus }),
       })
@@ -3276,7 +3289,7 @@ function FounderSecuritySettingsView() {
     const loadFounderSettings = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/founder-security/settings`, {
-          headers: { 'Authorization': 'Bearer mock_token' },
+          headers: await adminAuthHeaders(),
         })
         if (!response.ok) throw new Error(await response.text())
         const settings = await response.json()
@@ -3311,8 +3324,7 @@ function FounderSecuritySettingsView() {
       const response = await fetch(`${API_BASE_URL}/founder-security/settings`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer mock_token',
+          ...(await adminAuthHeaders(true)),
         },
         body: JSON.stringify({
           primaryEmail: activeEmails[0] || 'legatrixon2026@gmail.com',
@@ -3531,7 +3543,7 @@ function FounderSecurityLogsView() {
   const fetchEvents = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/founder-security/events`, {
-        headers: { 'Authorization': 'Bearer mock_token' },
+        headers: await adminAuthHeaders(),
       })
       if (!response.ok) throw new Error(await response.text())
       const data = await response.json()

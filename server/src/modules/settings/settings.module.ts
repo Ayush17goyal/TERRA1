@@ -46,6 +46,7 @@ import { ClerkAccountService } from './clerk-account.service';
 import { SupabaseService } from './supabase.service';
 import { ExamModule } from '../exam/exam.module';
 import { AdminRoleGuard } from '../../guards/admin-role.guard';
+import { CommandCenterAccessGuard } from '../../guards/command-center-access.guard';
 
 @Global()
 @Module({
@@ -91,7 +92,7 @@ import { AdminRoleGuard } from '../../guards/admin-role.guard';
     ]),
   ],
   controllers: [SettingsController, ByokController, ProviderManagementController],
-  providers: [SettingsService, ByokService, CreditService, FeatureEntitlementService, ProviderManagementService, ClerkAccountService, SupabaseService, AdminRoleGuard, { provide: APP_INTERCEPTOR, useClass: ApiUsageProtectionInterceptor }],
-  exports: [SettingsService, ByokService, CreditService, FeatureEntitlementService, ProviderManagementService, SupabaseService],
+  providers: [SettingsService, ByokService, CreditService, FeatureEntitlementService, ProviderManagementService, ClerkAccountService, SupabaseService, AdminRoleGuard, CommandCenterAccessGuard, { provide: APP_INTERCEPTOR, useClass: ApiUsageProtectionInterceptor }],
+  exports: [SettingsService, ByokService, CreditService, FeatureEntitlementService, ProviderManagementService, SupabaseService, CommandCenterAccessGuard],
 })
 export class SettingsModule {}

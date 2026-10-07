@@ -36,6 +36,18 @@ let FeatureEntitlementService = FeatureEntitlementService_1 = class FeatureEntit
         this.dataSource = dataSource;
         this.logger = new common_1.Logger(FeatureEntitlementService_1.name);
     }
+    getLegalResearchCommandCenterAccess(user) {
+        if (this.hasLegalResearchCommandCenterOverride(user)) {
+            return { feature: 'LEGAL_RESEARCH_COMMAND_CENTER', allowed: true, source: 'explicit_entitlement' };
+        }
+        return { feature: 'LEGAL_RESEARCH_COMMAND_CENTER', allowed: false, source: 'locked' };
+    }
+    hasLegalResearchCommandCenterOverride(user) {
+        const role = String(user?.trustedRole || '').trim().toLowerCase();
+        const entitlements = user?.trustedEntitlements || user?.privateEntitlements || {};
+        const entitlement = entitlements.LEGAL_RESEARCH_COMMAND_CENTER_ACCESS === true;
+        return role === 'developer' && entitlement;
+    }
     async getDemoConfig() {
         let setting = await this.demoSettings.findOne({ where: { id: 'global' } });
         if (!setting) {
@@ -81,7 +93,10 @@ let FeatureEntitlementService = FeatureEntitlementService_1 = class FeatureEntit
         const used = Number(counter?.usedCount || 0);
         return { feature, label: FEATURE_LABELS[feature], mode: 'subscription', plan, used, limit: entitlement.limit, remaining: entitlement.limit === null ? null : Math.max(0, entitlement.limit - used), reset: entitlement.reset };
     }
-    async reserve(userId, feature) {
+    async reserve(userId, feature, user) {
+        if (feature === 'legal_research' && this.hasLegalResearchCommandCenterOverride(user)) {
+            return { counterId: null, feature, unlimited: true, mode: 'subscription', limit: null, used: 0, periodKey: null };
+        }
         const subscription = await this.ensureSubscription(userId);
         const config = await this.getDemoConfig();
         if (config.enabled)

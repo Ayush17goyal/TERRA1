@@ -13,7 +13,7 @@ let AdminRoleGuard = class AdminRoleGuard {
         const request = context.switchToHttp().getRequest();
         const user = request.user || {};
         const email = String(user.email || '').toLowerCase();
-        const role = String(user.role || '').toLowerCase();
+        const role = String(user.trustedRole || '').toLowerCase();
         const allowedEmails = this.allowedAdminEmails();
         if (allowedEmails.has(email) ||
             role === 'admin' ||

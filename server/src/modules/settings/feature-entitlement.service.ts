@@ -8,6 +8,11 @@ import { DemoFeature, LimitedFeature, normalizeSubscriptionPlan, SUBSCRIPTION_PL
 
 export type FeatureReservation = { counterId: string | null; feature: DemoFeature; unlimited: boolean; mode: 'demo' | 'subscription'; limit: number | null; used: number; periodKey: string | null };
 export type DemoModeConfig = { enabled: boolean; limitPerFeaturePerDay: number; timezone: string; updatedAt?: Date; updatedBy?: string | null };
+export type CommandCenterAccessDecision = {
+  feature: 'LEGAL_RESEARCH_COMMAND_CENTER';
+  allowed: boolean;
+  source: 'explicit_entitlement' | 'locked';
+};
 
 const FEATURE_LABELS: Record<DemoFeature, string> = {
   drafting_mentor: 'Drafting Mentor', case_law_reasoning: 'Case Law Reasoning', mock_test: 'Mock Test Generation', legal_research: 'Legal Research', drafting_academy: 'Drafting Academy',
@@ -27,6 +32,20 @@ export class FeatureEntitlementService {
     @InjectRepository(ApiUsageError) private readonly errors: Repository<ApiUsageError>,
     private readonly dataSource: DataSource,
   ) {}
+
+  getLegalResearchCommandCenterAccess(user: any): CommandCenterAccessDecision {
+    if (this.hasLegalResearchCommandCenterOverride(user)) {
+      return { feature: 'LEGAL_RESEARCH_COMMAND_CENTER', allowed: true, source: 'explicit_entitlement' };
+    }
+    return { feature: 'LEGAL_RESEARCH_COMMAND_CENTER', allowed: false, source: 'locked' };
+  }
+
+  hasLegalResearchCommandCenterOverride(user: any): boolean {
+    const role = String(user?.trustedRole || '').trim().toLowerCase();
+    const entitlements = user?.trustedEntitlements || user?.privateEntitlements || {};
+    const entitlement = entitlements.LEGAL_RESEARCH_COMMAND_CENTER_ACCESS === true;
+    return role === 'developer' && entitlement;
+  }
 
   async getDemoConfig(): Promise<DemoModeConfig> {
     let setting = await this.demoSettings.findOne({ where: { id: 'global' } });
@@ -70,7 +89,10 @@ export class FeatureEntitlementService {
     return { feature, label: FEATURE_LABELS[feature], mode: 'subscription', plan, used, limit: entitlement.limit, remaining: entitlement.limit === null ? null : Math.max(0, entitlement.limit - used), reset: entitlement.reset };
   }
 
-  async reserve(userId: string, feature: DemoFeature): Promise<FeatureReservation> {
+  async reserve(userId: string, feature: DemoFeature, user?: any): Promise<FeatureReservation> {
+    if (feature === 'legal_research' && this.hasLegalResearchCommandCenterOverride(user)) {
+      return { counterId: null, feature, unlimited: true, mode: 'subscription', limit: null, used: 0, periodKey: null };
+    }
     const subscription = await this.ensureSubscription(userId);
     const config = await this.getDemoConfig();
     if (config.enabled) return this.atomicReserve(userId, feature, 'demo', `demo:day:${this.calendarDate(config.timezone)}`, config.limitPerFeaturePerDay);

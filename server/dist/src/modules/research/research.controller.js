@@ -16,6 +16,7 @@ exports.ResearchController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const clerk_auth_guard_1 = require("../../guards/clerk-auth.guard");
+const command_center_access_guard_1 = require("../../guards/command-center-access.guard");
 const research_service_1 = require("./research.service");
 const settings_service_1 = require("../settings/settings.service");
 let ResearchController = class ResearchController {
@@ -160,6 +161,17 @@ let ResearchController = class ResearchController {
         return result;
     }
     async generateBareActAnalysis(req, body) {
+        const userId = await this.userId(req);
+        const result = await this.research.generateBareActAnalysis(userId, body);
+        await this.settings.log({
+            userId: req.user.id,
+            module: 'Legal Research Command Center',
+            action: 'Generated Bare Act Analysis',
+            metadata: { reportId: result?.id, topic: body.topic, template: 'Bare Act Statutory Analysis' },
+        });
+        return result;
+    }
+    async generateCommandCenterBareActAnalysis(req, body) {
         const userId = await this.userId(req);
         const result = await this.research.generateBareActAnalysis(userId, body);
         await this.settings.log({
@@ -378,12 +390,21 @@ __decorate([
 ], ResearchController.prototype, "generateLegalBrief", null);
 __decorate([
     (0, common_1.Post)('bare-act'),
+    (0, command_center_access_guard_1.AllowWithoutCommandCenterAccess)(),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ResearchController.prototype, "generateBareActAnalysis", null);
+__decorate([
+    (0, common_1.Post)('command-center/bare-act'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ResearchController.prototype, "generateCommandCenterBareActAnalysis", null);
 __decorate([
     (0, common_1.Get)('judgment-intelligence'),
     __param(0, (0, common_1.Req)()),
@@ -425,7 +446,7 @@ __decorate([
 ], ResearchController.prototype, "challengeResearch", null);
 exports.ResearchController = ResearchController = __decorate([
     (0, common_1.Controller)('research'),
-    (0, common_1.UseGuards)(clerk_auth_guard_1.ClerkAuthGuard),
+    (0, common_1.UseGuards)(clerk_auth_guard_1.ClerkAuthGuard, command_center_access_guard_1.CommandCenterAccessGuard),
     __metadata("design:paramtypes", [research_service_1.ResearchService,
         settings_service_1.SettingsService])
 ], ResearchController);

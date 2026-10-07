@@ -21,6 +21,7 @@ const net = require("net");
 const tls = require("tls");
 const os = require("os");
 const crypto_1 = require("crypto");
+const admin_credentials_1 = require("../../security/admin-credentials");
 const founder_security_entities_1 = require("./founder-security.entities");
 let FounderSecurityService = FounderSecurityService_1 = class FounderSecurityService {
     constructor(settingsRepo, eventRepo, lockRepo, dataSource) {
@@ -29,6 +30,7 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
         this.lockRepo = lockRepo;
         this.dataSource = dataSource;
         this.logger = new common_1.Logger(FounderSecurityService_1.name);
+        this.loginApprovalTtlMs = 10 * 60 * 1000;
         this.loginApprovals = new Map();
         this.pendingLogins = new Map();
         this.clerkApprovals = new Map();
@@ -159,17 +161,7 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
         }
     }
     verifySecret(candidate, encodedHash) {
-        try {
-            const [algorithm, salt, expectedHex] = String(encodedHash).split('$');
-            if (algorithm !== 'scrypt' || !salt || !expectedHex)
-                return false;
-            const actual = (0, crypto_1.scryptSync)(String(candidate || ''), salt, expectedHex.length / 2);
-            const expected = Buffer.from(expectedHex, 'hex');
-            return actual.length === expected.length && (0, crypto_1.timingSafeEqual)(actual, expected);
-        }
-        catch {
-            return false;
-        }
+        return (0, admin_credentials_1.verifyAdminSecret)(candidate, encodedHash);
     }
     async initiateLoginApproval(adminId, role, ipAddress, userAgent) {
         const token = `apv_${(0, crypto_1.randomBytes)(32).toString('base64url')}`;
@@ -187,13 +179,21 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
         return token;
     }
     getLoginApprovalStatus(token) {
-        return this.loginApprovals.get(token) || null;
+        const attempt = this.loginApprovals.get(token);
+        if (!attempt)
+            return null;
+        if (Date.now() - attempt.createdAt.getTime() > this.loginApprovalTtlMs) {
+            this.loginApprovals.delete(token);
+            return null;
+        }
+        return attempt;
     }
     async approveLogin(token) {
-        const attempt = this.loginApprovals.get(token);
+        const attempt = this.getLoginApprovalStatus(token);
         if (!attempt || attempt.status !== 'pending')
             return false;
         attempt.status = 'approved';
+        attempt.sessionToken = (0, admin_credentials_1.issueAdminSessionToken)(attempt.adminId, attempt.role);
         const role = attempt.role || 'Founder';
         const rolePrefix = role.toLowerCase();
         const actorEmail = `${rolePrefix}-admin@legatrixon.local`;
@@ -240,7 +240,7 @@ let FounderSecurityService = FounderSecurityService_1 = class FounderSecuritySer
         return true;
     }
     async rejectLogin(token) {
-        const attempt = this.loginApprovals.get(token);
+        const attempt = this.getLoginApprovalStatus(token);
         if (!attempt || attempt.status !== 'pending')
             return false;
         attempt.status = 'rejected';

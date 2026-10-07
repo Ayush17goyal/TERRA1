@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClerkAuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const backend_1 = require("@clerk/backend");
+const admin_credentials_1 = require("../security/admin-credentials");
 let ClerkAuthGuard = ClerkAuthGuard_1 = class ClerkAuthGuard {
     constructor() {
         this.logger = new common_1.Logger(ClerkAuthGuard_1.name);
@@ -28,6 +29,18 @@ let ClerkAuthGuard = ClerkAuthGuard_1 = class ClerkAuthGuard {
             throw new common_1.UnauthorizedException('Authentication token missing or invalid');
         }
         const token = authHeader.slice('Bearer '.length).trim();
+        const adminSession = (0, admin_credentials_1.verifyAdminSessionToken)(token);
+        if (adminSession) {
+            request.user = {
+                id: adminSession.sub,
+                email: null,
+                fullName: 'Admin Portal Session',
+                role: adminSession.role,
+                trustedRole: adminSession.role,
+                authProvider: 'admin-portal',
+            };
+            return true;
+        }
         const secretKey = process.env.CLERK_SECRET_KEY;
         if (!secretKey) {
             this.logger.error('Clerk secret key is not configured');
@@ -48,21 +61,11 @@ let ClerkAuthGuard = ClerkAuthGuard_1 = class ClerkAuthGuard {
         catch (verifyErr) {
             const errMsg = verifyErr instanceof Error ? verifyErr.message : String(verifyErr);
             this.logger.warn(`Primary Clerk token verification failed: ${errMsg}`);
-            try {
-                const userId = this.decodeTokenSubject(token);
-                request.user = await this.toRequestUser(secretKey, userId);
-                this.logger.warn('Fallback Clerk user lookup succeeded after token verification failure');
+            if (allowDevBypass) {
+                request.user = fallbackUser;
                 return true;
             }
-            catch (fallbackErr) {
-                const fallbackMsg = fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr);
-                this.logger.warn(`Fallback Clerk authentication failed: ${fallbackMsg}`);
-                if (allowDevBypass) {
-                    request.user = fallbackUser;
-                    return true;
-                }
-                throw new common_1.UnauthorizedException('Authentication failed');
-            }
+            throw new common_1.UnauthorizedException('Authentication failed');
         }
     }
     async toRequestUser(secretKey, userId) {
@@ -75,6 +78,9 @@ let ClerkAuthGuard = ClerkAuthGuard_1 = class ClerkAuthGuard {
             fullName: [user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || null,
             imageUrl: user.imageUrl || null,
             role: user.publicMetadata?.role || user.privateMetadata?.role || user.unsafeMetadata?.role || null,
+            trustedRole: user.privateMetadata?.role || user.publicMetadata?.role || null,
+            privateEntitlements: user.privateMetadata?.entitlements || {},
+            trustedEntitlements: user.privateMetadata?.entitlements || user.publicMetadata?.entitlements || {},
             plan: user.publicMetadata?.plan || null,
             university: user.publicMetadata?.university || user.unsafeMetadata?.collegeName || user.unsafeMetadata?.university || null,
             yearOfStudy: user.publicMetadata?.yearOfStudy || user.unsafeMetadata?.yearOfStudy || null,
@@ -82,26 +88,18 @@ let ClerkAuthGuard = ClerkAuthGuard_1 = class ClerkAuthGuard {
             createdAt: user.createdAt,
         };
     }
-    decodeTokenSubject(token) {
-        const payload = token.split('.')[1];
-        if (!payload)
-            throw new Error('Malformed JWT: no payload segment');
-        const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
-        const decoded = JSON.parse(Buffer.from(normalized, 'base64').toString('utf8'));
-        const userId = decoded.sub || decoded.user_id;
-        if (!userId)
-            throw new Error('No user ID in token payload');
-        return userId;
-    }
     localFallbackUser() {
         return {
             id: 'local-dev-user',
             email: 'dev@legatrixon.local',
-            fullName: 'Local Developer',
+            fullName: 'Local Development User',
             university: 'LEGATRIXON Development',
             yearOfStudy: 'development',
             learningGoal: 'local testing',
-            role: 'admin',
+            role: 'customer',
+            trustedRole: 'customer',
+            privateEntitlements: {},
+            trustedEntitlements: {},
             createdAt: Date.now(),
         };
     }

@@ -6,6 +6,7 @@ export declare class SettingsController {
     private readonly entitlements;
     constructor(settings: SettingsService, entitlements: FeatureEntitlementService);
     getDemoMode(): Promise<import("./feature-entitlement.service").DemoModeConfig>;
+    getLegalResearchCommandCenterAccess(req: any): import("./feature-entitlement.service").CommandCenterAccessDecision;
     getDemoUsage(req: any, feature: DemoFeature): Promise<{
         feature: DemoFeature;
         label: string;

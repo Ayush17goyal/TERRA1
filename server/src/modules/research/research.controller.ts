@@ -14,11 +14,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ClerkAuthGuard } from '../../guards/clerk-auth.guard';
+import { AllowWithoutCommandCenterAccess, CommandCenterAccessGuard } from '../../guards/command-center-access.guard';
 import { ResearchService } from './research.service';
 import { SettingsService } from '../settings/settings.service';
 
 @Controller('research')
-@UseGuards(ClerkAuthGuard)
+@UseGuards(ClerkAuthGuard, CommandCenterAccessGuard)
 export class ResearchController {
   constructor(
     private readonly research: ResearchService,
@@ -250,7 +251,31 @@ export class ResearchController {
   }
 
   @Post('bare-act')
+  @AllowWithoutCommandCenterAccess()
   async generateBareActAnalysis(
+    @Req() req: any,
+    @Body() body: {
+      queryId?: string;
+      topic: string;
+      researchMode: string;
+      sources: string[];
+      provider?: string;
+      depth?: 'standard' | 'deep' | 'exhaustive';
+    },
+  ) {
+    const userId = await this.userId(req);
+    const result = await this.research.generateBareActAnalysis(userId, body);
+    await this.settings.log({
+      userId: req.user.id,
+      module: 'Legal Research Command Center',
+      action: 'Generated Bare Act Analysis',
+      metadata: { reportId: result?.id, topic: body.topic, template: 'Bare Act Statutory Analysis' },
+    });
+    return result;
+  }
+
+  @Post('command-center/bare-act')
+  async generateCommandCenterBareActAnalysis(
     @Req() req: any,
     @Body() body: {
       queryId?: string;

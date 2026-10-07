@@ -5074,6 +5074,11 @@ My Year of Study: ${yearOfStudy}
   // Shared state
   const [masteryScore, setMasteryScore] = useState(82)
   const [apiToken, setApiToken] = useState('')
+  const [commandCenterAccess, setCommandCenterAccess] = useState<{
+    status: 'loading' | 'allowed' | 'locked' | 'error'
+    source?: string
+  }>({ status: 'loading' })
+  const [commandCenterAccessRefresh, setCommandCenterAccessRefresh] = useState(0)
   const [verificationStatus, setVerificationStatus] = useState<string | null>(null)
   const [userRequestDetails, setUserRequestDetails] = useState<any>(null)
   const [verificationLoading, setVerificationLoading] = useState(true)
@@ -5105,10 +5110,38 @@ My Year of Study: ${yearOfStudy}
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
       setApiToken('')
+      setCommandCenterAccess({ status: 'locked' })
       return
     }
     getToken().then((token) => setApiToken(token || ''))
   }, [getToken, isLoaded, isSignedIn])
+
+  useEffect(() => {
+    if (!apiToken) return
+    const controller = new AbortController()
+    setCommandCenterAccess({ status: 'loading' })
+    fetch(`${settingsApiBase}/feature-access/legal-research-command-center`, {
+      headers: { Authorization: `Bearer ${apiToken}` },
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Feature access check failed with ${response.status}`)
+        return response.json()
+      })
+      .then((decision) => {
+        setCommandCenterAccess({
+          status: decision?.allowed === true ? 'allowed' : 'locked',
+          source: String(decision?.source || ''),
+        })
+      })
+      .catch((error) => {
+        if (error?.name !== 'AbortError') {
+          console.error('Failed to verify Legal Research Command Center access', error)
+          setCommandCenterAccess({ status: 'error' })
+        }
+      })
+    return () => controller.abort()
+  }, [apiToken, commandCenterAccessRefresh])
 
   const getSettingsAuthHeaders = async () => {
     const token = await getToken()
@@ -7860,16 +7893,19 @@ My Year of Study: ${yearOfStudy}
   }
 
   useEffect(() => {
-    if (currentQueryId) {
+    if (currentQueryId && commandCenterAccess.status === 'allowed') {
       void fetchSessionFiles(currentQueryId)
     }
-  }, [currentQueryId])
+  }, [currentQueryId, commandCenterAccess.status])
 
   useEffect(() => {
-    if (apiToken) {
+    const commandCenterSelected = activeTab === 'Legal Research Command Center™'
+      || activeTab === 'Legal Research Command Center'
+      || (activeTab === 'Legal Research' && legalResearchSubTab === 'command-center')
+    if (apiToken && commandCenterAccess.status === 'allowed' && commandCenterSelected) {
       fetchJudgmentHistory('')
     }
-  }, [apiToken])
+  }, [apiToken, activeTab, legalResearchSubTab, commandCenterAccess.status])
 
   const detectLegalResearchDocumentCategory = async (file: File) => {
     const nameLower = file.name.toLowerCase()
@@ -8118,7 +8154,7 @@ My Year of Study: ${yearOfStudy}
           fileSize: localFile.fileSize,
           previewContent: uploadedRecord.content || localFile.previewContent,
         },
-      ])
+      ]);
 
       (window as any).logUserActivity?.('Legal Research Command Center', 'Uploaded Document', { fileName: file.name, fileSize: file.size, category: targetCategory, selectedWorkspace, detectedCategory });
 
@@ -8219,7 +8255,7 @@ My Year of Study: ${yearOfStudy}
         : uploadCategory === 'Legal Brief'
           ? '/legal-brief'
           : uploadCategory === 'Bare Act'
-            ? '/bare-act'
+            ? '/command-center/bare-act'
             : '/generate'
       const payload = await requestResearchApi<any>(endpoint, {
         method: 'POST',
@@ -17331,13 +17367,14 @@ ${assessmentBody}
               <button
                 type="button"
                 onClick={() => setLegalResearchSubTab('command-center')}
+                aria-label={commandCenterAccess.status === 'allowed' ? 'Open Command Center' : 'Command Center is locked'}
                 style={{
                   padding: '8px 18px', borderRadius: '10px', border: legalResearchSubTab === 'command-center' ? '1px solid var(--gold)' : '1px solid var(--line)',
                   background: legalResearchSubTab === 'command-center' ? 'rgba(245,193,79,0.16)' : 'transparent',
                   color: legalResearchSubTab === 'command-center' ? 'var(--text)' : 'var(--text-soft)',
                   fontWeight: '700', fontSize: '0.86rem', cursor: 'pointer', transition: '180ms ease'
                 }}
-              >Command Center</button>
+              >Command Center {commandCenterAccess.status !== 'allowed' && <LockKeyhole size={13} style={{ marginLeft: '6px', verticalAlign: 'middle', color: 'var(--gold)' }} />}</button>
             </div>
             {legalResearchSubTab === 'guide' && <LegalResearchGuide />}
             {legalResearchSubTab === 'assistant' && <LegalResearchAssistant apiToken={apiToken} />}
@@ -17515,7 +17552,7 @@ ${assessmentBody}
         )}
 
         {/* VIEW 7: LEGAL RESEARCH COMMAND CENTER */}
-        {((activeTab === 'Legal Research Command Center™') || (activeTab === 'Legal Research Command Center') || (activeTab === 'Legal Research' && legalResearchSubTab === 'command-center')) && (
+        {((activeTab === 'Legal Research Command Center™') || (activeTab === 'Legal Research Command Center') || (activeTab === 'Legal Research' && legalResearchSubTab === 'command-center')) && commandCenterAccess.status === 'allowed' && (
           <>
             <div className="research-command-center reveal-up">
               <div className="research-command-head">
@@ -20290,6 +20327,44 @@ ${assessmentBody}
               </div>
             </div>
           </>
+        )}
+
+        {((activeTab === 'Legal Research Command Center™') || (activeTab === 'Legal Research Command Center') || (activeTab === 'Legal Research' && legalResearchSubTab === 'command-center')) && commandCenterAccess.status !== 'allowed' && (
+          <section className="settings-section" style={{ minHeight: '520px', display: 'grid', placeItems: 'center', textAlign: 'center', padding: '34px' }}>
+            <div style={{ maxWidth: '540px', display: 'grid', gap: '14px', justifyItems: 'center' }}>
+              <span style={{ width: '58px', height: '58px', borderRadius: '16px', display: 'grid', placeItems: 'center', background: 'rgba(245, 193, 79, 0.12)', border: '1px solid rgba(245, 193, 79, 0.28)', color: 'var(--gold)' }}>
+                <LockKeyhole size={26} />
+              </span>
+              <div>
+                <h3 style={{ margin: '0 0 8px', fontSize: '1.35rem', color: 'var(--text)' }}>
+                  {commandCenterAccess.status === 'loading'
+                    ? 'Checking Command Center access…'
+                    : commandCenterAccess.status === 'error'
+                      ? 'Unable to verify Command Center access'
+                      : 'Legal Research Command Center is locked'}
+                </h3>
+                <p style={{ margin: 0, color: 'var(--text-soft)', lineHeight: 1.6 }}>
+                  {commandCenterAccess.status === 'loading'
+                    ? 'Please wait while your account entitlement is verified.'
+                    : commandCenterAccess.status === 'error'
+                      ? 'The access service could not be reached. Start or restart the backend, then retry.'
+                      : 'This advanced workspace is still being prepared. Research Guide and Research Assistant remain available.'}
+                </p>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
+                {commandCenterAccess.status !== 'loading' && (
+                  <button type="button" className="btn btn-primary" onClick={() => setCommandCenterAccessRefresh((value) => value + 1)}>
+                    Retry Access Check
+                  </button>
+                )}
+                {commandCenterAccess.status === 'locked' && (
+                  <button type="button" className="btn btn-outline" onClick={() => setLegalResearchSubTab('guide')}>
+                    Open Research Guide
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
         )}
 
         {/* VIEW 9: MEMORIAL ARCHITECT AI — now part of Moot Court Suite™ */}

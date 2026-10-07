@@ -4,7 +4,8 @@ import { Repository, DataSource } from 'typeorm';
 import * as net from 'net';
 import * as tls from 'tls';
 import * as os from 'os';
-import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
+import { randomBytes } from 'crypto';
+import { issueAdminSessionToken, verifyAdminSecret } from '../../security/admin-credentials';
 import {
   FOUNDER_DEFAULT_EMAIL,
   FOUNDER_SECURITY_EVENTS,
@@ -25,6 +26,7 @@ type FounderSettingsPayload = Partial<{
 @Injectable()
 export class FounderSecurityService {
   private readonly logger = new Logger(FounderSecurityService.name);
+  private readonly loginApprovalTtlMs = 10 * 60 * 1000;
 
   constructor(
     @InjectRepository(FounderSecuritySettings)
@@ -69,6 +71,7 @@ export class FounderSecurityService {
       ipAddress: string;
       userAgent: string;
       createdAt: Date;
+      sessionToken?: string;
     }
   >();
 
@@ -231,15 +234,7 @@ export class FounderSecurityService {
   }
 
   verifySecret(candidate: string, encodedHash: string): boolean {
-    try {
-      const [algorithm, salt, expectedHex] = String(encodedHash).split('$');
-      if (algorithm !== 'scrypt' || !salt || !expectedHex) return false;
-      const actual = scryptSync(String(candidate || ''), salt, expectedHex.length / 2);
-      const expected = Buffer.from(expectedHex, 'hex');
-      return actual.length === expected.length && timingSafeEqual(actual, expected);
-    } catch {
-      return false;
-    }
+    return verifyAdminSecret(candidate, encodedHash);
   }
 
 
@@ -268,14 +263,21 @@ export class FounderSecurityService {
   }
 
   getLoginApprovalStatus(token: string) {
-    return this.loginApprovals.get(token) || null;
+    const attempt = this.loginApprovals.get(token);
+    if (!attempt) return null;
+    if (Date.now() - attempt.createdAt.getTime() > this.loginApprovalTtlMs) {
+      this.loginApprovals.delete(token);
+      return null;
+    }
+    return attempt;
   }
 
   async approveLogin(token: string): Promise<boolean> {
-    const attempt = this.loginApprovals.get(token);
+    const attempt = this.getLoginApprovalStatus(token);
     if (!attempt || attempt.status !== 'pending') return false;
 
     attempt.status = 'approved';
+    attempt.sessionToken = issueAdminSessionToken(attempt.adminId, attempt.role);
     const role = attempt.role || 'Founder';
     const rolePrefix = role.toLowerCase();
     const actorEmail = `${rolePrefix}-admin@legatrixon.local`;
@@ -326,7 +328,7 @@ export class FounderSecurityService {
   }
 
   async rejectLogin(token: string): Promise<boolean> {
-    const attempt = this.loginApprovals.get(token);
+    const attempt = this.getLoginApprovalStatus(token);
     if (!attempt || attempt.status !== 'pending') return false;
 
     attempt.status = 'rejected';

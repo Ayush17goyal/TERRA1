@@ -42,7 +42,71 @@ function createHarness(planName = 'free', demoEnabled = false, demoLimit = 4) {
 async function consume(service, feature, count, userId = 'user-1') { for (let index = 0; index < count; index += 1)
     await service.reserve(userId, feature); }
 describe('FeatureEntitlementService', () => {
-    afterEach(() => jest.useRealTimers());
+    afterEach(() => {
+        jest.useRealTimers();
+    });
+    it('locks the Command Center for accounts without developer metadata', () => {
+        const { service } = createHarness();
+        expect(service.getLegalResearchCommandCenterAccess({ trustedRole: null, privateEntitlements: {} })).toEqual({
+            feature: 'LEGAL_RESEARCH_COMMAND_CENTER',
+            allowed: false,
+            source: 'locked',
+        });
+    });
+    it('allows an explicitly entitled developer', () => {
+        const { service } = createHarness();
+        expect(service.getLegalResearchCommandCenterAccess({
+            trustedRole: 'developer',
+            privateEntitlements: { LEGAL_RESEARCH_COMMAND_CENTER_ACCESS: true },
+        })).toEqual({
+            feature: 'LEGAL_RESEARCH_COMMAND_CENTER',
+            allowed: true,
+            source: 'explicit_entitlement',
+        });
+    });
+    it('does not allow a developer role without the explicit entitlement', () => {
+        const { service } = createHarness();
+        expect(service.getLegalResearchCommandCenterAccess({ trustedRole: 'developer', privateEntitlements: {} }).allowed).toBe(false);
+    });
+    it('does not allow an entitlement without the developer role', () => {
+        const { service } = createHarness();
+        expect(service.getLegalResearchCommandCenterAccess({
+            trustedRole: 'customer',
+            privateEntitlements: { LEGAL_RESEARCH_COMMAND_CENTER_ACCESS: true },
+        }).allowed).toBe(false);
+    });
+    it('does not treat other privileged roles as the required developer role', () => {
+        const { service } = createHarness();
+        expect(service.getLegalResearchCommandCenterAccess({
+            trustedRole: 'admin',
+            privateEntitlements: { LEGAL_RESEARCH_COMMAND_CENTER_ACCESS: true },
+        }).allowed).toBe(false);
+    });
+    it('accepts an administrator-controlled public metadata entitlement', () => {
+        const { service } = createHarness();
+        expect(service.getLegalResearchCommandCenterAccess({
+            trustedRole: 'developer',
+            trustedEntitlements: { LEGAL_RESEARCH_COMMAND_CENTER_ACCESS: true },
+        })).toMatchObject({ allowed: true, source: 'explicit_entitlement' });
+    });
+    it('stays locked even if the removed legacy global flag is present', () => {
+        process.env.LEGAL_RESEARCH_COMMAND_CENTER_ENABLED = 'true';
+        const { service } = createHarness();
+        expect(service.getLegalResearchCommandCenterAccess({ trustedRole: null, privateEntitlements: {} })).toMatchObject({
+            allowed: false,
+            source: 'locked',
+        });
+        delete process.env.LEGAL_RESEARCH_COMMAND_CENTER_ENABLED;
+    });
+    it('does not count legal research usage for an explicitly entitled developer', async () => {
+        const { service, counters } = createHarness('free', false, 1);
+        const reservation = await service.reserve('user-1', 'legal_research', {
+            trustedRole: 'developer',
+            privateEntitlements: { LEGAL_RESEARCH_COMMAND_CENTER_ACCESS: true },
+        });
+        expect(reservation).toMatchObject({ unlimited: true, counterId: null });
+        expect(counters).toHaveLength(0);
+    });
     it('enforces demo limits independently per user and feature', async () => {
         const { service } = createHarness('pro-max', true, 4);
         await consume(service, 'legal_research', 4);

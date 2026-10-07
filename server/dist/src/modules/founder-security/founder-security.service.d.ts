@@ -12,6 +12,7 @@ export declare class FounderSecurityService {
     private readonly lockRepo;
     private readonly dataSource;
     private readonly logger;
+    private readonly loginApprovalTtlMs;
     constructor(settingsRepo: Repository<FounderSecuritySettings>, eventRepo: Repository<FounderSecurityEvent>, lockRepo: Repository<AdminAccountLock>, dataSource: DataSource);
     private getPublicBackendOrigin;
     private buildPublicApiUrl;
@@ -52,6 +53,7 @@ export declare class FounderSecurityService {
         ipAddress: string;
         userAgent: string;
         createdAt: Date;
+        sessionToken?: string;
     };
     approveLogin(token: string): Promise<boolean>;
     rejectLogin(token: string): Promise<boolean>;

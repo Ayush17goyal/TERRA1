@@ -6,6 +6,7 @@ const booleanString = z
   .transform((value) => value === 'true');
 
 const optionalUrl = z.string().url().optional().or(z.literal('').transform(() => undefined));
+const optionalScryptHash = z.string().regex(/^scrypt\$[0-9a-f]+\$[0-9a-f]+$/i).optional().or(z.literal('').transform(() => undefined));
 const csv = z.string().optional().transform((value) => (value || '').split(',').map((item) => item.trim()).filter(Boolean));
 
 export const EnvironmentSchema = z.object({
@@ -36,7 +37,8 @@ export const EnvironmentSchema = z.object({
   ADMIN_EMAILS: csv,
   FOUNDER_EMAILS: csv,
   ADMIN_PORTAL_ID: z.string().optional(),
-  ADMIN_PORTAL_PASSWORD_HASH: z.string().regex(/^scrypt\$[0-9a-f]+\$[0-9a-f]+$/i).optional(),
+  ADMIN_PORTAL_PASSWORD_HASH: optionalScryptHash,
+  ADMIN_PORTAL_SESSION_SECRET: z.string().min(32).optional(),
   DEMO_LIMIT_PER_FEATURE_PER_DAY: z.coerce.number().int().min(1).max(100).default(4),
   ALLOW_DEV_AUTH_BYPASS: booleanString,
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
@@ -70,6 +72,7 @@ export const EnvironmentSchema = z.object({
   if (production && !env.OPENAI_API_KEY && !env.OPENROUTER_API_KEY) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['OPENAI_API_KEY'], message: 'Production requires an LLM provider key.' });
   if (production && !env.ADMIN_PORTAL_ID) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['ADMIN_PORTAL_ID'], message: 'Production requires ADMIN_PORTAL_ID.' });
   if (production && !env.ADMIN_PORTAL_PASSWORD_HASH) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['ADMIN_PORTAL_PASSWORD_HASH'], message: 'Production requires a scrypt ADMIN_PORTAL_PASSWORD_HASH.' });
+  if (production && !env.ADMIN_PORTAL_SESSION_SECRET) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['ADMIN_PORTAL_SESSION_SECRET'], message: 'Production requires an independent ADMIN_PORTAL_SESSION_SECRET of at least 32 characters.' });
   if (production && env.ALLOW_DEV_AUTH_BYPASS) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['ALLOW_DEV_AUTH_BYPASS'], message: 'Dev auth bypass cannot be enabled in production.' });
   if (production && env.VIRUS_SCAN_MODE !== 'required') ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['VIRUS_SCAN_MODE'], message: 'Production requires VIRUS_SCAN_MODE=required.' });
   if (env.VIRUS_SCAN_MODE === 'required' && !env.VIRUS_SCAN_COMMAND) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['VIRUS_SCAN_COMMAND'], message: 'Required virus scanning needs VIRUS_SCAN_COMMAND.' });

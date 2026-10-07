@@ -3,6 +3,7 @@ import { ClerkAuthGuard } from '../../guards/clerk-auth.guard';
 import { AdminRoleGuard } from '../../guards/admin-role.guard';
 import { FounderSecurityEventType } from './founder-security.entities';
 import { FounderSecurityService } from './founder-security.service';
+import { AdminPortalGuard } from '../../guards/admin-portal.guard';
 
 @Controller('founder-security')
 export class FounderSecurityController {
@@ -274,7 +275,21 @@ export class FounderSecurityController {
     if (!attempt) {
       return { status: 'invalid' };
     }
-    return { status: attempt.status };
+    return {
+      status: attempt.status,
+      ...(attempt.status === 'approved' && attempt.sessionToken ? { sessionToken: attempt.sessionToken } : {}),
+    };
+  }
+
+  @Get('admin-session')
+  @UseGuards(AdminPortalGuard)
+  async getAdminSession(@Req() req: any) {
+    return {
+      authenticated: true,
+      adminId: req.user?.id,
+      role: req.user?.role,
+      provider: req.user?.authProvider,
+    };
   }
 
   @Post('clerk-access/request')

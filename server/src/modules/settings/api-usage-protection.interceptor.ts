@@ -19,6 +19,7 @@ export const PROTECTED_API_ROUTES: ProtectedRoute[] = [
   { method: 'POST', pattern: /^\/legal-intelligence\/drafting\/check$/, feature: 'drafting_academy' },
   { method: 'POST', pattern: /^\/drafting-mentor\/academy\//, feature: 'drafting_mentor' },
   { method: 'POST', pattern: /^\/research\/(generate|judgment-intelligence|legal-brief|bare-act|challenge)$/, feature: 'legal_research' },
+  { method: 'POST', pattern: /^\/research\/command-center\/bare-act$/, feature: 'legal_research' },
   { method: 'POST', pattern: /^\/judgments\/[^/]+\/(analyze|explain|evaluate-verdict|revision-notes|moot-court-kit|alternative-reasoning|mastery)$/, feature: 'judgment_ai' },
   { method: 'POST', pattern: /^\/exam\/mock-paper\/(generate|evaluate)$/, feature: 'mock_test' },
   { method: 'POST', pattern: /^\/exam\/study-library\/(generate-test|generate-answer|insights)$/, feature: 'mock_test' },
@@ -51,7 +52,7 @@ export class ApiUsageProtectionInterceptor implements NestInterceptor {
     const userId = request.user?.id;
     if (!userId) return throwError(() => new UnauthorizedException('Sign in is required to use this feature.'));
 
-    return from(this.entitlements.reserve(userId, feature)).pipe(
+    return from(this.entitlements.reserve(userId, feature, request.user)).pipe(
       mergeMap((reservation) => next.handle().pipe(
         catchError((error) => from(this.handleFailure(userId, feature, reservation, error)).pipe(
           mergeMap((safeError) => throwError(() => safeError)),

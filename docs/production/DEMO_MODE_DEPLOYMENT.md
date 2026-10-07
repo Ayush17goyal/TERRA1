@@ -5,7 +5,7 @@
 - Frontend: React 19 + TypeScript + Vite 8, deployed by the current `vercel.json` as a static SPA with `/api/v1/*` rewrites.
 - Backend: NestJS 10 + TypeORM, built from `server/` and currently described by `render.yaml`.
 - Production database: PostgreSQL is mandatory. The intended deployment can use the Supabase Postgres connection string through `DATABASE_URL`/`POSTGRES_URL`. SQLite remains development-only.
-- Authentication: Clerk protects NestJS user routes. Admin API operations require Clerk plus `AdminRoleGuard` (`ADMIN_EMAILS` or an admin-class Clerk role). The legacy founder portal uses a scrypt password hash followed by email approval; it no longer contains source-code passwords or security answers.
+- Authentication: Clerk protects NestJS user routes. Admin API operations accept either an authorized Clerk identity (`ADMIN_EMAILS` or an admin-class Clerk role) or the short-lived signed session issued after the founder portal's scrypt-password and email-approval flow. The portal no longer contains source-code passwords or security answers.
 - Data/services: Supabase REST/Storage, Qdrant, Redis, SMTP/FCM, Google Calendar OAuth, Razorpay, and optional Sentry/OpenTelemetry.
 
 ## Paid/external API inventory
@@ -58,7 +58,7 @@ Backend-required/core values:
 - `NODE_ENV=production`, `PORT`, `PUBLIC_BACKEND_URL`
 - `DATABASE_URL` (or `POSTGRES_URL`), `POSTGRES_SSL=true`
 - `CLIENT_ORIGINS` and `CLIENT_ORIGIN` with exact HTTPS frontend origins, no wildcards
-- `CLERK_SECRET_KEY`, `ADMIN_EMAILS`, `ADMIN_PORTAL_ID`, `ADMIN_PORTAL_PASSWORD_HASH`
+- `CLERK_SECRET_KEY`, `ADMIN_EMAILS`, `ADMIN_PORTAL_ID`, `ADMIN_PORTAL_PASSWORD_HASH`, `ADMIN_PORTAL_SESSION_SECRET` (an independent random value of at least 32 characters)
 - at least one of `OPENAI_API_KEY` or `OPENROUTER_API_KEY`; configure production `GEMINI_API_KEY`/`DEEPSEEK_API_KEY` where those fallbacks are enabled
 - `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 - `QDRANT_URL`, `QDRANT_API_KEY`, `REDIS_URL`
@@ -91,8 +91,11 @@ To reset the founder portal password safely:
 1. Run `cd server` and `npm run admin:hash-secret` in an interactive terminal.
 2. Enter a new password-manager-generated secret twice. The command hides input and prints only a scrypt hash.
 3. Replace `ADMIN_PORTAL_PASSWORD_HASH` in Render's secret environment settings.
-4. Redeploy/restart the backend and complete the email approval step.
-5. Do not paste the plaintext password into source, chat, logs, `render.yaml`, or the browser bundle.
+4. Ensure `ADMIN_PORTAL_SESSION_SECRET` contains an independent password-manager-generated random value of at least 32 characters.
+5. Redeploy/restart the backend and complete the email approval step. Approval returns a 30-minute signed session stored only in browser session storage; logout or closing the tab removes it.
+6. Do not paste the plaintext password into source, chat, logs, `render.yaml`, or the browser bundle.
+
+For local development, run `cd server` and `npm run admin:reset-dev`. This command is disabled for `NODE_ENV=production`; it prompts twice without echoing, writes only the scrypt hash to the ignored `server/.env`, removes the legacy plaintext `ADMIN_PORTAL_PASSWORD` entry, and verifies the new hash before saving it.
 
 There are no seeded/default production credentials. Any earlier development defaults and hard-coded challenge answers were removed.
 

@@ -47,6 +47,12 @@ function isPaidCompatRoute(method: string, route: string) {
     /^memorial-workflow\/(blueprint|run)$/,
   ].some((pattern) => pattern.test(route));
 }
+
+function isCommandCenterCompatRoute(route: string) {
+  if (!route.startsWith('research/')) return false;
+  // This legacy endpoint is shared by LexMentor outside the Command Center.
+  return route !== 'research/bare-act';
+}
 function compactId(prefix: string) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -635,7 +641,7 @@ export default async function handler(req: any, res: any) {
   // Production AI traffic must go through the NestJS entitlement interceptor.
   // Keeping the compatibility implementation enabled would create a second,
   // unmetered path to paid providers.
-  if ((globalThis as any).process?.env?.NODE_ENV === 'production' && isPaidCompatRoute(req.method, route)) {
+  if ((globalThis as any).process?.env?.NODE_ENV === 'production' && (isPaidCompatRoute(req.method, route) || isCommandCenterCompatRoute(route))) {
     return json(res, 503, { code: 'PROTECTED_API_REQUIRES_BACKEND', message: 'This feature must use the configured LEGATRIXON API service.' });
   }
 
@@ -2019,4 +2025,3 @@ If a fact or authority cannot be verified from your legal knowledge, say so expr
     message: `Production API route not implemented: ${req.method} /api/v1/${route}`,
   });
 }
-

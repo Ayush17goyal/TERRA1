@@ -180,6 +180,28 @@ export declare class ResearchController {
         updatedAt: Date;
         query: import("./research.entities").ResearchQuery;
     }>;
+    generateCommandCenterBareActAnalysis(req: any, body: {
+        queryId?: string;
+        topic: string;
+        researchMode: string;
+        sources: string[];
+        provider?: string;
+        depth?: 'standard' | 'deep' | 'exhaustive';
+    }): Promise<{
+        sources: import("./research.entities").ResearchSource[];
+        notes: import("./research.entities").ResearchNote[];
+        assets: import("./research.entities").ResearchAsset[];
+        id: string;
+        queryId: string;
+        userId: string;
+        title: string;
+        summary: string;
+        researchOutline: Record<string, unknown>;
+        researchMode: string;
+        createdAt: Date;
+        updatedAt: Date;
+        query: import("./research.entities").ResearchQuery;
+    }>;
     listJudgmentReports(req: any, search?: string): Promise<{
         id: string;
         userId: string;

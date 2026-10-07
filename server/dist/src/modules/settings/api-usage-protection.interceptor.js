@@ -25,6 +25,7 @@ exports.PROTECTED_API_ROUTES = [
     { method: 'POST', pattern: /^\/legal-intelligence\/drafting\/check$/, feature: 'drafting_academy' },
     { method: 'POST', pattern: /^\/drafting-mentor\/academy\//, feature: 'drafting_mentor' },
     { method: 'POST', pattern: /^\/research\/(generate|judgment-intelligence|legal-brief|bare-act|challenge)$/, feature: 'legal_research' },
+    { method: 'POST', pattern: /^\/research\/command-center\/bare-act$/, feature: 'legal_research' },
     { method: 'POST', pattern: /^\/judgments\/[^/]+\/(analyze|explain|evaluate-verdict|revision-notes|moot-court-kit|alternative-reasoning|mastery)$/, feature: 'judgment_ai' },
     { method: 'POST', pattern: /^\/exam\/mock-paper\/(generate|evaluate)$/, feature: 'mock_test' },
     { method: 'POST', pattern: /^\/exam\/study-library\/(generate-test|generate-answer|insights)$/, feature: 'mock_test' },
@@ -57,7 +58,7 @@ let ApiUsageProtectionInterceptor = class ApiUsageProtectionInterceptor {
         const userId = request.user?.id;
         if (!userId)
             return (0, rxjs_1.throwError)(() => new common_1.UnauthorizedException('Sign in is required to use this feature.'));
-        return (0, rxjs_1.from)(this.entitlements.reserve(userId, feature)).pipe((0, rxjs_1.mergeMap)((reservation) => next.handle().pipe((0, rxjs_1.catchError)((error) => (0, rxjs_1.from)(this.handleFailure(userId, feature, reservation, error)).pipe((0, rxjs_1.mergeMap)((safeError) => (0, rxjs_1.throwError)(() => safeError)))))));
+        return (0, rxjs_1.from)(this.entitlements.reserve(userId, feature, request.user)).pipe((0, rxjs_1.mergeMap)((reservation) => next.handle().pipe((0, rxjs_1.catchError)((error) => (0, rxjs_1.from)(this.handleFailure(userId, feature, reservation, error)).pipe((0, rxjs_1.mergeMap)((safeError) => (0, rxjs_1.throwError)(() => safeError)))))));
     }
     resolveFeature(method, rawUrl) {
         const path = rawUrl.split('?')[0].replace(/^\/api\/v1/, '') || '/';

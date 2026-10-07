@@ -27,7 +27,8 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     ADMIN_EMAILS: z.ZodEffects<z.ZodOptional<z.ZodString>, string[], string>;
     FOUNDER_EMAILS: z.ZodEffects<z.ZodOptional<z.ZodString>, string[], string>;
     ADMIN_PORTAL_ID: z.ZodOptional<z.ZodString>;
-    ADMIN_PORTAL_PASSWORD_HASH: z.ZodOptional<z.ZodString>;
+    ADMIN_PORTAL_PASSWORD_HASH: z.ZodUnion<[z.ZodOptional<z.ZodString>, z.ZodEffects<z.ZodLiteral<"">, any, "">]>;
+    ADMIN_PORTAL_SESSION_SECRET: z.ZodOptional<z.ZodString>;
     DEMO_LIMIT_PER_FEATURE_PER_DAY: z.ZodDefault<z.ZodNumber>;
     ALLOW_DEV_AUTH_BYPASS: z.ZodEffects<z.ZodOptional<z.ZodEnum<["true", "false"]>>, boolean, "true" | "false">;
     LOG_LEVEL: z.ZodDefault<z.ZodEnum<["fatal", "error", "warn", "info", "debug", "trace", "silent"]>>;
@@ -60,6 +61,8 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     OPENAI_API_KEY?: string;
     OPENAI_MODEL?: string;
     REDIS_URL?: string;
+    ADMIN_PORTAL_SESSION_SECRET?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: any;
     CLERK_SECRET_KEY?: string;
     SUPABASE_URL?: any;
     NEXT_PUBLIC_SUPABASE_URL?: any;
@@ -72,10 +75,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     DISABLE_SUPABASE?: boolean;
     ADMIN_EMAILS?: string[];
     FOUNDER_EMAILS?: string[];
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     PORT?: number;
     ADMIN_PORTAL_ID?: string;
-    ADMIN_PORTAL_PASSWORD_HASH?: string;
-    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;
@@ -111,6 +113,8 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     OPENAI_API_KEY?: string;
     OPENAI_MODEL?: string;
     REDIS_URL?: string;
+    ADMIN_PORTAL_SESSION_SECRET?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: string;
     CLERK_SECRET_KEY?: string;
     SUPABASE_URL?: string;
     NEXT_PUBLIC_SUPABASE_URL?: string;
@@ -123,10 +127,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     DISABLE_SUPABASE?: "true" | "false";
     ADMIN_EMAILS?: string;
     FOUNDER_EMAILS?: string;
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     PORT?: number;
     ADMIN_PORTAL_ID?: string;
-    ADMIN_PORTAL_PASSWORD_HASH?: string;
-    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;
@@ -162,6 +165,8 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     OPENAI_API_KEY?: string;
     OPENAI_MODEL?: string;
     REDIS_URL?: string;
+    ADMIN_PORTAL_SESSION_SECRET?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: any;
     CLERK_SECRET_KEY?: string;
     SUPABASE_URL?: any;
     NEXT_PUBLIC_SUPABASE_URL?: any;
@@ -174,10 +179,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     DISABLE_SUPABASE?: boolean;
     ADMIN_EMAILS?: string[];
     FOUNDER_EMAILS?: string[];
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     PORT?: number;
     ADMIN_PORTAL_ID?: string;
-    ADMIN_PORTAL_PASSWORD_HASH?: string;
-    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;
@@ -213,6 +217,8 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     OPENAI_API_KEY?: string;
     OPENAI_MODEL?: string;
     REDIS_URL?: string;
+    ADMIN_PORTAL_SESSION_SECRET?: string;
+    ADMIN_PORTAL_PASSWORD_HASH?: string;
     CLERK_SECRET_KEY?: string;
     SUPABASE_URL?: string;
     NEXT_PUBLIC_SUPABASE_URL?: string;
@@ -225,10 +231,9 @@ export declare const EnvironmentSchema: z.ZodEffects<z.ZodObject<{
     DISABLE_SUPABASE?: "true" | "false";
     ADMIN_EMAILS?: string;
     FOUNDER_EMAILS?: string;
+    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     PORT?: number;
     ADMIN_PORTAL_ID?: string;
-    ADMIN_PORTAL_PASSWORD_HASH?: string;
-    DEMO_LIMIT_PER_FEATURE_PER_DAY?: number;
     SQLITE_DB_PATH?: string;
     DATABASE_URL?: string;
     POSTGRES_URL?: string;

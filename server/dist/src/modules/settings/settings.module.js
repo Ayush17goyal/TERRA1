@@ -31,6 +31,7 @@ const clerk_account_service_1 = require("./clerk-account.service");
 const supabase_service_1 = require("./supabase.service");
 const exam_module_1 = require("../exam/exam.module");
 const admin_role_guard_1 = require("../../guards/admin-role.guard");
+const command_center_access_guard_1 = require("../../guards/command-center-access.guard");
 let SettingsModule = class SettingsModule {
 };
 exports.SettingsModule = SettingsModule;
@@ -78,8 +79,8 @@ exports.SettingsModule = SettingsModule = __decorate([
             ]),
         ],
         controllers: [settings_controller_1.SettingsController, byok_controller_1.ByokController, provider_management_controller_1.ProviderManagementController],
-        providers: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, feature_entitlement_service_1.FeatureEntitlementService, provider_management_service_1.ProviderManagementService, clerk_account_service_1.ClerkAccountService, supabase_service_1.SupabaseService, admin_role_guard_1.AdminRoleGuard, { provide: core_1.APP_INTERCEPTOR, useClass: api_usage_protection_interceptor_1.ApiUsageProtectionInterceptor }],
-        exports: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, feature_entitlement_service_1.FeatureEntitlementService, provider_management_service_1.ProviderManagementService, supabase_service_1.SupabaseService],
+        providers: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, feature_entitlement_service_1.FeatureEntitlementService, provider_management_service_1.ProviderManagementService, clerk_account_service_1.ClerkAccountService, supabase_service_1.SupabaseService, admin_role_guard_1.AdminRoleGuard, command_center_access_guard_1.CommandCenterAccessGuard, { provide: core_1.APP_INTERCEPTOR, useClass: api_usage_protection_interceptor_1.ApiUsageProtectionInterceptor }],
+        exports: [settings_service_1.SettingsService, byok_service_1.ByokService, credit_service_1.CreditService, feature_entitlement_service_1.FeatureEntitlementService, provider_management_service_1.ProviderManagementService, supabase_service_1.SupabaseService, command_center_access_guard_1.CommandCenterAccessGuard],
     })
 ], SettingsModule);
 //# sourceMappingURL=settings.module.js.map
