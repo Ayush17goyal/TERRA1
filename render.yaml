@@ -130,6 +130,6 @@ services:
 
   - type: keyvalue
     name: legatrixon-redis
-    plan: 256mb
+    plan: free
     maxmemoryPolicy: allkeys-lru
     ipAllowList: []
